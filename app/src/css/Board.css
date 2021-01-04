@@ -1,0 +1,17 @@
+.board {
+    margin: 40px auto 0;
+}
+
+thead {
+    text-align: center;
+    font-size: 14px;
+}
+
+.table-head-month {
+    padding-bottom: 5px;
+}
+
+.table-head-day {
+    text-align: right;
+    padding-right: 10px;
+}

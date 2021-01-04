@@ -1,0 +1,13 @@
+td {
+    width: 30px;
+    height: 30px;
+    background-color: white;
+}
+
+.inactive {
+    border: 1px solid rgb(0, 0, 0);
+}
+
+.active {
+    border: 5px solid rgb(0, 0, 255);
+}
