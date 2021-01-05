@@ -14,8 +14,11 @@ class App extends React.Component {
     constructor(props) {
         super(props);
 
+        let data = Array.from(Array(12), () => new Array(31));
+        data[0][0] = 1;
+
         this.state = {
-            data: Array.from(Array(12), () => new Array(31)),
+            data: data,
             menuXPos: 0,
             menuYPos: 0,
             menuVisible: false,
@@ -64,6 +67,8 @@ class App extends React.Component {
                     xPos={this.state.menuXPos}
                     yPos={this.state.menuYPos}
                     visible={this.state.menuVisible}
+                    day={this.state.currentlySelected[1]}
+                    month={this.state.currentlySelected[0]}
                     handleMenuClose={this.handleMenuClose}
                 >
                 </CellMenu>

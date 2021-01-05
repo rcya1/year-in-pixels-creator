@@ -1,13 +1,13 @@
-td {
+.cell {
     width: 30px;
     height: 30px;
-    background-color: white;
+    cursor: pointer;
 }
 
-.inactive {
+.cell-inactive {
     border: 1px solid rgb(0, 0, 0);
 }
 
-.active {
-    border: 5px solid rgb(0, 0, 255);
+.cell-active {
+    border: 3px solid rgb(0, 0, 255);
 }

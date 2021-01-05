@@ -1,6 +1,7 @@
 import React from 'react';
 
 import Cell from './Cell';
+import Constants from './Constants'
 
 import '../css/Board.css';
 
@@ -10,9 +11,6 @@ export default class Board extends React.Component {
     }
 
     render() {
-        const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-        const daysPerMonth = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
-
         let chartData = [];
         for(let d = 0; d < 31; d++) {
             let rowData = [
@@ -20,7 +18,7 @@ export default class Board extends React.Component {
             ];
             for(let m = 0; m < 12; m++) {
                 let text = "";
-                let valid = d + 1 <= daysPerMonth[m];
+                let valid = d + 1 <= Constants.daysPerMonth[m];
                 let active = this.props.currentlySelected[0] === m && this.props.currentlySelected[1] === d;
 
                 if(valid) text = this.props.data[m][d];
@@ -43,7 +41,7 @@ export default class Board extends React.Component {
                         <tr>
                             <th></th>
                             {
-                                monthNames.map((value, index) => {
+                                Constants.abbrMonthNames.map((value, index) => {
                                     return <th key={index} className="table-head-month">{value}</th>
                                 })
                             }

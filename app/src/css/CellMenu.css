@@ -1,4 +1,40 @@
 .menu {
     position: absolute;
     background: rgb(255, 255, 255);
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    border-radius: 6px;
+}
+
+.menu-title {
+    text-align: center;
+    margin-top: 5px;
+}
+
+.menu-item {
+    margin-top: 10px;
+    margin-right: 40px;
+    margin-left: 10px;
+}
+
+.menu-submit {
+    text-align: center;
+    margin: 20px 30px 15px;
+}
+
+.menu-close {
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    cursor: pointer;
+    width: 30px;
+    height: 20px;
+    text-align: center;
+    line-height: 20px;
+    font-family: Arial, sans-serif;
+    background: rgb(250, 250, 250);
+}
+
+.menu-close:hover {
+    background-color: lightgray;
 }
