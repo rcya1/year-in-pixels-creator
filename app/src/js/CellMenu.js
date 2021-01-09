@@ -5,8 +5,8 @@ import DateUtils from './DateUtils';
 
 import '../css/CellMenu.css';
 
-// TODO Fix how if you scroll, this shows up in the wrong place
 // TODO Fix that if it will go of screen, then it will still show up correctly
+// TODO Add the options to the menu and also check if value is out of range (if it is then just change it to 0)
 export default class CellMenu extends React.Component {
     constructor(props) {
         super(props);
@@ -16,9 +16,21 @@ export default class CellMenu extends React.Component {
             comment: ""
         };
 
+        // this.ref = React.createRef();
+
         this.onChangeValue = this.onChangeValue.bind(this);
         this.onChangeComment = this.onChangeComment.bind(this);
         this.onSubmit = this.onSubmit.bind(this);
+    }
+
+    // todo look into using this maybe to do the moving b/c it runs after the first render
+    componentDidUpdate(prevProps) {
+        if(prevProps.value !== this.props.value || prevProps.comment !== this.props.comment) {
+            this.setState({
+                value: this.props.value,
+                comment: this.props.comment
+            })
+        }
     }
 
     onChangeValue(e) {
@@ -36,6 +48,7 @@ export default class CellMenu extends React.Component {
     onSubmit(e) {
         e.preventDefault();
         this.props.handleMenuClose();
+        this.props.handleMenuSubmit(this.props.month, this.props.day, this.state.value, this.state.comment);
     }
 
     render() {
@@ -43,26 +56,39 @@ export default class CellMenu extends React.Component {
             let title = Constants.fullMonthNames[this.props.month] + " " + (this.props.day + 1) + 
                 DateUtils.getOrdinalEnding(this.props.day + 1);
 
+            let top = this.props.yPos + document.documentElement.scrollTop;
+            let left = this.props.xPos;
+            // if(this.ref.current != null) {
+            //     let rect = this.ref.current.getBoundingClientRect();
+            //     console.log(rect);
+            // }
+            // console.log(window.innerHeight);
+
             return (
                 <div className="menu"
                     style={{
-                        top: this.props.yPos,
-                        left: this.props.xPos
-                    }}>
+                        top: top,
+                        left: left
+                    }}
+                    ref={this.ref}>
                     <form onSubmit={this.onSubmit}>
                         <h4 className="menu-title">{title}</h4>
-                        <div className="form-group menu-item">
+                        <hr className="menu-divider"></hr>
+                        <div className="form-group menu-item menu-select">
                             <select required
                                 onChange={this.onChangeValue}
-                                className="form-control">
+                                value={this.state.value}
+                                className="form-control form-control-sm"
+                            >
                                 <option value={0}>Unselected</option>
                                 <option value={1}>Test 1</option>
                                 <option value={2}>Test 2</option>
                                 <option value={3}>Test 3</option>
                             </select>
                         </div>
-                        <div className="form-group menu-item">
-                            <textarea className="form-control"
+                        <div className="form-group menu-item menu-comment">
+                            <textarea className="form-control form-control-sm"
+                                value={this.state.comment}
                                 onChange={this.onChangeComment}
                                 placeholder="Comment">
                             </textarea>
@@ -75,7 +101,7 @@ export default class CellMenu extends React.Component {
                         onClick={this.props.handleMenuClose}
                     >
                         <div className="menu-close-x" >
-                            <i class="fas fa-times"></i>
+                            <i className="fas fa-times"></i>
                         </div>
                     </div>
                 </div>

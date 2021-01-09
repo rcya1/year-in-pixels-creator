@@ -29,6 +29,7 @@ export default class Board extends React.Component {
                     handleClick={this.props.handleClick}
                     valid={valid}
                     active={active}
+                    options={this.props.options}
                     key={m + ":" + d}></Cell>);
             }
             chartData.push(<tr key={d}>{rowData}</tr>);
