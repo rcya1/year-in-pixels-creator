@@ -23,12 +23,13 @@ class App extends React.Component {
             data: data,
             comments: comments,
             options: [
-                [125, 125, 117, ], 
-                [184, 183, 118],
-                [175, 125, 197],
-                [126, 252, 238],
-                [253, 250, 117],
-                [253, 125, 236]
+                [125, 125, 117, "Very Bad Day"], 
+                [184, 183, 118, "Bad Day"],
+                [175, 125, 197, "Average Day"],
+                [126, 252, 238, "Chill Day"],
+                [253, 250, 117, "Good Day"],
+                [253, 125, 236, "Amazing Day"],
+                [255, 171, 111, "Super Special Day"]
             ],
             menuXPos: 0,
             menuYPos: 0,

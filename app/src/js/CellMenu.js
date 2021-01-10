@@ -1,4 +1,6 @@
 import React from 'react';
+import Select from 'react-select'
+import chroma from 'chroma-js';
 
 import Constants from './Constants'
 import DateUtils from './DateUtils';
@@ -33,9 +35,9 @@ export default class CellMenu extends React.Component {
         }
     }
 
-    onChangeValue(e) {
+    onChangeValue(newValue) {
         this.setState({
-            value: e.target.value
+            value: newValue.value
         })
     }
 
@@ -64,6 +66,78 @@ export default class CellMenu extends React.Component {
             // }
             // console.log(window.innerHeight);
 
+            let options = this.props.options.map((option, index) => {
+                return {
+                    value: index + 1,
+                    label: option[3],
+                    color: "rgb(" + option[0] + "," + option[1] + "," + option[2] + ")"
+                };
+            });
+
+            options.unshift({
+                value: 0,
+                label: "Unselected",
+                color: "#FFF"
+            });
+
+            const dot = (color = '#ccc') => {
+                if(chroma(color).css() != chroma("#FFF").css()) return {
+                    alignItems: 'center',
+                    display: 'flex',
+                
+                    ':before': {
+                        backgroundColor: color,
+                        borderRadius: 10,
+                        content: '" "',
+                        display: 'block',
+                        marginRight: 8,
+                        height: 10,
+                        width: 10,
+                    },
+                }
+                return null;    
+            };
+              
+            const colourStyles = {
+                control: styles => ({ 
+                    ...styles,
+                    backgroundColor: 'white',
+                    fontSize: '.875rem'
+                }),
+                option: (styles, { data, isDisabled, isFocused, isSelected }) => {
+                    const color = chroma(data.color);
+                    let backgroundColor = chroma('#FFF').css();
+                    if(color.css() == chroma('#FFF').css()) {
+                        if(isFocused) {
+                            backgroundColor = chroma('#DDD').css();
+                        }
+                    }
+                    else {
+                        if(isSelected) {
+                            backgroundColor = color.css();
+                        }
+                        else if(isFocused) {
+                            backgroundColor = color.alpha(0.6).css();
+                        }
+                    }
+                    return {
+                        ...styles,
+                        ...dot(data.color),
+                        backgroundColor: backgroundColor,
+                        color: 'black',
+                        fontSize: '.875rem',
+                
+                        ':active': {
+                            ...styles[':active'],
+                            backgroundColor: isSelected ? data.color : color.alpha(0.3).css(),
+                        },
+                    };
+                },
+                input: styles => ({ ...styles, ...dot('#FFF') }),
+                placeholder: styles => ({ ...styles, ...dot('#FFF ') }),
+                singleValue: (styles, { data }) => ({ ...styles, ...dot(data.color) }),
+            };
+
             return (
                 <div className="menu"
                     style={{
@@ -75,16 +149,13 @@ export default class CellMenu extends React.Component {
                         <h4 className="menu-title">{title}</h4>
                         <hr className="menu-divider"></hr>
                         <div className="form-group menu-item menu-select">
-                            <select required
+                            <Select
+                                value={options[this.state.value]}
+                                options={options}
                                 onChange={this.onChangeValue}
-                                value={this.state.value}
-                                className="form-control form-control-sm"
-                            >
-                                <option value={0}>Unselected</option>
-                                <option value={1}>Test 1</option>
-                                <option value={2}>Test 2</option>
-                                <option value={3}>Test 3</option>
-                            </select>
+                                styles={colourStyles}
+                            >    
+                            </Select>
                         </div>
                         <div className="form-group menu-item menu-comment">
                             <textarea className="form-control form-control-sm"

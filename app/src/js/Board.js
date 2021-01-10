@@ -6,9 +6,9 @@ import Constants from './Constants'
 import '../css/Board.css';
 
 export default class Board extends React.Component {
-    constructor(props) {
-        super(props);
-    }
+    // constructor(props) {
+    //     super(props);
+    // }
 
     render() {
         let chartData = [];

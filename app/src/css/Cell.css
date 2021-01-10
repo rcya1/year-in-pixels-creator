@@ -9,5 +9,5 @@
 }
 
 .cell-active {
-    border: 3px solid rgb(0, 0, 255);
+    border: 3px solid rgba(0, 0, 0, 0.7);
 }
