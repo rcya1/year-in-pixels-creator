@@ -15,9 +15,7 @@ class App extends React.Component {
         super(props);
 
         let data = Array(12).fill().map(() => Array(31).fill(0));
-        data[0][0] = 1;
-        let comments = Array(12).fill().map(() => Array(31).fill("Test"));
-        comments[0][0] = "";
+        let comments = Array(12).fill().map(() => Array(31).fill(""));
 
         this.state = {
             data: data,
@@ -38,21 +36,23 @@ class App extends React.Component {
         }
 
         this.menuXYProvider = null;
-        this.handleResize = this.handleResize.bind(this);
+        this.updateMenu = this.updateMenu.bind(this);
         this.handleCellClick = this.handleCellClick.bind(this);
         this.handleMenuClose = this.handleMenuClose.bind(this);
         this.handleMenuSubmit = this.handleMenuSubmit.bind(this);
     }
 
     componentDidMount() {
-        window.addEventListener('resize', this.handleResize);
+        window.addEventListener('resize', this.updateMenu);
+        window.addEventListener('scroll', this.updateMenu);
     }
 
     componentWillUnmount() {
-        window.removeEventListener('resize', this.handleResize);
+        window.removeEventListener('resize', this.updateMenu);
+        window.removeEventListener('scroll', this.updateMenu);
     }
 
-    handleResize() {
+    updateMenu() {
         if(this.menuXYProvider != null) {
             let xy = this.menuXYProvider();
             this.setState({

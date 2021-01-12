@@ -8,7 +8,6 @@ import DateUtils from './DateUtils';
 import '../css/CellMenu.css';
 
 // TODO Fix that if it will go of screen, then it will still show up correctly
-// TODO Add the options to the menu and also check if value is out of range (if it is then just change it to 0)
 export default class CellMenu extends React.Component {
     constructor(props) {
         super(props);
@@ -81,7 +80,7 @@ export default class CellMenu extends React.Component {
             });
 
             const dot = (color = '#ccc') => {
-                if(chroma(color).css() != chroma("#FFF").css()) return {
+                if(chroma(color).css() !== chroma("#FFF").css()) return {
                     alignItems: 'center',
                     display: 'flex',
                 
@@ -107,7 +106,7 @@ export default class CellMenu extends React.Component {
                 option: (styles, { data, isDisabled, isFocused, isSelected }) => {
                     const color = chroma(data.color);
                     let backgroundColor = chroma('#FFF').css();
-                    if(color.css() == chroma('#FFF').css()) {
+                    if(color.css() === chroma('#FFF').css()) {
                         if(isFocused) {
                             backgroundColor = chroma('#DDD').css();
                         }
