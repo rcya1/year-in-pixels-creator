@@ -1,21 +1,26 @@
 const mongoose = require('mongoose');
+const validate = require('./validate');
 
 const colorSchemeSchema = new mongoose.Schema({
         red: {
             type: Number,
-            required: true
+            required: true,
+            validate: [validate.validateColorValue, "Red value must be in the range [0, 255]"]
         },
         green: {
             type: Number,
-            required: true
+            required: true,
+            validate: [validate.validateColorValue, "Red value must be in the range [0, 255]"]
         },
         blue: {
             type: Number,
-            required: true
+            required: true,
+            validate: [validate.validateColorValue, "Red value must be in the range [0, 255]"]
         },
         label: {
             type: String,
-            required: true
+            required: true,
+            validate: [validate.validateNonZeroLength, "Label must have a length > 0"]
         }
     }, {
         timestamps: true
