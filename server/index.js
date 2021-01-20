@@ -1,7 +1,9 @@
 const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
+const loginRouter = require('./routes/login');
 const usersRouter = require('./routes/users');
+const colorSchemeRouter = require('./routes/color_scheme');
 const bodyParser = require('body-parser');
 const expressSession = require('express-session');
 const passport = require('passport');
@@ -42,7 +44,9 @@ connection.once('open', () => {
     console.log("Connected to MongoDB database!");
 });
 
+app.use('/', loginRouter);
 app.use('/users', usersRouter);
+app.use('/color-schemes', colorSchemeRouter);
 
 app.listen(port, () => {
     console.log("Server is listening on port: " + port);

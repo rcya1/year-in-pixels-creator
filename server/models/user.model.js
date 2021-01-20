@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
 const passportLocalMongoose = require('passport-local-mongoose');
-const colorSchemeSchema = require('./color_scheme.model');
 const validate = require('./validate');
 
 const userSchema = new mongoose.Schema({
