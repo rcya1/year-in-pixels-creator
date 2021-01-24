@@ -10,6 +10,11 @@ let {log, Status} = require('./route_logger');
 // value for a specific date, comment for a specific date
 // edit value for a specific date, edit comment for a specific date, delete year, add year
 
+/**
+ * Returns an array of all of the color/comments data for the currently logged in user
+ * 
+ * No Body Content Required
+ */
 router.route('/get').get(passport.authenticate('local'), asyncHandler(async(req, res) => {
     let user = await UserSchema.findById(req.user._id)
         .populate('data');

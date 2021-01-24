@@ -6,6 +6,13 @@ const passport = require('passport');
 const asyncHandler = require('express-async-handler');
 let {log, Status} = require('./route_logger');
 
+/**
+ * Registers the given credentials with the application
+ * 
+ * Body Content Required:
+ *  username - username
+ *  password - password
+ */
 router.route('/register').post((req, res) => {
     const username = req.body.username;
     const password = req.body.password;
@@ -28,6 +35,11 @@ router.route('/register').post((req, res) => {
     });
 });
 
+/**
+ * Deletes the user that is currently logged in
+ * 
+ * No Body Content Required
+ */
 router.route('/delete').post(passport.authenticate('local'), asyncHandler(async(req, res) => {
     let id = req.user._id;
 
@@ -50,6 +62,11 @@ router.route('/delete').post(passport.authenticate('local'), asyncHandler(async(
     log(res, Status.SUCCESS, "User deleted.");
 }));
 
+/**
+ * Returns all of the user data in JSON for the currently logged in user
+ * 
+ * No Body Content Required
+ */
 router.route('/get').get(passport.authenticate('local'), asyncHandler(async(req, res) => {
     let user = await UserSchema.findById(req.user._id)
         .populate("colorSchemes")

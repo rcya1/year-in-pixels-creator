@@ -2,6 +2,14 @@ const router = require('express').Router();
 const passport = require('passport');
 let {log, Status} = require('./route_logger');
 
+/**
+ * Logs the user into the application with the given credentials
+ * Stores the login information in a session and returns a session ID in a cookie
+ * 
+ * Body Content Required: 
+ *  username - username
+ *  password - password
+ */
 router.route('/login').post((req, res, next) => {
     if(req.isAuthenticated()) {
         log(res, Status.ERROR, "The user is already logged in.");
@@ -30,6 +38,11 @@ router.route('/login').post((req, res, next) => {
     })(req, res, next);
 });
 
+/**
+ * Logs the user out of the application
+ * 
+ * No Body Content Required
+ */
 router.route('/logout').post((req, res, next) => {
     if(req.isAuthenticated()) {
         req.logOut();
