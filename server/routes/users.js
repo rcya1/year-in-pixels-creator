@@ -3,83 +3,58 @@ let UserSchema = require('../models/user.model');
 let ColorSchemeSchema = require('../models/color_scheme.model');
 let DataSchema = require('../models/data.model');
 const passport = require('passport');
+const asyncHandler = require('express-async-handler');
+let {log, Status} = require('./route_logger');
 
 router.route('/register').post((req, res) => {
     const username = req.body.username;
     const password = req.body.password;
 
-    // ------------ TEMP ------------
-    const newColorScheme = {
-        red: 120,
-        green: 120,
-        blue: 120,
-        label: "Test"
-    };
-
-    let colorScheme = new ColorSchemeSchema(newColorScheme);
-    colorScheme.save();
-    // ------------ TEMP ------------
-
     const newUser = {
         username: username,
-        colorSchemes: [colorScheme._id],
+        colorSchemes: [],
         data: []
     };
 
-    UserSchema.register(new UserSchema(newUser), password, (err, user) => {
+    UserSchema.register(new UserSchema(newUser), password, (err) => {
         if(err) {
-            return res.send("Unable to register user: " + err);
+            log(res, Status.ERROR, err);
+            return;
         }
 
         passport.authenticate('local')(req, res, function() {
-            res.send("Successfully added the user " + user.username + ".");
+            log(res, Status.SUCCESS, "Successfully added the user.");
         });
     });
 });
 
-router.route('/delete').post((req, res) => {
-    if(!req.isAuthenticated()) {
-        return res.send("Error: The user is not logged in");
-    }
-
+router.route('/delete').post(passport.authenticate('local'), asyncHandler(async(req, res) => {
     let id = req.user._id;
 
     req.logOut();
 
-    let message = "";
+    let user = await UserSchema.findById(id);
 
-    // deep delete the data
-    // TODO Combine delete and deep delete into a single call
-    UserSchema.findById(id)
-        .then(user => {
-            for(let colorSchemeID of user.colorSchemes) {
-                ColorSchemeSchema.findByIdAndDelete(colorSchemeID)
-                    .then(colorScheme => message += "Color scheme " + colorScheme.label + " deleted\n")
-                    .catch(err => res.status(400).json("Error: " + err));
-            }
-            for(let dataID of user.data) {
-                DataSchema.findByIdAndDelete(dataID)
-                    .then(data => message += "Data for " + data.year + " deleted\n")
-                    .catch(err => res.status(400).json("Error: " + err));
-            }
-        })
-        .catch(err => res.status(400).json("Error: " + err));
-    
-    UserSchema.findByIdAndDelete(id)
-        .then(user => res.send(message + "User " + user.username + " deleted"))
-        .catch(err => res.status(400).json("Error: " + err));
-});
+    let deleteRequests = [];
 
-router.route('/get').get((req, res, next) => {
-    if(!req.isAuthenticated()) {
-        return res.send("Error: The user is not logged in");
+    for(let colorSchemeID of user.colorSchemes) {
+        deleteRequests.push(ColorSchemeSchema.findByIdAndDelete(colorSchemeID));
+    }
+    for(let dataID of user.data) {
+        deleteRequests.push(DataSchema.findByIdAndDelete(dataID));
     }
 
-    UserSchema.findById(req.user._id)
+    await Promise.all(deleteRequests);
+    await UserSchema.findByIdAndDelete(id);
+    
+    log(res, Status.SUCCESS, "User deleted.");
+}));
+
+router.route('/get').get(passport.authenticate('local'), asyncHandler(async(req, res) => {
+    let user = await UserSchema.findById(req.user._id)
         .populate("colorSchemes")
-        .populate("data")
-        .then(user => res.json(user))
-        .catch(err => res.status(400).send("Could not find that user: " + err));
-});
+        .populate("data");
+    res.json(user);
+}));
 
 module.exports = router;
