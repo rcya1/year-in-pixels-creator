@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 const loginRouter = require('./routes/login');
 const usersRouter = require('./routes/users');
 const colorSchemeRouter = require('./routes/color_scheme');
+const dataRouter = require('./routes/data');
 const bodyParser = require('body-parser');
 const expressSession = require('express-session');
 const passport = require('passport');
@@ -47,6 +48,7 @@ connection.once('open', () => {
 app.use('/', loginRouter);
 app.use('/users', usersRouter);
 app.use('/color-schemes', colorSchemeRouter);
+app.use('/data', dataRouter);
 
 app.listen(port, () => {
     console.log("Server is listening on port: " + port);

@@ -4,8 +4,6 @@ let ColorSchemeSchema = require('../models/color_scheme.model');
 let DataSchema = require('../models/data.model');
 const passport = require('passport');
 
-// TODO Get the multi line output messages working
-
 router.route('/get').get((req, res, next) => {
     if(!req.isAuthenticated()) {
         return res.send("Error: The user is not logged in");
@@ -32,28 +30,28 @@ router.route('/add').post((req, res, next) => {
                     return res.send("Error: Color scheme with that label already exists in the user.");
                 }
             }
+            
+            const newColorScheme = {
+                red: Number(req.body.red),
+                green: Number(req.body.green),
+                blue: Number(req.body.blue),
+                label: req.body.label
+            };
+
+            let colorScheme = new ColorSchemeSchema(newColorScheme);
+            colorScheme.save()
+                .then(() => {
+                    UserSchema.findById(req.user._id)
+                        .then(user => {
+                            user.colorSchemes.push(colorScheme._id);
+                            user.save();
+                            return res.send("Added color scheme to user.");
+                        })
+                        .catch(() => res.status(400).send("Error: Could not find user"));
+                })
+                .catch(() => res.status(400).send("Error: Could not save color scheme"));
         })
         .catch((err) => res.status(400).send("Error: Could not find user: " + err));
-
-    const newColorScheme = {
-        red: Number(req.body.red),
-        green: Number(req.body.green),
-        blue: Number(req.body.blue),
-        label: req.body.label
-    };
-
-    let colorScheme = new ColorSchemeSchema(newColorScheme);
-    colorScheme.save()
-        .then(() => {
-            UserSchema.findById(req.user._id)
-                .then(user => {
-                    user.colorSchemes.push(colorScheme._id);
-                    user.save();
-                    return res.send("Added color scheme to user.");
-                })
-                .catch(() => res.status(400).send("Error: Could not find user"));
-        })
-        .catch(() => res.status(400).send("Error: Could not save color scheme"));
 });
 
 router.route('/edit').post((req, res, next) => {
@@ -103,29 +101,26 @@ router.route('/delete').post((req, res, next) => {
         .populate('colorSchemes')
         .then(user => {
             let found = false;
-            let message = "";
-
             for(let i in user.colorSchemes) {
                 let colorScheme = user.colorSchemes[i];
                 if(colorScheme._id == req.body.colorSchemeId) {
                     user.colorSchemes.splice(i, 1);
                     found = true;
                     user.save()
-                        .then(() => message += "Deleted color scheme from user " + user.username + "\n")
-                        .catch(err => res.status(400).send('Error saving updated user: ' + err));
+                        .catch(err => res.status(400).send('Error: Could not remove color scheme from user: ' + err));
                     break;
                 }
             }
 
             if(!found) {
-                return res.send("Could not find color scheme of that ID in the user " + user.username);
+                return res.send("Error: Could not find color scheme of that ID in the user.");
             }
 
             ColorSchemeSchema.findByIdAndDelete(req.body.colorSchemeId)
-                .then(colorScheme => res.send(message + "Color scheme deleted."))
-                .catch(err => res.status(400).send("Error with deleting color scheme: " + err));
+                .then(colorScheme => res.send("Color scheme deleted."))
+                .catch(err => res.status(400).send("Error: Could not delete color scheme: " + err));
         })
-        .catch(err => res.status(400).send("Could not find that user: " + err));
+        .catch(err => res.status(400).send("Error: Could not find that user: " + err));
 });
 
 module.exports = router;
