@@ -8,6 +8,7 @@ import DateUtils from './DateUtils';
 import '../css/CellMenu.css';
 
 // TODO Fix that if it will go of screen, then it will still show up correctly
+// TODO Replace close button with something from React-Icons
 export default class CellMenu extends React.Component {
     constructor(props) {
         super(props);
