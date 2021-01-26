@@ -1,5 +1,5 @@
 function validateDataLength(arr) {
-    return arr.length !== 12 * 31;
+    return arr.length === 12 * 31;
 }
 
 function validateColorValue(color) {

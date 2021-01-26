@@ -4,6 +4,10 @@ const Status = Object.freeze({
 });
 
 function log(res, status, message) {
+    if(status == Status.ERROR) {
+        res = res.status(500);
+    }
+    
     res.json("[" + status + "] " + message);
 }
 

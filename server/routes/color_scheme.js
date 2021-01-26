@@ -1,7 +1,6 @@
 const router = require('express').Router();
 let UserSchema = require('../models/user.model');
 let ColorSchemeSchema = require('../models/color_scheme.model');
-let DataSchema = require('../models/data.model');
 const passport = require('passport');
 const asyncHandler = require('express-async-handler');
 let {log, Status} = require('./route_logger');
