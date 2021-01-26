@@ -3,7 +3,7 @@ import React from 'react';
 import Cell from './Cell';
 import Constants from './Constants'
 
-import '../css/Board.css';
+import '../../css/Board.css';
 
 export default class Board extends React.Component {
     // constructor(props) {

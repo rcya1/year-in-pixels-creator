@@ -5,7 +5,7 @@ import chroma from 'chroma-js';
 import Constants from './Constants'
 import DateUtils from './DateUtils';
 
-import '../css/CellMenu.css';
+import '../../css/CellMenu.css';
 
 // TODO Fix that if it will go of screen, then it will still show up correctly
 // TODO Replace close button with something from React-Icons
@@ -87,6 +87,7 @@ export default class CellMenu extends React.Component {
                 
                     ':before': {
                         backgroundColor: color,
+                        border: '1px solid rgba(80, 80, 80, 10)',
                         borderRadius: 10,
                         content: '" "',
                         display: 'block',
