@@ -11,6 +11,10 @@ const userSchema = new mongoose.Schema({
             type: String,
             validate: [validate.validateNonZeroLength, "Password must have length > 0"]
         },
+        name: {
+            type: String,
+            required: false
+        },
         colorSchemes: {
             type: [{
                 type: mongoose.Schema.Types.ObjectId,

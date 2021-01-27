@@ -1,0 +1,9 @@
+.register-form {
+    max-width: 800px;
+}
+
+.register-form-body {
+    max-width: 500px;
+    min-width: 300px;
+    width: 50%;
+}

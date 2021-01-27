@@ -12,13 +12,16 @@ let {log, Status} = require('./route_logger');
  * Body Content Required:
  *  username - username
  *  password - password
+ *  name - name
  */
 router.route('/register').post((req, res) => {
     const username = req.body.username;
     const password = req.body.password;
+    const name = req.body.name;
 
     const newUser = {
         username: username,
+        name: name,
         colorSchemes: [],
         data: []
     };
