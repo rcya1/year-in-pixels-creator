@@ -66,6 +66,20 @@ router.route('/delete').post(passport.authenticate('local'), asyncHandler(async(
 }));
 
 /**
+ * Returns whether the given username is available
+ * 
+ * Body Content Required:
+ *  username - the username to be checked
+ */
+router.route('/check-available').get(asyncHandler(async(req, res) => {
+    let exists = await UserSchema.exists({
+        username: req.body.username
+    });
+
+    res.json(!exists);
+}));
+
+/**
  * Returns all of the user data in JSON for the currently logged in user
  * 
  * No Body Content Required

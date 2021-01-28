@@ -11,6 +11,7 @@
     "chroma-js": "^2.1.0",
     "react": "^17.0.1",
     "react-bootstrap": "^1.4.0",
+    "react-color": "2.19.3",
     "react-dom": "^17.0.1",
     "react-icons": "^4.1.0",
     "react-router": "^5.2.0",

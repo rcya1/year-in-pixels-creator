@@ -7,7 +7,7 @@ import Button from 'react-bootstrap/Button';
 import InputGroup from 'react-bootstrap/InputGroup';
 import { FaUser, FaLock } from 'react-icons/fa';
 
-import '../css/Register.css';
+import '../css/Form.css';
 
 export default class CreateUser extends Component {
     constructor(props) {
@@ -73,12 +73,12 @@ export default class CreateUser extends Component {
 
     render() {
         return (
-            <Container className="mt-3 register-form">
+            <Container className="mt-3 form">
                 <Card className="bg-light">
                     <Card.Header>
                         <h3 className="text-center">Register New Account</h3>
                     </Card.Header>
-                    <Card.Body className="register-form-body mx-auto">
+                    <Card.Body className="form-body mx-auto">
                         <Form noValidate validated={this.state.validated} onSubmit={this.handleSubmit}>
                             <Form.Group>
                                 <InputGroup>
@@ -167,7 +167,7 @@ export default class CreateUser extends Component {
                             </Button>
                         </Form>
 
-                        <p class="mt-3 text-center">Have an account? <a href="">Log In</a> </p>            
+                        <p class="mt-3 text-center">Have an account? <a href="/login">Log In</a> </p>            
                     </Card.Body>
                 </Card>
             </Container>

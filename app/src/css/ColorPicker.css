@@ -1,0 +1,13 @@
+.sketch-picker {
+    box-shadow: rgba(0, 0, 0, 0.15) 0px 0px 0px 1px !important;
+}
+
+[id^="rc-editable-input-"], [for^="rc-editable-input-"]  {
+    box-sizing: content-box;
+    text-align: center;
+    font-size: 12.5px !important;
+}
+
+.sketch-picker > .flexbox-fix > div > div + div {
+    box-shadow: none !important;
+}
