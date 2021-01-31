@@ -33,15 +33,18 @@ class Main extends React.Component {
             ],
             menuXPos: 0,
             menuYPos: 0,
+            menuXOffset: 0,
+            menuYOffset: 0,
             menuVisible: false,
             currentlySelected: [-1, -1],
 
             addColorSchemeModalVisible: false,
-            editColorSchemeModalVisible: true
+            editColorSchemeModalVisible: false
         }
 
         this.menuXYProvider = null;
         this.updateMenu = this.updateMenu.bind(this);
+        this.updateMenuOffset = this.updateMenuOffset.bind(this);
         this.handleCellClick = this.handleCellClick.bind(this);
         this.handleMenuClose = this.handleMenuClose.bind(this);
         this.handleMenuSubmit = this.handleMenuSubmit.bind(this);
@@ -68,6 +71,8 @@ class Main extends React.Component {
             this.setState({
                 menuXPos: xy[0],
                 menuYPos: xy[1],
+                menuXOffset: 0,
+                menuYOffset: 0
             });
         }
     }
@@ -78,6 +83,8 @@ class Main extends React.Component {
         this.setState({
             menuXPos: xy[0],
             menuYPos: xy[1],
+            menuXOffset: 0,
+            menuYOffset: 0,
             menuVisible: true,
             currentlySelected: [month, day]
         })
@@ -105,6 +112,25 @@ class Main extends React.Component {
             data: dataCopy,
             comments: commentsCopy
         })
+    }
+
+    updateMenuOffset(top, bottom) {
+        let newMenuXOffset = this.state.menuXOffset;
+        let newMenuYOffset = this.state.menuYOffset;
+
+        let padding = 10;
+        
+        if(top - padding < 0) {
+            newMenuYOffset -= top - padding;
+        }
+        if(bottom + padding > window.innerHeight) {
+            newMenuYOffset += window.innerHeight - (bottom + padding);
+        }
+
+        this.setState({
+            menuXOffset: newMenuXOffset,
+            menuYOffset: newMenuYOffset
+        });
     }
 
     handleAddColorSchemeModalOpen() {
@@ -150,8 +176,9 @@ class Main extends React.Component {
                     </Row>
                 </Container>
                 <CellMenu 
-                    xPos={this.state.menuXPos}
-                    yPos={this.state.menuYPos}
+                    xPos={this.state.menuXPos + this.state.menuXOffset}
+                    yPos={this.state.menuYPos + this.state.menuYOffset}
+                    updateMenuOffset={this.updateMenuOffset}
                     visible={this.state.menuVisible}
                     month={this.state.currentlySelected[0]}
                     day={this.state.currentlySelected[1]}

@@ -2,12 +2,14 @@
     box-shadow: rgba(0, 0, 0, 0.15) 0px 0px 0px 1px !important;
 }
 
+/* Remove box spacing issues for editing values */
 [id^="rc-editable-input-"], [for^="rc-editable-input-"]  {
     box-sizing: content-box;
     text-align: center;
     font-size: 12.5px !important;
 }
 
+/* Black magic witchcraft to remove shadow from color preview */
 .sketch-picker > .flexbox-fix > div > div + div {
     box-shadow: none !important;
 }

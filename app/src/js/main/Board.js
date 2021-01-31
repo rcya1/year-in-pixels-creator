@@ -5,6 +5,7 @@ import Constants from './Constants'
 
 import '../../css/Board.css';
 
+// TODO Make an option for showing it in month form
 export default class Board extends React.Component {
     // constructor(props) {
     //     super(props);

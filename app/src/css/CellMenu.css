@@ -1,15 +1,12 @@
 .menu {
     position: absolute;
-    background: rgb(255, 255, 255);
-    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.5);
-    border: 1px solid rgba(0, 0, 0, 0.2);
-    border-radius: 6px;
-    width: 20%;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
+    white-space: nowrap;
+    flex-wrap: nowrap;
 }
 
 .menu-title {
     text-align: center;
-    margin-top: 3%;
 }
 
 .menu-divider {
@@ -17,7 +14,7 @@
 }
 
 .menu-item {
-    margin: 3% 10% 3%;
+    margin: 3% 0;
 }
 
 .menu-select {

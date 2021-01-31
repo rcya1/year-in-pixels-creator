@@ -105,7 +105,7 @@ export default class EditColorSchemeModal extends React.Component {
                         Cancel
                     </Button>
                     <Button variant="primary" onClick={this.handleSubmit}>
-                        Submit
+                        Save
                     </Button>
                 </Modal.Footer>
             </Modal>
