@@ -8,7 +8,7 @@ import Col from 'react-bootstrap/Col';
 import '../../css/Main.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-import CellMenu from './CellMenu';
+import CellMenu from './menu/CellMenu';
 import AddColorSchemeModal from './color-scheme/AddColorSchemeModal';
 import EditColorSchemeModal from './color-scheme/EditColorSchemeModal';
 

@@ -1,6 +1,5 @@
 import React from 'react';
 import Select from 'react-select'
-import chroma from 'chroma-js';
 import Button from 'react-bootstrap/Button';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
@@ -8,13 +7,15 @@ import Form from 'react-bootstrap/Form';
 import FormControl from 'react-bootstrap/FormControl';
 import Card from 'react-bootstrap/Card';
 import Modal from 'react-bootstrap/Modal';
-import BootstrapUtils from '../BootstrapUtils';
 
-import Constants from './Constants'
-import DateUtils from './DateUtils';
+import BootstrapUtils from '../../BootstrapUtils';
+import Constants from '../Constants'
+import DateUtils from '../DateUtils';
 
-import '../../css/CellMenu.css';
+import '../../../css/CellMenu.css';
 import Col from 'react-bootstrap/esm/Col';
+
+let selectStyles = require('./SelectStyle').selectStyles;
 
 // TODO Add it so that if you click off the cell menu while it is active, then it will close the menu
 // Maybe when the main receives a click event, check to see if it originated from cell menu? not sure if that will work
@@ -93,65 +94,6 @@ export default class CellMenu extends React.Component {
                 color: "#FFF"
             });
 
-            const dot = (color = '#ccc') => {
-                if(chroma(color).css() !== chroma("#FFF").css()) return {
-                    alignItems: 'center',
-                    display: 'flex',
-                
-                    ':before': {
-                        backgroundColor: color,
-                        border: '1px solid rgba(80, 80, 80, 10)',
-                        borderRadius: 10,
-                        content: '" "',
-                        display: 'block',
-                        marginRight: 8,
-                        height: 10,
-                        width: 10,
-                    },
-                }
-                return null;    
-            };
-              
-            const colourStyles = {
-                control: styles => ({ 
-                    ...styles,
-                    backgroundColor: 'white',
-                    fontSize: '.875rem'
-                }),
-                option: (styles, { data, isDisabled, isFocused, isSelected }) => {
-                    const color = chroma(data.color);
-                    let backgroundColor = chroma('#FFF').css();
-                    if(color.css() === chroma('#FFF').css()) {
-                        if(isFocused) {
-                            backgroundColor = chroma('#DDD').css();
-                        }
-                    }
-                    else {
-                        if(isSelected) {
-                            backgroundColor = color.css();
-                        }
-                        else if(isFocused) {
-                            backgroundColor = color.alpha(0.6).css();
-                        }
-                    }
-                    return {
-                        ...styles,
-                        ...dot(data.color),
-                        backgroundColor: backgroundColor,
-                        color: 'black',
-                        fontSize: '.875rem',
-                
-                        ':active': {
-                            ...styles[':active'],
-                            backgroundColor: isSelected ? data.color : color.alpha(0.3).css(),
-                        },
-                    };
-                },
-                input: styles => ({ ...styles, ...dot('#FFF') }),
-                placeholder: styles => ({ ...styles, ...dot('#FFF ') }),
-                singleValue: (styles, { data }) => ({ ...styles, ...dot(data.color) }),
-            };
-
             let bodyContent = (
                 <Form>
                     <Container>
@@ -161,7 +103,7 @@ export default class CellMenu extends React.Component {
                                     value={options[this.state.value]}
                                     options={options}
                                     onChange={this.onChangeValue}
-                                    styles={colourStyles}
+                                    styles={selectStyles}
                                 />
                             </Col>
                         </Row>
