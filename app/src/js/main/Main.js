@@ -11,6 +11,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import CellMenu from './menu/CellMenu';
 import AddColorSchemeModal from './color-scheme/AddColorSchemeModal';
 import EditColorSchemeModal from './color-scheme/EditColorSchemeModal';
+import BootstrapUtils from '../BootstrapUtils';
 
 class Main extends React.Component {
     constructor(props) {
@@ -48,6 +49,7 @@ class Main extends React.Component {
         this.handleCellClick = this.handleCellClick.bind(this);
         this.handleMenuClose = this.handleMenuClose.bind(this);
         this.handleMenuSubmit = this.handleMenuSubmit.bind(this);
+        this.handleClick = this.handleClick.bind(this);
         
         this.handleAddColorSchemeModalOpen = this.handleAddColorSchemeModalOpen.bind(this);
         this.handleAddColorSchemeModalClose = this.handleAddColorSchemeModalClose.bind(this);
@@ -58,11 +60,13 @@ class Main extends React.Component {
     componentDidMount() {
         window.addEventListener('resize', this.updateMenu);
         window.addEventListener('scroll', this.updateMenu);
+        window.addEventListener('click', this.handleClick);
     }
 
     componentWillUnmount() {
         window.removeEventListener('resize', this.updateMenu);
         window.removeEventListener('scroll', this.updateMenu);
+        window.removeEventListener('click', this.handleClick);
     }
 
     updateMenu() {
@@ -96,6 +100,12 @@ class Main extends React.Component {
             menuVisible: false,
             currentlySelected: [-1, -1]
         });
+    }
+
+    handleClick() {
+        if(BootstrapUtils.inLg()) {
+            this.handleMenuClose();
+        }
     }
 
     handleMenuSubmit(month, day, value, comment) {

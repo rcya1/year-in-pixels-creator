@@ -17,8 +17,6 @@ import Col from 'react-bootstrap/esm/Col';
 
 let selectStyles = require('./SelectStyle').selectStyles;
 
-// TODO Add it so that if you click off the cell menu while it is active, then it will close the menu
-// Maybe when the main receives a click event, check to see if it originated from cell menu? not sure if that will work
 export default class CellMenu extends React.Component {
     constructor(props) {
         super(props);
@@ -70,6 +68,10 @@ export default class CellMenu extends React.Component {
         e.preventDefault();
         this.props.handleMenuClose();
         this.props.handleMenuSubmit(this.props.month, this.props.day, this.state.value, this.state.comment);
+    }
+
+    handleClick(e) {
+        e.stopPropagation();
     }
 
     render() {
@@ -142,6 +144,7 @@ export default class CellMenu extends React.Component {
                             left: left
                         }}
                         ref={this.ref}
+                        onClick={this.handleClick}
                     >
 
                         <Card>
@@ -161,6 +164,7 @@ export default class CellMenu extends React.Component {
                         show={this.props.visible} 
                         onHide={this.props.handleMenuClose}
                         size="md"
+                        onClick={this.handleClick}
                     >
                         <Modal.Header>
                             <Modal.Title className="menu-title w-100">{title}</Modal.Title>

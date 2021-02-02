@@ -31,8 +31,9 @@ export default class Cell extends React.Component {
                 className={className}
                 ref={this.ref}
                 style={generatedStyle}
-                onClick = {() => {
+                onClick = {(e) => {
                     if(this.props.valid) {
+                        e.stopPropagation();
                         this.props.handleClick(() => {
                                 let rect = this.ref.current.getBoundingClientRect();
                                 return [rect.x + rect.width * 3 / 4, rect.y + rect.height / 2];
