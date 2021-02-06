@@ -48,8 +48,18 @@ router.route('/logout').post((req, res, next) => {
         req.logOut();
         log(res, Status.SUCCESS, "Successfully logged out.");
     }
+    else {
+        log(res, Status.ERROR, "The user is not logged in.");
+    }
+});
 
-    log(res, Status.ERROR, "The user is not logged in.");
+/**
+ * Returns whether or not the user is currently authenticated
+ * 
+ * No Body Content Required
+ */
+router.route('/authenticated').get((req, res, next) => {
+    res.json(req.isAuthenticated());
 });
 
 module.exports = router;

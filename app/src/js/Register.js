@@ -6,9 +6,16 @@ import Card from 'react-bootstrap/Card';
 import Button from 'react-bootstrap/Button';
 import InputGroup from 'react-bootstrap/InputGroup';
 import { FaUser, FaLock } from 'react-icons/fa';
+import { Link, Redirect } from 'react-router-dom';
+
+import axios from 'axios';
 
 import '../css/Form.css';
 
+// TODO:
+// - Read this: https://flaviocopes.com/axios-credentials/
+// - Add system for displaying alerts / messages
+// - Create a system for the redirect code (use one of the react patterns listed on the website)
 export default class CreateUser extends Component {
     constructor(props) {
         super(props);
@@ -18,7 +25,8 @@ export default class CreateUser extends Component {
             username: "",
             password: "",
             confirmPassword: "",
-            validated: false
+            validated: false,
+            redirect: false
         }
 
         this.onChangeName = this.onChangeName.bind(this);
@@ -26,6 +34,14 @@ export default class CreateUser extends Component {
         this.onChangePassword = this.onChangePassword.bind(this);
         this.onChangeConfirmPassword = this.onChangeConfirmPassword.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
+    }
+
+    componentDidUpdate() {
+        if(this.state.redirect != null) {
+            this.setState({
+                redirect: null
+            });
+        }
     }
 
     onChangeName(e) {
@@ -52,7 +68,7 @@ export default class CreateUser extends Component {
         });
     }
 
-    handleSubmit(e) {
+    async handleSubmit(e) {
         e.preventDefault();
         e.stopPropagation();
 
@@ -67,11 +83,31 @@ export default class CreateUser extends Component {
         });
 
         if(form.checkValidity() === true) {
-            console.log("Valid form!");
+            const body = {
+                username: this.state.username,
+                password: this.state.password,
+                name: this.state.name
+            };
+
+            try {
+                let res = await axios.post("http://localhost:5000/users/register", body, { withCredentials: true });
+                console.log(res.data);
+                this.props.setLoggedIn(true);
+                this.setState({
+                    redirect: "/"
+                });
+            }
+            catch(err) {
+                console.log(err);
+            }
         }
     }
 
     render() {
+        if(this.state.redirect) {
+            return <Redirect to={this.state.redirect}/>
+        }
+
         return (
             <Container className="mt-3 form">
                 <Card className="bg-light">
@@ -94,7 +130,7 @@ export default class CreateUser extends Component {
                                         onChange={this.onChangeName}
                                     />
                                 </InputGroup>
-                                <small class="form-text text-muted">You may leave this blank.</small>
+                                <small className="form-text text-muted">You may leave this blank.</small>
                             </Form.Group>
 
                             <Form.Group>
@@ -167,7 +203,7 @@ export default class CreateUser extends Component {
                             </Button>
                         </Form>
 
-                        <p class="mt-3 text-center">Have an account? <a href="/login">Log In</a> </p>            
+                        <p className="mt-3 text-center">Have an account? <Link to="/login">Log In</Link> </p>            
                     </Card.Body>
                 </Card>
             </Container>

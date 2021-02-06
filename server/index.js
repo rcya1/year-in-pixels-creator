@@ -22,7 +22,12 @@ const session = expressSession({
     saveUninitialized: false
 });
 
-app.use(cors());
+app.use(cors({ 
+    credentials: true,
+    origin: function(origin, callback) {
+        callback(null, true);
+    }
+}));
 app.use(express.json());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));

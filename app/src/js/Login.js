@@ -6,6 +6,9 @@ import Card from 'react-bootstrap/Card';
 import Button from 'react-bootstrap/Button';
 import InputGroup from 'react-bootstrap/InputGroup';
 import { FaUser, FaLock } from 'react-icons/fa';
+import { Link, Redirect } from 'react-router-dom';
+
+import axios from 'axios';
 
 import '../css/Form.css';
 
@@ -16,12 +19,21 @@ export default class CreateUser extends Component {
         this.state = {
             username: "",
             password: "",
-            validated: false
+            validated: false,
+            redirect: false
         }
 
         this.onChangeUsername = this.onChangeUsername.bind(this);
         this.onChangePassword = this.onChangePassword.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
+    }
+
+    componentDidUpdate() {
+        if(this.state.redirect != null) {
+            this.setState({
+                redirect: null
+            });
+        }
     }
 
     onChangeUsername(e) {
@@ -36,7 +48,7 @@ export default class CreateUser extends Component {
         });
     }
 
-    handleSubmit(e) {
+    async handleSubmit(e) {
         e.preventDefault();
         e.stopPropagation();
 
@@ -47,11 +59,30 @@ export default class CreateUser extends Component {
         });
 
         if(form.checkValidity() === true) {
-            console.log("Valid form!");
+            const body = {
+                username: this.state.username,
+                password: this.state.password,
+            };
+
+            try {
+                let res = await axios.post("http://localhost:5000/login", body, { withCredentials: true });
+                console.log(res.data);
+                this.props.setLoggedIn(true);
+                this.setState({
+                    redirect: "/"
+                });
+            }
+            catch(err) {
+                console.log(err);
+            }
         }
     }
 
     render() {
+        if(this.state.redirect) {
+            return <Redirect to={this.state.redirect}/>
+        }
+
         return (
             <Container className="mt-3 form">
                 <Card className="bg-light">
@@ -107,7 +138,7 @@ export default class CreateUser extends Component {
                             </Button>
                         </Form>
 
-                        <p class="mt-3 text-center">Don't have an account? <a href="/register">Register</a> </p>            
+                        <p className="mt-3 text-center">Don't have an account? <Link to="/register">Register</Link> </p>            
                     </Card.Body>
                 </Card>
             </Container>
