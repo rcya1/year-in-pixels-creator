@@ -62,7 +62,6 @@ export default class AddColorSchemeModal extends React.Component {
                 backdrop="static"
                 size="md"
             >
-                
                 <Modal.Header>
                     <Modal.Title>Add Color Scheme</Modal.Title>
                 </Modal.Header>

@@ -8,7 +8,7 @@ import InputGroup from 'react-bootstrap/InputGroup';
 import { FaUser, FaLock } from 'react-icons/fa';
 import { Link, Redirect } from 'react-router-dom';
 
-import axios from 'axios';
+import HTTPRequest from './util/HTTPRequest';
 
 import '../css/Form.css';
 
@@ -65,7 +65,7 @@ export default class CreateUser extends Component {
             };
 
             try {
-                let res = await axios.post("http://localhost:5000/login", body, { withCredentials: true });
+                let res = await HTTPRequest.post("login", body);
                 console.log(res.data);
                 this.props.setLoggedIn(true);
                 this.setState({

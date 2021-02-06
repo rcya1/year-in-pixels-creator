@@ -8,14 +8,13 @@ import InputGroup from 'react-bootstrap/InputGroup';
 import { FaUser, FaLock } from 'react-icons/fa';
 import { Link, Redirect } from 'react-router-dom';
 
-import axios from 'axios';
+import HTTPRequest from './util/HTTPRequest';
 
 import '../css/Form.css';
 
 // TODO:
-// - Read this: https://flaviocopes.com/axios-credentials/
 // - Add system for displaying alerts / messages
-// - Create a system for the redirect code (use one of the react patterns listed on the website)
+// - Create a system for the redirect code (use one high order components)
 export default class CreateUser extends Component {
     constructor(props) {
         super(props);
@@ -90,7 +89,7 @@ export default class CreateUser extends Component {
             };
 
             try {
-                let res = await axios.post("http://localhost:5000/users/register", body, { withCredentials: true });
+                let res = await HTTPRequest.post("users/register", body);
                 console.log(res.data);
                 this.props.setLoggedIn(true);
                 this.setState({

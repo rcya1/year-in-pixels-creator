@@ -4,7 +4,7 @@ import Nav from 'react-bootstrap/Nav'
 import { NavLink, Redirect } from 'react-router-dom';
 import Button from 'react-bootstrap/Button';
 
-import axios from 'axios';
+import HTTPRequest from './util/HTTPRequest';
 
 import '../css/Navbar.css'
 
@@ -35,8 +35,6 @@ class AppNavbar extends React.Component {
             color: "rgba(255,255,255,.8)"
         };
 
-        // TODO Create list of login buttons 
-
         let loginButtons = [];
         if(this.props.loggedIn) {
             loginButtons.push((<Button
@@ -44,7 +42,7 @@ class AppNavbar extends React.Component {
                     key="logout"
                     onClick={async () => { 
                         try {
-                            let res = await axios.post("http://localhost:5000/logout", {}, { withCredentials: true });
+                            let res = await HTTPRequest.post("logout");
                             console.log(res.data);
                         }
                         catch(err) {

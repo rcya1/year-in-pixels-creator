@@ -8,9 +8,9 @@ import FormControl from 'react-bootstrap/FormControl';
 import Card from 'react-bootstrap/Card';
 import Modal from 'react-bootstrap/Modal';
 
-import BootstrapUtils from '../../BootstrapUtils';
-import Constants from '../Constants'
-import DateUtils from '../DateUtils';
+import BootstrapUtils from '../../util/BootstrapUtils';
+import { FULL_MONTH_NAMES } from '../Constants'
+import { getOrdinalEnding } from '../../util/DateUtils';
 
 import '../../../css/CellMenu.css';
 import Col from 'react-bootstrap/esm/Col';
@@ -76,8 +76,8 @@ export default class CellMenu extends React.Component {
 
     render() {
         if(this.props.visible) {
-            let title = Constants.fullMonthNames[this.props.month] + " " + (this.props.day + 1) + 
-                DateUtils.getOrdinalEnding(this.props.day + 1);
+            let title = FULL_MONTH_NAMES[this.props.month] + " " + (this.props.day + 1) + 
+                getOrdinalEnding(this.props.day + 1);
 
             let top = this.props.yPos + document.documentElement.scrollTop;
             let left = this.props.xPos;

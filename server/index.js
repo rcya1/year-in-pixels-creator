@@ -19,7 +19,10 @@ const port = process.env.PORT || 5000;
 const session = expressSession({
     secret: process.env.SESSION_SECRET,
     resave: false,
-    saveUninitialized: false
+    saveUninitialized: false,
+    cookie: {
+        sameSite: "strict"
+    }
 });
 
 app.use(cors({ 

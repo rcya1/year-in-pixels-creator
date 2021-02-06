@@ -1,4 +1,4 @@
-let getOrdinalEnding = function(number) {
+export let getOrdinalEnding = function(number) {
     let i = number % 10;
     let k = number % 100;
     
@@ -12,8 +12,4 @@ let getOrdinalEnding = function(number) {
         return "rd";
     }
     return "th";
-}
-
-module.exports = {
-    getOrdinalEnding: getOrdinalEnding
 }
