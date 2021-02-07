@@ -1,7 +1,3 @@
-let inLg = function() {
+export function inLg() {
     return window.innerWidth >= 992;
-}
-
-module.exports = {
-    inLg: inLg
 }

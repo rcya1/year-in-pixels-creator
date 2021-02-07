@@ -8,7 +8,7 @@ import FormControl from 'react-bootstrap/FormControl';
 import Card from 'react-bootstrap/Card';
 import Modal from 'react-bootstrap/Modal';
 
-import BootstrapUtils from '../../util/BootstrapUtils';
+import { inLg } from '../../util/BootstrapUtils';
 import { FULL_MONTH_NAMES } from '../Constants'
 import { getOrdinalEnding } from '../../util/DateUtils';
 
@@ -43,7 +43,7 @@ export default class CellMenu extends React.Component {
             });
         }
 
-        if(BootstrapUtils.inLg()) {
+        if(inLg()) {
             // TODO Look into IntersectionObserver instead of this
             if(prevProps.xPos !== this.props.xPos || prevProps.yPos !== this.props.yPos) {
                 let rect = this.ref.current.getBoundingClientRect();
@@ -136,7 +136,7 @@ export default class CellMenu extends React.Component {
                 </Form>
             );
 
-            if(BootstrapUtils.inLg()) {
+            if(inLg()) {
                 return (
                     <div className="menu"
                         style={{
