@@ -1,36 +1,21 @@
 import React from 'react';
 import Navbar from 'react-bootstrap/Navbar'
 import Nav from 'react-bootstrap/Nav'
-import { NavLink, Redirect } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 import Button from 'react-bootstrap/Button';
 
 import HTTPRequest from './util/HTTPRequest';
+import withRedirect from './util/react/WithRedirect';
 
 import '../css/Navbar.css'
 
 class AppNavbar extends React.Component {
 
-    constructor(props) {
-        super(props);
-
-        this.state = {
-            redirect: null,
-        }
-    }
-
-    componentDidUpdate() {
-        if(this.state.redirect != null) {
-            this.setState({
-                redirect: null
-            });
-        }
-    }
+    // constructor(props) {
+    //     super(props);
+    // }
 
     render() {
-        if(this.state.redirect) {
-            return <Redirect to={this.state.redirect}/>
-        }
-
         let activeStyle = {
             color: "rgba(255,255,255,.8)"
         };
@@ -59,10 +44,8 @@ class AppNavbar extends React.Component {
             loginButtons.push((<Button
                     className="navbar-button"
                     key="login"
-                    onClick={() => { 
-                        this.setState({
-                            redirect: "/login"
-                        });
+                    onClick={() => {
+                        this.props.setRedirect("/login");
                     }}
                 >
                     Login
@@ -72,9 +55,7 @@ class AppNavbar extends React.Component {
                     className="navbar-button"
                     key="register"
                     onClick={() => { 
-                        this.setState({
-                            redirect: "/register"
-                        });
+                        this.props.setRedirect("/register");
                     }}
                 >
                     Register
@@ -110,4 +91,4 @@ class AppNavbar extends React.Component {
     }
 }
 
-export default AppNavbar;
+export default withRedirect(AppNavbar);

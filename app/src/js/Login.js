@@ -6,34 +6,26 @@ import Card from 'react-bootstrap/Card';
 import Button from 'react-bootstrap/Button';
 import InputGroup from 'react-bootstrap/InputGroup';
 import { FaUser, FaLock } from 'react-icons/fa';
-import { Link, Redirect } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 import HTTPRequest from './util/HTTPRequest';
+import withRedirect from './util/react/WithRedirect';
 
 import '../css/Form.css';
 
-export default class CreateUser extends Component {
+class CreateUser extends Component {
     constructor(props) {
         super(props);
 
         this.state = {
             username: "",
             password: "",
-            validated: false,
-            redirect: false
+            validated: false
         }
 
         this.onChangeUsername = this.onChangeUsername.bind(this);
         this.onChangePassword = this.onChangePassword.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
-    }
-
-    componentDidUpdate() {
-        if(this.state.redirect != null) {
-            this.setState({
-                redirect: null
-            });
-        }
     }
 
     onChangeUsername(e) {
@@ -68,9 +60,7 @@ export default class CreateUser extends Component {
                 let res = await HTTPRequest.post("login", body);
                 console.log(res.data);
                 this.props.setLoggedIn(true);
-                this.setState({
-                    redirect: "/"
-                });
+                this.props.setRedirect("/");
             }
             catch(err) {
                 console.log(err);
@@ -79,10 +69,6 @@ export default class CreateUser extends Component {
     }
 
     render() {
-        if(this.state.redirect) {
-            return <Redirect to={this.state.redirect}/>
-        }
-
         return (
             <Container className="mt-3 form">
                 <Card className="bg-light">
@@ -145,3 +131,5 @@ export default class CreateUser extends Component {
         )
     }
 }
+
+export default withRedirect(CreateUser);
