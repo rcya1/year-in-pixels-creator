@@ -17,6 +17,8 @@ import Col from 'react-bootstrap/esm/Col';
 
 let selectStyles = require('./SelectStyle').selectStyles;
 
+// TODO Look into: https://stackoverflow.com/questions/8328886/sticky-top-div-with-absolute-positioning
+// and other position: sticky things
 export default class CellMenu extends React.Component {
     constructor(props) {
         super(props);

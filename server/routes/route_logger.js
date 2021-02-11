@@ -8,7 +8,7 @@ function log(res, status, message) {
         res = res.status(500);
     }
     
-    res.json("[" + status + "] " + message);
+    res.send("[" + status + "] " + message);
 }
 
 module.exports = {

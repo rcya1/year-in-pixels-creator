@@ -17,21 +17,7 @@ class Main extends React.Component {
     constructor(props) {
         super(props);
 
-        let data = Array(12).fill().map(() => Array(31).fill(0));
-        let comments = Array(12).fill().map(() => Array(31).fill(""));
-
         this.state = {
-            data: data,
-            comments: comments,
-            options: [
-                [125, 125, 117, "Very Bad Day"], 
-                [184, 183, 118, "Bad Day"],
-                [175, 125, 197, "Average Day"],
-                [126, 252, 238, "Chill Day"],
-                [253, 250, 117, "Good Day"],
-                [253, 125, 236, "Amazing Day"],
-                [255, 171, 111, "Super Special Day"]
-            ],
             menuXPos: 0,
             menuYPos: 0,
             menuXOffset: 0,
@@ -48,7 +34,6 @@ class Main extends React.Component {
         this.updateMenuOffset = this.updateMenuOffset.bind(this);
         this.handleCellClick = this.handleCellClick.bind(this);
         this.handleMenuClose = this.handleMenuClose.bind(this);
-        this.handleMenuSubmit = this.handleMenuSubmit.bind(this);
         this.handleClick = this.handleClick.bind(this);
         
         this.handleAddColorSchemeModalOpen = this.handleAddColorSchemeModalOpen.bind(this);
@@ -108,22 +93,6 @@ class Main extends React.Component {
         }
     }
 
-    handleMenuSubmit(month, day, value, comment) {
-        let dataCopy = this.state.data.map((arr) => {
-            return arr.slice();
-        });
-        dataCopy[month][day] = value;
-
-        let commentsCopy = this.state.comments.map((arr) => {
-            return arr.slice();
-        });
-        commentsCopy[month][day] = comment;
-        this.setState({
-            data: dataCopy,
-            comments: commentsCopy
-        })
-    }
-
     updateMenuOffset(top, bottom) {
         let newMenuXOffset = this.state.menuXOffset;
         let newMenuYOffset = this.state.menuYOffset;
@@ -177,9 +146,9 @@ class Main extends React.Component {
                         </Col>
                         <Col sm={{ span: 12, order: 2 }} lg={{ span: 6, order: 1 }}>
                             <Board
-                                data={this.state.data}
+                                data={this.props.data}
                                 handleClick={this.handleCellClick}
-                                options={this.state.options}
+                                options={this.props.options}
                                 currentlySelected={this.state.currentlySelected}
                             ></Board>
                         </Col>
@@ -192,12 +161,12 @@ class Main extends React.Component {
                     visible={this.state.menuVisible}
                     month={this.state.currentlySelected[0]}
                     day={this.state.currentlySelected[1]}
-                    value={this.state.data[Math.max(this.state.currentlySelected[0], 0)]
+                    value={this.props.data[Math.max(this.state.currentlySelected[0], 0)]
                         [Math.max(this.state.currentlySelected[1], 0)]}
-                    comment={this.state.comments[Math.max(this.state.currentlySelected[0], 0)]
+                    comment={this.props.comments[Math.max(this.state.currentlySelected[0], 0)]
                         [Math.max(this.state.currentlySelected[1], 0)]}
-                    options={this.state.options}
-                    handleMenuSubmit={this.handleMenuSubmit}
+                    options={this.props.options}
+                    handleMenuSubmit={this.props.updateDay}
                     handleMenuClose={this.handleMenuClose}
                 />
 

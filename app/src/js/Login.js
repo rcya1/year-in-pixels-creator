@@ -61,9 +61,26 @@ class CreateUser extends Component {
                 console.log(res.data);
                 this.props.setLoggedIn(true);
                 this.props.setRedirect("/");
+                this.props.retrieveData();
+
+                this.props.addAlert("info", "Successfully Logged In", "You are now signed in.");
             }
             catch(err) {
-                console.log(err);
+                if(err.response !== undefined) {
+                    let response = err.response.data;
+                    if(response.includes("IncorrectPasswordError")) {
+                        this.props.addAlert("danger", "Incorrect Password", "The password you entered is not correct.");
+                    }
+                    else if(response.includes("IncorrectUsernameError")) {
+                        this.props.addAlert("danger", "Unknown User", "That user does not exist.");
+                    }
+                    else {
+                        this.props.addAlert("danger", "Unknown Error", response);
+                    }
+                }
+                else {
+                    this.props.addAlert("danger", "Unknown Error Has Occurred", "Please contact the developer to help fix this issue");
+                }
             }
         }
     }
