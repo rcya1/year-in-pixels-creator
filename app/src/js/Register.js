@@ -14,7 +14,7 @@ import withRedirect from './util/react/WithRedirect';
 import '../css/Form.css';
 
 // TODO:
-// - Add system for displaying alerts / messages
+// - Add detecting username while typing
 class CreateUser extends Component {
     constructor(props) {
         super(props);

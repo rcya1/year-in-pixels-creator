@@ -27,7 +27,7 @@ class AppNavbar extends React.Component {
                     key="logout"
                     onClick={async () => { 
                         try {
-                            let res = await HTTPRequest.post("logout");
+                            await HTTPRequest.post("logout");
                             this.props.addAlert("info", "Successfully Logged Out", "You are now signed out");
                         }
                         catch(err) {
