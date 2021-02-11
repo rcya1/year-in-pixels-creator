@@ -13,3 +13,7 @@ export let getOrdinalEnding = function(number) {
     }
     return "th";
 }
+
+export let getIndex = function(month, day) {
+    return month * 31 + day;
+}

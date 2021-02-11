@@ -43,7 +43,12 @@ router.route('/register').post((req, res) => {
  * 
  * No Body Content Required
  */
-router.route('/delete').post(passport.authenticate('local'), asyncHandler(async(req, res) => {
+router.route('/delete').post(asyncHandler(async(req, res) => {
+    if(!req.isAuthenticated()) {
+        log(res, Status.ERROR, "User is not logged in");
+        return;
+    }
+
     let id = req.user._id;
 
     req.logOut();
@@ -67,13 +72,10 @@ router.route('/delete').post(passport.authenticate('local'), asyncHandler(async(
 
 /**
  * Returns whether the given username is available
- * 
- * Body Content Required:
- *  username - the username to be checked
  */
-router.route('/check-available').get(asyncHandler(async(req, res) => {
+router.route('/check-available/:username').get(asyncHandler(async(req, res) => {
     let exists = await UserSchema.exists({
-        username: req.body.username
+        username: req.params.username
     });
 
     res.json(!exists);
@@ -81,10 +83,13 @@ router.route('/check-available').get(asyncHandler(async(req, res) => {
 
 /**
  * Returns all of the user data in JSON for the currently logged in user
- * 
- * No Body Content Required
  */
-router.route('/get').get(passport.authenticate('local'), asyncHandler(async(req, res) => {
+router.route('/get').get(asyncHandler(async(req, res) => {
+    if(!req.isAuthenticated()) {
+        log(res, Status.ERROR, "User is not logged in");
+        return;
+    }
+
     let user = await UserSchema.findById(req.user._id)
         .populate("colorSchemes")
         .populate("data");

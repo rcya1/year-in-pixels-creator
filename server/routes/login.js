@@ -55,8 +55,6 @@ router.route('/logout').post((req, res, next) => {
 
 /**
  * Returns whether or not the user is currently authenticated
- * 
- * No Body Content Required
  */
 router.route('/authenticated').get((req, res, next) => {
     res.json(req.isAuthenticated());

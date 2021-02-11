@@ -7,10 +7,13 @@ let {log, Status} = require('./route_logger');
 
 /**
  * Returns an array of all of the color schemes for the currently logged in user
- * 
- * No Body Content Required
  */
-router.route('/get').get(passport.authenticate('local'), asyncHandler(async(req, res) => {
+router.route('/get').get(asyncHandler(async(req, res) => {
+    if(!req.isAuthenticated()) {
+        log(res, Status.ERROR, "User is not logged in");
+        return;
+    }
+
     let user = await UserSchema.findById(req.user._id)
         .populate('colorSchemes');
     res.json(user.colorSchemes);
@@ -25,7 +28,12 @@ router.route('/get').get(passport.authenticate('local'), asyncHandler(async(req,
  *  blue  - Integer between 0 and 255 for the green value of the color scheme
  *  label - String for the name of the color scheme
  */
-router.route('/add').post(passport.authenticate('local'), asyncHandler(async(req, res) => {    
+router.route('/add').post(asyncHandler(async(req, res) => {    
+    if(!req.isAuthenticated()) {
+        log(res, Status.ERROR, "User is not logged in");
+        return;
+    }
+
     // check if this color scheme label already exists
     let user = await UserSchema.findById(req.user._id)
         .populate('colorSchemes');
@@ -61,7 +69,12 @@ router.route('/add').post(passport.authenticate('local'), asyncHandler(async(req
  *  label         - New string for the name of the color scheme
  *  colorSchemeId - MongoDB ID for the color scheme to be edited
  */
-router.route('/edit').post(passport.authenticate('local'), asyncHandler(async(req, res) => {
+router.route('/edit').post(asyncHandler(async(req, res) => {
+    if(!req.isAuthenticated()) {
+        log(res, Status.ERROR, "User is not logged in");
+        return;
+    }
+
     let user = await UserSchema.findById(req.user._id)
         .populate('colorSchemes');
 
@@ -93,7 +106,12 @@ router.route('/edit').post(passport.authenticate('local'), asyncHandler(async(re
  * Body Content Required:
  *  colorSchemeId - MongoDB ID for the color scheme to be deleted
  */
-router.route('/delete').post(passport.authenticate('local'), asyncHandler(async(req, res) => {
+router.route('/delete').post(asyncHandler(async(req, res) => {
+    if(!req.isAuthenticated()) {
+        log(res, Status.ERROR, "User is not logged in");
+        return;
+    }
+
     let user = await UserSchema.findById(req.user._id)
         .populate('colorSchemes');
 

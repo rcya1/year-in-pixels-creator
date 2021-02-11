@@ -7,6 +7,7 @@ import Main from './main/Main'
 import Register from './Register'
 import Login from './Login'
 import HTTPRequest from './util/HTTPRequest';
+import { getIndex } from './util/DateUtils';
 
 let StyledAlert = require('./AlertStyle').StyledAlert;
 
@@ -16,13 +17,14 @@ class App extends React.Component {
     constructor(props) {
         super(props);
 
-        let data = Array(12).fill().map(() => Array(31).fill(0));
-        let comments = Array(12).fill().map(() => Array(31).fill(""));
+        let values = Array(12 * 31).fill(0);
+        let comments = Array(12 * 31).fill("");
 
         this.state = {
             loggedIn: false,
+            year: new Date().getFullYear(),
             alerts: [],
-            data: data,
+            values: values,
             comments: comments,
             options: [
                 [125, 125, 117, "Very Bad Day"], 
@@ -42,24 +44,57 @@ class App extends React.Component {
         this.onDismissAlert = this.onDismissAlert.bind(this);
     }
 
-    retrieveData() {
+    async componentDidMount() {
+        try {
+            let res = await HTTPRequest.get("authenticated");
+            this.setState({
+                loggedIn: res.data
+            });
+            if(res.data === true) {
+                this.retrieveData();
+            }
+        }
+        catch(err) {
+            if(err.response !== undefined) {
+                let response = err.response.data;
+                this.props.addAlert("danger", "Unknown Error", response);
+            }
+            else {
+                this.props.addAlert("danger", "Unknown Error Has Occurred", "Please contact the developer to help fix this issue.");
+            }
+        }
+    }
+
+    async retrieveData() {
         if(this.state.loggedIn) {
-            
+            try {
+                let res = await HTTPRequest.get("data/get-year/" + this.state.year);
+                this.setState({
+                    values: res.data.values,
+                    comments: res.data.comments
+                });
+                this.addAlert("info", "Loaded Data", "Successfully loaded data from account");
+            }
+            catch(err) {
+                if(err.response !== undefined) {
+                    let response = err.response.data;
+                    this.props.addAlert("danger", "Unknown Error", response);
+                }
+                else {
+                    this.props.addAlert("danger", "Unknown Error Has Occurred", "Please contact the developer to help fix this issue.");
+                }
+            }
         }
     }
 
     updateDay(month, day, value, comment) {
-        let dataCopy = this.state.data.map((arr) => {
-            return arr.slice();
-        });
-        dataCopy[month][day] = value;
+        let valuesCopy = this.state.values.slice();
+        valuesCopy[getIndex(month, day)] = value;
 
-        let commentsCopy = this.state.comments.map((arr) => {
-            return arr.slice();
-        });
-        commentsCopy[month][day] = comment;
+        let commentsCopy = this.state.comments.slice();
+        commentsCopy[getIndex(month, day)] = comment;
         this.setState({
-            data: dataCopy,
+            values: valuesCopy,
             comments: commentsCopy
         });
 
@@ -125,7 +160,7 @@ class App extends React.Component {
                     <Main
                         loggedIn={this.state.loggedIn}
                         addAlert={this.addAlert}
-                        data={this.state.data}
+                        values={this.state.values}
                         comments={this.state.comments}
                         options={this.state.options}
                         updateDay={this.updateDay}

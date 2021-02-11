@@ -2,6 +2,7 @@ import React from 'react';
 
 import Cell from './Cell';
 import { ABBR_MONTH_NAMES, DAYS_PER_MONTH } from './Constants'
+import { getIndex } from '../util/DateUtils'
 
 import '../../css/Board.css';
 
@@ -22,9 +23,9 @@ export default class Board extends React.Component {
                 let valid = d + 1 <= DAYS_PER_MONTH[m];
                 let active = this.props.currentlySelected[0] === m && this.props.currentlySelected[1] === d;
 
-                if(valid) text = this.props.data[m][d];
+                if(valid) text = this.props.values[getIndex(m, d)];
 
-                rowData.push(<Cell data={text}
+                rowData.push(<Cell value={text}
                     month={m}
                     day={d}
                     handleClick={this.props.handleClick}

@@ -14,9 +14,9 @@ export default class Cell extends React.Component {
         if(this.props.active) className = "cell cell-active";
 
         let generatedStyle;
-        if(this.props.data) {
+        if(this.props.value) {
             let length = this.props.options.length;
-            let value = parseInt(this.props.data) - 1;
+            let value = parseInt(this.props.value) - 1;
 
             if(value >= 0 && value < length) {
                 let color = this.props.options[value];

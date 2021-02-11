@@ -58,7 +58,6 @@ class CreateUser extends Component {
 
             try {
                 let res = await HTTPRequest.post("login", body);
-                console.log(res.data);
                 this.props.setLoggedIn(true);
                 this.props.setRedirect("/");
                 this.props.retrieveData();

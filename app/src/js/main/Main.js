@@ -12,6 +12,7 @@ import CellMenu from './menu/CellMenu';
 import AddColorSchemeModal from './color-scheme/AddColorSchemeModal';
 import EditColorSchemeModal from './color-scheme/EditColorSchemeModal';
 import { inLg } from '../util/BootstrapUtils';
+import { getIndex } from '../util/DateUtils';
 
 class Main extends React.Component {
     constructor(props) {
@@ -146,7 +147,7 @@ class Main extends React.Component {
                         </Col>
                         <Col sm={{ span: 12, order: 2 }} lg={{ span: 6, order: 1 }}>
                             <Board
-                                data={this.props.data}
+                                values={this.props.values}
                                 handleClick={this.handleCellClick}
                                 options={this.props.options}
                                 currentlySelected={this.state.currentlySelected}
@@ -161,10 +162,14 @@ class Main extends React.Component {
                     visible={this.state.menuVisible}
                     month={this.state.currentlySelected[0]}
                     day={this.state.currentlySelected[1]}
-                    value={this.props.data[Math.max(this.state.currentlySelected[0], 0)]
-                        [Math.max(this.state.currentlySelected[1], 0)]}
-                    comment={this.props.comments[Math.max(this.state.currentlySelected[0], 0)]
-                        [Math.max(this.state.currentlySelected[1], 0)]}
+                    value={this.props.values[getIndex(
+                            Math.max(this.state.currentlySelected[0], 0),
+                            Math.max(this.state.currentlySelected[1], 0)
+                        )]}
+                    comment={this.props.comments[getIndex(
+                        Math.max(this.state.currentlySelected[0], 0),
+                        Math.max(this.state.currentlySelected[1], 0)
+                    )]}
                     options={this.props.options}
                     handleMenuSubmit={this.props.updateDay}
                     handleMenuClose={this.handleMenuClose}

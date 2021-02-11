@@ -31,7 +31,13 @@ class AppNavbar extends React.Component {
                             this.props.addAlert("info", "Successfully Logged Out", "You are now signed out");
                         }
                         catch(err) {
-                            console.log(err);
+                            if(err.response !== undefined) {
+                                let response = err.response.data;
+                                this.props.addAlert("danger", "Unknown Error", response);
+                            }
+                            else {
+                                this.props.addAlert("danger", "Unknown Error Has Occurred", "Please contact the developer to help fix this issue.");
+                            }
                         }
                         this.props.setLoggedIn(false);
                     }}

@@ -1,32 +1,36 @@
 const router = require('express').Router();
 let UserSchema = require('../models/user.model');
 let DataSchema = require('../models/data.model');
-const passport = require('passport');
 const asyncHandler = require('express-async-handler');
 let {log, Status} = require('./route_logger');
 
 /**
  * Returns an array of JSON objects with all of the color/comments data for the currently logged in user
- * 
- * No Body Content Required
  */
-router.route('/get').get(passport.authenticate('local'), asyncHandler(async(req, res) => {
+router.route('/get').get(asyncHandler(async(req, res) => {
+    if(!req.isAuthenticated()) {
+        log(res, Status.ERROR, "User is not logged in");
+        return;
+    }
+
     let user = await UserSchema.findById(req.user._id)
         .populate('data');
     res.json(user.data);
 }));
 /**
  * Returns a JSON object with all of the color/comments data for a speciic year for the currently logged in user
- * 
- * Body Content Required:
- *  year - Number representing which year's data should be used
  */
-router.route('/get-year').get(passport.authenticate('local'), asyncHandler(async(req, res) => {
+router.route('/get-year/:year').get(asyncHandler(async(req, res) => {
+    if(!req.isAuthenticated()) {
+        log(res, Status.ERROR, "User is not logged in");
+        return;
+    }
+
     let user = await UserSchema.findById(req.user._id)
         .populate('data');
     for(let dataId of user.data) {
         let data = await DataSchema.findById(dataId);
-        if(data.year == req.body.year) {
+        if(data.year == req.params.year) {
             res.json(data);
             return;
         }
@@ -37,16 +41,18 @@ router.route('/get-year').get(passport.authenticate('local'), asyncHandler(async
 
 /**
  * Returns an array of the color values for a specific year for the currently logged in user
- * 
- * Body Content Required:
- *  year - Number representing which year's data should be used
  */
-router.route('/get-year-values').get(passport.authenticate('local'), asyncHandler(async(req, res) => {
+router.route('/get-year-values/:year').get(asyncHandler(async(req, res) => {
+    if(!req.isAuthenticated()) {
+        log(res, Status.ERROR, "User is not logged in");
+        return;
+    }
+
     let user = await UserSchema.findById(req.user._id)
         .populate('data');
     for(let dataId of user.data) {
         let data = await DataSchema.findById(dataId);
-        if(data.year == req.body.year) {
+        if(data.year == req.params.year) {
             res.json(data.values);
             return;
         }
@@ -57,16 +63,18 @@ router.route('/get-year-values').get(passport.authenticate('local'), asyncHandle
 
 /**
  * Returns an array of the comment data for a specific year for the currently logged in user
- * 
- * Body Content Required:
- *  year - Number representing which year's data should be used
  */
-router.route('/get-year-comments').get(passport.authenticate('local'), asyncHandler(async(req, res) => {
+router.route('/get-year-comments/:year').get(asyncHandler(async(req, res) => {
+    if(!req.isAuthenticated()) {
+        log(res, Status.ERROR, "User is not logged in");
+        return;
+    }
+
     let user = await UserSchema.findById(req.user._id)
         .populate('data');
     for(let dataId of user.data) {
         let data = await DataSchema.findById(dataId);
-        if(data.year == req.body.year) {
+        if(data.year == req.params.year) {
             res.json(data.comments);
             return;
         }
@@ -77,21 +85,21 @@ router.route('/get-year-comments').get(passport.authenticate('local'), asyncHand
 
 /**
  * Returns a JSON with the color/comments data for a specific date for the currently logged in user
- * 
- * Body Content Required:
- *  year  - Number representing which year's data should be used
- *  day   - Number (1-indexed) representing which day's data should be used
- *  month - Number (1-indexed) representing which month's data should be used
  */
-router.route('/get-day').get(passport.authenticate('local'), asyncHandler(async(req, res) => {
-    if(!validateDate(res, req.body.month, req.body.day)) return;
+router.route('/get-day/:year/:month/:day').get(asyncHandler(async(req, res) => {
+    if(!req.isAuthenticated()) {
+        log(res, Status.ERROR, "User is not logged in");
+        return;
+    }
+
+    if(!validateDate(res, req.params.month, req.params.day)) return;
 
     let user = await UserSchema.findById(req.user._id)
         .populate('data');
     for(let dataId of user.data) {
         let data = await DataSchema.findById(dataId);
-        if(data.year == req.body.year) {
-            let index = (req.body.month - 1) * 12 + req.body.day - 1;
+        if(data.year == req.params.year) {
+            let index = (req.params.month - 1) * 12 + req.params.day - 1;
             let value = data.values[index];
             let comment = data.comments[index];
             res.json({
@@ -107,21 +115,21 @@ router.route('/get-day').get(passport.authenticate('local'), asyncHandler(async(
 
 /**
  * Returns the color value for a specific date for the currently logged in user
- * 
- * Body Content Required:
- *  year  - Number representing which year's data should be used
- *  day   - Number (1-indexed) representing which day's data should be used
- *  month - Number (1-indexed) representing which month's data should be used
  */
-router.route('/get-day-value').get(passport.authenticate('local'), asyncHandler(async(req, res) => {
-    if(!validateDate(res, req.body.month, req.body.day)) return;
+router.route('/get-day-value/:year/:month/:day').get(asyncHandler(async(req, res) => {
+    if(!req.isAuthenticated()) {
+        log(res, Status.ERROR, "User is not logged in");
+        return;
+    }
+
+    if(!validateDate(res, req.params.month, req.params.day)) return;
     
     let user = await UserSchema.findById(req.user._id)
         .populate('data');
     for(let dataId of user.data) {
         let data = await DataSchema.findById(dataId);
-        if(data.year == req.body.year) {
-            let index = (req.body.month - 1) * 12 + req.body.day - 1;
+        if(data.year == req.params.year) {
+            let index = (req.params.month - 1) * 12 + req.params.day - 1;
             let value = data.values[index];
             res.json(value);
             return;
@@ -133,21 +141,21 @@ router.route('/get-day-value').get(passport.authenticate('local'), asyncHandler(
 
 /**
  * Returns the comment for a specific date for the currently logged in user
- * 
- * Body Content Required:
- *  year  - Number representing which year's data should be used
- *  day   - Number (1-indexed) representing which day's data should be used
- *  month - Number (1-indexed) representing which month's data should be used
  */
-router.route('/get-day-comment').get(passport.authenticate('local'), asyncHandler(async(req, res) => {
-    if(!validateDate(res, req.body.month, req.body.day)) return;
+router.route('/get-day-comment/:year/:month/:day').get(asyncHandler(async(req, res) => {
+    if(!req.isAuthenticated()) {
+        log(res, Status.ERROR, "User is not logged in");
+        return;
+    }
+
+    if(!validateDate(res, req.params.month, req.params.day)) return;
 
     let user = await UserSchema.findById(req.user._id)
         .populate('data');
     for(let dataId of user.data) {
         let data = await DataSchema.findById(dataId);
-        if(data.year == req.body.year) {
-            let index = (req.body.month - 1) * 12 + req.body.day - 1;
+        if(data.year == req.params.year) {
+            let index = (req.params.month - 1) * 12 + req.params.day - 1;
             let comment = data.comments[index];
             res.json(comment);
             return;
@@ -166,7 +174,12 @@ router.route('/get-day-comment').get(passport.authenticate('local'), asyncHandle
  *  month - Number (1-indexed) representing which month's data should be modified
  *  value - Number representing the new color value for this date
  */
-router.route('/edit-value').post(passport.authenticate('local'), asyncHandler(async(req, res) => {
+router.route('/edit-value').post(asyncHandler(async(req, res) => {
+    if(!req.isAuthenticated()) {
+        log(res, Status.ERROR, "User is not logged in");
+        return;
+    }
+
     if(!validateDate(res, req.body.month, req.body.day)) return;
 
     let user = await UserSchema.findById(req.user._id)
@@ -175,7 +188,7 @@ router.route('/edit-value').post(passport.authenticate('local'), asyncHandler(as
         let data = await DataSchema.findById(dataId);
         if(data.year == req.body.year) {
             let index = (req.body.month - 1) * 12 + req.body.day - 1;
-            data.values[index] = req.body.value;
+            data.values.set(index, req.body.value);
 
             await data.save();
             log(res, Status.SUCCESS, "Edited data.");
@@ -196,7 +209,12 @@ router.route('/edit-value').post(passport.authenticate('local'), asyncHandler(as
  *  month   - Number (1-indexed) representing which month's data should be modified
  *  comment - String representing the new comment for this date
  */
-router.route('/edit-comment').post(passport.authenticate('local'), asyncHandler(async(req, res) => {
+router.route('/edit-comment').post(asyncHandler(async(req, res) => {
+    if(!req.isAuthenticated()) {
+        log(res, Status.ERROR, "User is not logged in");
+        return;
+    }
+
     if(!validateDate(res, req.body.month, req.body.day)) return;
 
     let user = await UserSchema.findById(req.user._id)
@@ -205,7 +223,7 @@ router.route('/edit-comment').post(passport.authenticate('local'), asyncHandler(
         let data = await DataSchema.findById(dataId);
         if(data.year == req.body.year) {
             let index = (req.body.month - 1) * 12 + req.body.day - 1;
-            data.comments[index] = req.body.comment;
+            data.comments.set(index, req.body.comment);
             return;
         }
 
@@ -223,7 +241,12 @@ router.route('/edit-comment').post(passport.authenticate('local'), asyncHandler(
  * Body Content Required:
  *  year - Number representing which year should be added
  */
-router.route('/add-year').post(passport.authenticate('local'), asyncHandler(async(req, res) => {
+router.route('/add-year').post(asyncHandler(async(req, res) => {
+    if(!req.isAuthenticated()) {
+        log(res, Status.ERROR, "User is not logged in");
+        return;
+    }
+
     let user = await UserSchema.findById(req.user._id)
         .populate('data');
 
@@ -256,7 +279,12 @@ router.route('/add-year').post(passport.authenticate('local'), asyncHandler(asyn
  * Body Content Required:
  *  year - Number representing which year should be deleted
  */
-router.route('/delete-year').post(passport.authenticate('local'), asyncHandler(async(req, res) => {
+router.route('/delete-year').post(asyncHandler(async(req, res) => {
+    if(!req.isAuthenticated()) {
+        log(res, Status.ERROR, "User is not logged in");
+        return;
+    }
+
     let user = await UserSchema.findById(req.user._id)
         .populate('data');
 
