@@ -2,10 +2,10 @@ import React from 'react';
 import {BrowserRouter as Router, Route} from "react-router-dom";
 import {AlertContainer} from "react-bs-notifier";
 
-import AppNavbar from './AppNavbar'
-import Main from './main/Main'
-import Register from './Register'
-import Login from './Login'
+import AppNavbar from './components/AppNavbar'
+import Main from './components/main/Main'
+import Register from './components/Register'
+import Login from './components/Login'
 import HTTPRequest from './util/HTTPRequest';
 import { getIndex } from './util/DateUtils';
 

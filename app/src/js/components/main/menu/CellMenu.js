@@ -8,11 +8,11 @@ import FormControl from 'react-bootstrap/FormControl';
 import Card from 'react-bootstrap/Card';
 import Modal from 'react-bootstrap/Modal';
 
-import { inLg } from '../../util/BootstrapUtils';
+import { inLg } from '../../../util/BootstrapUtils';
 import { FULL_MONTH_NAMES } from '../Constants'
-import { getOrdinalEnding } from '../../util/DateUtils';
+import { getOrdinalEnding } from '../../../util/DateUtils';
 
-import '../../../css/CellMenu.css';
+import '../../../../css/CellMenu.css';
 import Col from 'react-bootstrap/esm/Col';
 
 let selectStyles = require('./SelectStyle').selectStyles;

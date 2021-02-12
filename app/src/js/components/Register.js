@@ -8,10 +8,10 @@ import InputGroup from 'react-bootstrap/InputGroup';
 import { FaUser, FaLock } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 
-import HTTPRequest from './util/HTTPRequest';
-import withRedirect from './util/react/WithRedirect';
+import HTTPRequest from '../util/HTTPRequest';
+import withRedirect from '../util/react/WithRedirect';
 
-import '../css/Form.css';
+import '../../css/Form.css';
 
 // TODO:
 // - Add detecting username while typing

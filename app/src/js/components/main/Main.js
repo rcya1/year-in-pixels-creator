@@ -5,14 +5,14 @@ import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 
-import '../../css/Main.css';
+import '../../../css/Main.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 import CellMenu from './menu/CellMenu';
 import AddColorSchemeModal from './color-scheme/AddColorSchemeModal';
 import EditColorSchemeModal from './color-scheme/EditColorSchemeModal';
-import { inLg } from '../util/BootstrapUtils';
-import { getIndex } from '../util/DateUtils';
+import { inLg } from '../../util/BootstrapUtils';
+import { getIndex } from '../../util/DateUtils';
 
 class Main extends React.Component {
     constructor(props) {

@@ -9,10 +9,10 @@ import InputGroup from 'react-bootstrap/InputGroup';
 import { MdLabel } from 'react-icons/md';
 import { SketchPicker } from 'react-color';
 
-import '../../../css/ColorPicker.css'
-import '../../../css/Form.css'
+import '../../../../css/ColorPicker.css'
+import '../../../../css/Form.css'
 
-export default class EditColorSchemeModal extends React.Component {
+export default class AddColorSchemeModal extends React.Component {
     constructor(props) {
         super(props);
 
@@ -62,9 +62,8 @@ export default class EditColorSchemeModal extends React.Component {
                 backdrop="static"
                 size="md"
             >
-                
                 <Modal.Header>
-                    <Modal.Title>Edit Color Scheme</Modal.Title>
+                    <Modal.Title>Add Color Scheme</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <Container>

@@ -4,10 +4,10 @@ import Nav from 'react-bootstrap/Nav'
 import { NavLink } from 'react-router-dom';
 import Button from 'react-bootstrap/Button';
 
-import HTTPRequest from './util/HTTPRequest';
-import withRedirect from './util/react/WithRedirect';
+import HTTPRequest from '../util/HTTPRequest';
+import withRedirect from '../util/react/WithRedirect';
 
-import '../css/Navbar.css'
+import '../../css/Navbar.css'
 
 class AppNavbar extends React.Component {
 

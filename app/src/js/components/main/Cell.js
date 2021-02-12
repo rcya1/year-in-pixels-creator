@@ -1,6 +1,6 @@
 import React from 'react';
 
-import '../../css/Cell.css'
+import '../../../css/Cell.css'
 
 export default class Cell extends React.Component {
     constructor(props) {
