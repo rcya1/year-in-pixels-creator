@@ -19,13 +19,13 @@ export default class Board extends React.Component {
                 <th className="table-head-day" key={"-1:" + d}>{d + 1}</th>
             ];
             for(let m = 0; m < 12; m++) {
-                let text = "";
+                let value = "";
                 let valid = d + 1 <= DAYS_PER_MONTH[m];
                 let active = this.props.currentlySelected[0] === m && this.props.currentlySelected[1] === d;
 
-                if(valid) text = this.props.values[getIndex(m, d)];
+                if(valid) value = this.props.values[getIndex(m, d)];
 
-                rowData.push(<Cell value={text}
+                rowData.push(<Cell value={value}
                     month={m}
                     day={d}
                     handleClick={this.props.handleClick}

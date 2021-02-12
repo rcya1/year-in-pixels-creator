@@ -11,7 +11,6 @@ import { getIndex } from './util/DateUtils';
 
 let StyledAlert = require('./AlertStyle').StyledAlert;
 
-// TODO Fix the formatting on the alerts
 class App extends React.Component {
     
     constructor(props) {
@@ -57,10 +56,10 @@ class App extends React.Component {
         catch(err) {
             if(err.response !== undefined) {
                 let response = err.response.data;
-                this.props.addAlert("danger", "Unknown Error", response);
+                this.addAlert("danger", "Unknown Error", response);
             }
             else {
-                this.props.addAlert("danger", "Unknown Error Has Occurred", "Please contact the developer to help fix this issue.");
+                this.addAlert("danger", "Unknown Error Has Occurred", "Please contact the developer to help fix this issue.");
             }
         }
     }
@@ -73,21 +72,21 @@ class App extends React.Component {
                     values: res.data.values,
                     comments: res.data.comments
                 });
-                this.addAlert("info", "Loaded Data", "Successfully loaded data from account");
+                this.addAlert("info", "Loaded Data", "Successfully loaded data from account.");
             }
             catch(err) {
                 if(err.response !== undefined) {
                     let response = err.response.data;
-                    this.props.addAlert("danger", "Unknown Error", response);
+                    this.addAlert("danger", "Unknown Error", response);
                 }
                 else {
-                    this.props.addAlert("danger", "Unknown Error Has Occurred", "Please contact the developer to help fix this issue.");
+                    this.addAlert("danger", "Unknown Error Has Occurred", "Please contact the developer to help fix this issue.");
                 }
             }
         }
     }
 
-    updateDay(month, day, value, comment) {
+    async updateDay(month, day, value, comment) {
         let valuesCopy = this.state.values.slice();
         valuesCopy[getIndex(month, day)] = value;
 
@@ -98,7 +97,29 @@ class App extends React.Component {
             comments: commentsCopy
         });
 
-        // TODO Send data to the server
+        const body = {
+            year: this.state.year,
+            month: month + 1,
+            day: day + 1,
+            value: value,
+            comment: comment
+        }
+
+        if(this.state.loggedIn) {
+            try {
+                await HTTPRequest.post("/data/edit-day", body);
+                this.addAlert("info", "Updated Data", "Successfully updated data for account.");
+            }
+            catch(err) {
+                if(err.response !== undefined) {
+                    let response = err.response.data;
+                    this.addAlert("danger", "Unknown Error", response);
+                }
+                else {
+                    this.addAlert("danger", "Unknown Error Has Occurred", "Please contact the developer to help fix this issue.");
+                }
+            }    
+        }
     }
 
     setLoggedIn(loggedIn) {

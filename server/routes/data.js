@@ -99,7 +99,7 @@ router.route('/get-day/:year/:month/:day').get(asyncHandler(async(req, res) => {
     for(let dataId of user.data) {
         let data = await DataSchema.findById(dataId);
         if(data.year == req.params.year) {
-            let index = (req.params.month - 1) * 12 + req.params.day - 1;
+            let index = (req.params.month - 1) * 31 + req.params.day - 1;
             let value = data.values[index];
             let comment = data.comments[index];
             res.json({
@@ -129,7 +129,7 @@ router.route('/get-day-value/:year/:month/:day').get(asyncHandler(async(req, res
     for(let dataId of user.data) {
         let data = await DataSchema.findById(dataId);
         if(data.year == req.params.year) {
-            let index = (req.params.month - 1) * 12 + req.params.day - 1;
+            let index = (req.params.month - 1) * 31 + req.params.day - 1;
             let value = data.values[index];
             res.json(value);
             return;
@@ -155,9 +155,78 @@ router.route('/get-day-comment/:year/:month/:day').get(asyncHandler(async(req, r
     for(let dataId of user.data) {
         let data = await DataSchema.findById(dataId);
         if(data.year == req.params.year) {
-            let index = (req.params.month - 1) * 12 + req.params.day - 1;
+            let index = (req.params.month - 1) * 31 + req.params.day - 1;
             let comment = data.comments[index];
             res.json(comment);
+            return;
+        }
+    }
+
+    log(res, Status.ERROR, "Could not find that year in the current user");
+}));
+
+/**
+ * Edits the color values and comments for an entire year for the currently logged in user
+ * 
+ * Body Content Required:
+ *  year     - Number representing which year's data should be modified
+ *  values   - Number array representing the new color values for this year
+ *  comments - String array representing the new comments for this year 
+ */
+router.route('/edit-year').post(asyncHandler(async(req, res) => {
+    if(!req.isAuthenticated()) {
+        log(res, Status.ERROR, "User is not logged in");
+        return;
+    }
+
+    let user = await UserSchema.findById(req.user._id)
+        .populate('data');
+    for(let dataId of user.data) {
+        let data = await DataSchema.findById(dataId);
+        if(data.year == req.body.year) {
+            for(let i = 0; i < 12 * 31; i++) {
+                data.values.set(i, req.body.values[i]);
+                data.comments.set(i, req.body.comments[i]);
+            }
+
+            await data.save();
+            log(res, Status.SUCCESS, "Edited data.");
+            
+            return;
+        }
+    }
+}));
+
+/**
+ * Edits the color value and comment for a specific date for the currently logged in user
+ * 
+ * Body Content Required:
+ *  year    - Number representing which year's data should be modified
+ *  day     - Number (1-indexed) representing which day's data should be modified
+ *  month   - Number (1-indexed) representing which month's data should be modified
+ *  value   - Number representing the new color value for this date
+ *  comment - String representing the new comment for this date 
+ */
+router.route('/edit-day').post(asyncHandler(async(req, res) => {
+    if(!req.isAuthenticated()) {
+        log(res, Status.ERROR, "User is not logged in");
+        return;
+    }
+
+    if(!validateDate(res, req.body.month, req.body.day)) return;
+
+    let user = await UserSchema.findById(req.user._id)
+        .populate('data');
+    for(let dataId of user.data) {
+        let data = await DataSchema.findById(dataId);
+        if(data.year == req.body.year) {
+            let index = (req.body.month - 1) * 31 + req.body.day - 1;
+            data.values.set(index, req.body.value);
+            data.comments.set(index, req.body.comment);
+
+            await data.save();
+            log(res, Status.SUCCESS, "Edited data.");
+            
             return;
         }
     }
@@ -187,7 +256,7 @@ router.route('/edit-value').post(asyncHandler(async(req, res) => {
     for(let dataId of user.data) {
         let data = await DataSchema.findById(dataId);
         if(data.year == req.body.year) {
-            let index = (req.body.month - 1) * 12 + req.body.day - 1;
+            let index = (req.body.month - 1) * 31 + req.body.day - 1;
             data.values.set(index, req.body.value);
 
             await data.save();
@@ -222,7 +291,7 @@ router.route('/edit-comment').post(asyncHandler(async(req, res) => {
     for(let dataId of user.data) {
         let data = await DataSchema.findById(dataId);
         if(data.year == req.body.year) {
-            let index = (req.body.month - 1) * 12 + req.body.day - 1;
+            let index = (req.body.month - 1) * 31 + req.body.day - 1;
             data.comments.set(index, req.body.comment);
             return;
         }

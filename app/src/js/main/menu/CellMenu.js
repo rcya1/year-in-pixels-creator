@@ -98,13 +98,18 @@ export default class CellMenu extends React.Component {
                 color: "#FFF"
             });
 
+            let value = this.state.value;
+            if(this.state.value > options.length) {
+                value = 0;
+            }
+
             let bodyContent = (
                 <Form>
                     <Container>
                         <Row className="mb-2">
                             <Col>
                                 <Select
-                                    value={options[this.state.value]}
+                                    value={options[value]}
                                     options={options}
                                     onChange={this.onChangeValue}
                                     styles={selectStyles}
