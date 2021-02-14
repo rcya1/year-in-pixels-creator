@@ -6,6 +6,7 @@ import AppNavbar from './components/AppNavbar'
 import Main from './components/main/Main'
 import Register from './components/Register'
 import Login from './components/Login'
+import { OverrideDataPrompt, OverrideOption } from './components/OverrideDataPrompt'
 import HTTPRequest from './util/HTTPRequest';
 import { getIndex } from './util/DateUtils';
 
@@ -33,14 +34,18 @@ class App extends React.Component {
                 [253, 250, 117, "Good Day"],
                 [253, 125, 236, "Amazing Day"],
                 [255, 171, 111, "Super Special Day"]
-            ]
+            ],
+            overrideDataPromptVisible: false
         }
 
         this.retrieveData = this.retrieveData.bind(this);
         this.updateDay = this.updateDay.bind(this);
+        this.handleDataOverrideSubmit = this.handleDataOverrideSubmit.bind(this);
         this.setLoggedIn = this.setLoggedIn.bind(this);
         this.addAlert = this.addAlert.bind(this);
         this.onDismissAlert = this.onDismissAlert.bind(this);
+        this.onlineValues = null;
+        this.onlineComments = null;
     }
 
     async componentDidMount() {
@@ -68,11 +73,38 @@ class App extends React.Component {
         if(this.state.loggedIn) {
             try {
                 let res = await HTTPRequest.get("data/get-year/" + this.state.year);
-                this.setState({
-                    values: res.data.values,
-                    comments: res.data.comments
-                });
-                this.addAlert("info", "Loaded Data", "Successfully loaded data from account.");
+
+                let onlineValues = res.data.values;
+                let onlineComments = res.data.comments;
+
+                let versionsDifferent = false;
+                let currentModified = false;
+                for(let i = 0; i < 12 * 31; i++) {
+                    if(onlineValues[i] !== this.state.values[i] || onlineComments[i] !== this.state.comments[i]) {
+                        versionsDifferent = true;
+                    }
+                    if(this.state.values[i] !== 0 || this.state.comments[i] !== "") {
+                        currentModified = true;
+                    }
+                    if(versionsDifferent && currentModified) break;
+                }
+
+                if(versionsDifferent && currentModified) {
+                    this.setState({
+                        overrideDataPromptVisible: true
+                    });
+                    this.onlineValues = onlineValues;
+                    this.onlineComments = onlineComments;
+                }
+                else {
+                    this.setState({
+                        values: res.data.values,
+                        comments: res.data.comments
+                    });
+                    this.addAlert("info", "Loaded Data", "Successfully loaded data from account.");
+                    this.onlineValues = null;
+                    this.onlineComments = null;
+                }
             }
             catch(err) {
                 if(err.response !== undefined) {
@@ -118,8 +150,90 @@ class App extends React.Component {
                 else {
                     this.addAlert("danger", "Unknown Error Has Occurred", "Please contact the developer to help fix this issue.");
                 }
-            }    
+            }
         }
+    }
+
+    async handleDataOverrideSubmit(overrideOption) {
+        switch(overrideOption) {
+            case OverrideOption.REPLACE_CURRENT:
+                this.onlineValues = this.state.values;
+                this.onlineComments = this.state.comments;
+                break;
+            case OverrideOption.REPLACE_ONLINE:
+                this.setState({
+                    values: this.onlineValues,
+                    comments: this.onlineComments
+                });
+                break;
+            case OverrideOption.MERGE_CURRENT:
+                for(let i = 0; i < 12 * 31; i++) {
+                    if(this.state.values[i] !== this.onlineValues[i]) {
+                        if(this.state.values[i] !== 0) {
+                            this.onlineValues[i] = this.state.values[i];
+                        }
+                    }
+                    if(this.state.comments[i] !== this.onlineComments[i]) {
+                        if(this.state.comments[i] !== 0) {
+                            this.onlineComments[i] = this.state.comments[i];
+                        }
+                    }
+                }
+
+                this.setState({
+                    values: this.onlineValues,
+                    comments: this.onlineComments
+                });
+                break;
+            case OverrideOption.MERGE_ONLINE:
+                for(let i = 0; i < 12 * 31; i++) {
+                    if(this.state.values[i] !== this.onlineValues[i]) {
+                        if(this.onlineValues[i] === 0) {
+                            this.onlineValues[i] = this.state.values[i];
+                        }
+                    }
+                    if(this.state.comments[i] !== this.onlineComments[i]) {
+                        if(this.onlineComments[i] === "") {
+                            this.onlineComments[i] = this.state.comments[i];
+                        }
+                    }
+                }
+
+                this.setState({
+                    values: this.onlineValues,
+                    comments: this.onlineComments
+                });
+                break;
+            default:
+                break;
+        }
+
+        try {
+            const body = {
+                year: this.state.year,
+                values: this.onlineValues,
+                comments: this.onlineComments
+            };
+
+            await HTTPRequest.post("/data/edit-year", body);
+            this.addAlert("info", "Updated Data", "Successfully updated data for account.");
+        }
+        catch(err) {
+            if(err.response !== undefined) {
+                let response = err.response.data;
+                this.addAlert("danger", "Unknown Error", response);
+            }
+            else {
+                this.addAlert("danger", "Unknown Error Has Occurred", "Please contact the developer to help fix this issue.");
+            }
+        }
+
+        this.onlineValues = null;
+        this.onlineComments = null;
+
+        this.setState({
+            overrideDataPromptVisible: false
+        });
     }
 
     setLoggedIn(loggedIn) {
@@ -177,6 +291,10 @@ class App extends React.Component {
                         })
                     }
                 </AlertContainer>
+                <OverrideDataPrompt
+                    visible={this.state.overrideDataPromptVisible}
+                    handleSubmit={this.handleDataOverrideSubmit}
+                />
                 <Route path="/" exact>
                     <Main
                         loggedIn={this.state.loggedIn}
