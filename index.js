@@ -62,6 +62,9 @@ app.use('/users', usersRouter);
 app.use('/color-schemes', colorSchemeRouter);
 app.use('/data', dataRouter);
 
+// Serve frontend
+app.use(express.static('app/build'));
+
 app.listen(port, () => {
     console.log("Server is listening on port: " + port);
 });

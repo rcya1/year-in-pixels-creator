@@ -80,12 +80,12 @@ class CreateUser extends Component {
             };
 
             try {
-                let res = await HTTPRequest.post("users/register", body);
-                console.log(res.data);
+                await HTTPRequest.post("users/register", body);
                 this.props.setLoggedIn(true);
-                this.props.setRedirect("/");
-
                 this.props.addAlert("info", "Successfully Registered", "You are now registered and logged in.");
+                this.props.uploadData();
+                
+                this.props.setRedirect("/");
             }
             catch(err) {
                 if(err.response !== undefined) {

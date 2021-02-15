@@ -39,6 +39,7 @@ class App extends React.Component {
         }
 
         this.retrieveData = this.retrieveData.bind(this);
+        this.uploadData = this.uploadData.bind(this);
         this.updateDay = this.updateDay.bind(this);
         this.handleDataOverrideSubmit = this.handleDataOverrideSubmit.bind(this);
         this.setLoggedIn = this.setLoggedIn.bind(this);
@@ -124,6 +125,7 @@ class App extends React.Component {
 
         let commentsCopy = this.state.comments.slice();
         commentsCopy[getIndex(month, day)] = comment;
+
         this.setState({
             values: valuesCopy,
             comments: commentsCopy
@@ -150,6 +152,30 @@ class App extends React.Component {
                 else {
                     this.addAlert("danger", "Unknown Error Has Occurred", "Please contact the developer to help fix this issue.");
                 }
+            }
+        }
+    }
+
+    async uploadData() {
+        try {
+            await HTTPRequest.post("data/add-year", { year: this.state.year });
+            
+            const body = {
+                year: this.state.year,
+                values: this.state.values,
+                comments: this.state.comments
+            };
+
+            await HTTPRequest.post("/data/edit-year", body);
+            this.addAlert("info", "Uploaded Data", "Successfully uploaded data for new account.");
+        }
+        catch(err) {
+            if(err.response !== undefined) {
+                let response = err.response.data;
+                this.addAlert("danger", "Unknown Error", response);
+            }
+            else {
+                this.addAlert("danger", "Unknown Error Has Occurred", "Please contact the developer to help fix this issue.");
             }
         }
     }
@@ -309,6 +335,7 @@ class App extends React.Component {
                     <Register
                         setLoggedIn={this.setLoggedIn}
                         addAlert={this.addAlert}
+                        uploadData={this.uploadData}
                     />
                 </Route>
                 <Route path="/login">
