@@ -12,6 +12,7 @@ import HTTPRequest from '../util/HTTPRequest';
 import withRedirect from '../util/react/WithRedirect';
 
 import '../../css/Form.css';
+import axios from 'axios';
 
 // TODO:
 // - Add detecting username while typing
@@ -24,7 +25,8 @@ class CreateUser extends Component {
             username: "",
             password: "",
             confirmPassword: "",
-            validated: false
+            validated: false,
+            usernameTaken: false
         }
 
         this.onChangeName = this.onChangeName.bind(this);
@@ -40,10 +42,28 @@ class CreateUser extends Component {
         });
     }
 
-    onChangeUsername(e) {
+    async onChangeUsername(e) {
         this.setState({
             username: e.target.value
         });
+
+        let username = e.target.value;
+        if(username !== "") {
+            try {
+                let res = await axios.get("users/check-available/" + username);
+                this.setState({
+                    usernameTaken: (res.data === false)
+                });
+            }
+            catch(err) {
+                if(err.response !== undefined) {
+                    this.props.addAlert("danger", "Unknown Error", err.response);
+                }
+                else {
+                    this.props.addAlert("danger", "Unknown Error Has Occurred", "Please contact the developer to help fix this issue");
+                }
+            }
+        }
     }
 
     onChangePassword(e) {
@@ -141,12 +161,13 @@ class CreateUser extends Component {
                                         placeholder="Username"
                                         type="text"
                                         required
+                                        isInvalid={this.state.usernameTaken}
                                         value={this.state.username}
                                         onChange={this.onChangeUsername}
                                     />
 
                                     <FormControl.Feedback type="invalid">
-                                        Please choose a username.
+                                        Username already taken / is empty.
                                     </FormControl.Feedback>
                                 </InputGroup>
                             </Form.Group>
