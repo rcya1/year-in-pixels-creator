@@ -17,15 +17,12 @@ class App extends React.Component {
     constructor(props) {
         super(props);
 
-        let values = Array(12 * 31).fill(0);
-        let comments = Array(12 * 31).fill("");
-
         this.state = {
             loggedIn: false,
             year: new Date().getFullYear(),
             alerts: [],
-            values: values,
-            comments: comments,
+            values: Array(12 * 31).fill(0),
+            comments: Array(12 * 31).fill(""),
             options: [
                 [125, 125, 117, "Very Bad Day"], 
                 [184, 183, 118, "Bad Day"],
@@ -73,39 +70,8 @@ class App extends React.Component {
     async retrieveData() {
         if(this.state.loggedIn) {
             try {
-                let res = await HTTPRequest.get("data/get-year/" + this.state.year);
-
-                let onlineValues = res.data.values;
-                let onlineComments = res.data.comments;
-
-                let versionsDifferent = false;
-                let currentModified = false;
-                for(let i = 0; i < 12 * 31; i++) {
-                    if(onlineValues[i] !== this.state.values[i] || onlineComments[i] !== this.state.comments[i]) {
-                        versionsDifferent = true;
-                    }
-                    if(this.state.values[i] !== 0 || this.state.comments[i] !== "") {
-                        currentModified = true;
-                    }
-                    if(versionsDifferent && currentModified) break;
-                }
-
-                if(versionsDifferent && currentModified) {
-                    this.setState({
-                        overrideDataPromptVisible: true
-                    });
-                    this.onlineValues = onlineValues;
-                    this.onlineComments = onlineComments;
-                }
-                else {
-                    this.setState({
-                        values: res.data.values,
-                        comments: res.data.comments
-                    });
-                    this.addAlert("info", "Loaded Data", "Successfully loaded data from account.");
-                    this.onlineValues = null;
-                    this.onlineComments = null;
-                }
+                this.loadColorAndComments();
+                this.loadColorSchemes();
             }
             catch(err) {
                 if(err.response !== undefined) {
@@ -116,6 +82,75 @@ class App extends React.Component {
                     this.addAlert("danger", "Unknown Error Has Occurred", "Please contact the developer to help fix this issue.");
                 }
             }
+        }
+    }
+
+    // make sure to wrap in try / catch
+    async loadColorAndComments() {
+        let res = await HTTPRequest.get("data/get-year/" + this.state.year);
+
+        let onlineValues = res.data.values;
+        let onlineComments = res.data.comments;
+
+        let versionsDifferent = false; // whether or not the online and current version differ
+        let currentModified = false;   // whether or not the current version is empty or not
+        for(let i = 0; i < 12 * 31; i++) {
+            if(onlineValues[i] !== this.state.values[i] || onlineComments[i] !== this.state.comments[i]) {
+                versionsDifferent = true;
+            }
+            if(this.state.values[i] !== 0 || this.state.comments[i] !== "") {
+                currentModified = true;
+            }
+            if(versionsDifferent && currentModified) break;
+        }
+
+        // display override prompt to see how to reconcile the differences
+        if(versionsDifferent && currentModified) {
+            this.setState({
+                overrideDataPromptVisible: true
+            });
+            this.onlineValues = onlineValues;
+            this.onlineComments = onlineComments;
+        }
+        // no differences or current version not modified
+        else {
+            this.setState({
+                values: res.data.values,
+                comments: res.data.comments
+            });
+            this.addAlert("info", "Loaded Data", "Successfully loaded data from account.");
+            this.onlineValues = null;
+            this.onlineComments = null;
+        }
+    }
+
+    // make sure to wrap in a try / catch
+    async loadColorSchemes() {
+        let res = await HTTPRequest.get("color-schemes/get");
+        let data = res.data;
+        
+        // no data currently stored in account, so upload it
+        if(data.length === 0) {
+            for(let colorScheme of this.state.options) {
+                const body = {
+                    red:   colorScheme[0],
+                    green: colorScheme[1],
+                    blue:  colorScheme[2],
+                    label: colorScheme[3]
+                };
+                await HTTPRequest.post("color-schemes/add", body);
+            }
+            this.addAlert("info", "Uploaded Color Schemes", "Successfully uploaded color schemes to account.");
+        }
+        else {
+            let options = [];
+            for(let colorScheme of data) {
+                options.push([colorScheme.red, colorScheme.green, colorScheme.blue, colorScheme.label]);
+            }
+            this.setState({
+                options: options
+            });
+            this.addAlert("info", "Loaded Color Schemes", "Successfully loaded color schemes from account.");
         }
     }
 

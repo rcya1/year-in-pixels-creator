@@ -14,8 +14,6 @@ import withRedirect from '../util/react/WithRedirect';
 import '../../css/Form.css';
 import axios from 'axios';
 
-// TODO:
-// - Add detecting username while typing
 class CreateUser extends Component {
     constructor(props) {
         super(props);

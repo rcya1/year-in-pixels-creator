@@ -5,6 +5,8 @@ const passport = require('passport');
 const asyncHandler = require('express-async-handler');
 let {log, Status} = require('./route_logger');
 
+// TODO Need to add a way to modify the order of these color schemes (probably need to add an index variable to the schema)
+
 /**
  * Returns an array of all of the color schemes for the currently logged in user
  */
