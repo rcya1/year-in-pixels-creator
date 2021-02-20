@@ -167,16 +167,13 @@ class App extends React.Component {
         });
 
         const body = {
-            year: this.state.year,
-            month: month + 1,
-            day: day + 1,
             value: value,
             comment: comment
         }
 
         if(this.state.loggedIn) {
             try {
-                await HTTPRequest.post("/data/edit-day", body);
+                await HTTPRequest.put("/data/" + this.state.year + "/" + (month + 1) + "/" + (day + 1), body);
                 this.addAlert("info", "Updated Data", "Successfully updated data for account.");
             }
             catch(err) {
