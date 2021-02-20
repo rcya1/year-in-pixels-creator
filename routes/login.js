@@ -3,6 +3,7 @@ const passport = require('passport');
 let {log, Status} = require('./route_logger');
 
 /**
+ * POST
  * Logs the user into the application with the given credentials
  * Stores the login information in a session and returns a session ID in a cookie
  * 
@@ -39,9 +40,8 @@ router.route('/login').post((req, res, next) => {
 });
 
 /**
+ * POST
  * Logs the user out of the application
- * 
- * No Body Content Required
  */
 router.route('/logout').post((req, res, next) => {
     if(req.isAuthenticated()) {
@@ -54,6 +54,7 @@ router.route('/logout').post((req, res, next) => {
 });
 
 /**
+ * GET
  * Returns whether or not the user is currently authenticated
  */
 router.route('/authenticated').get((req, res, next) => {

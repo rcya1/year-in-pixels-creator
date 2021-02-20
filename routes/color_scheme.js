@@ -8,20 +8,29 @@ let {log, Status} = require('./route_logger');
 // TODO Need to add a way to modify the order of these color schemes (probably need to add an index variable to the schema)
 
 /**
+ * GET
  * Returns an array of all of the color schemes for the currently logged in user
  */
-router.route('/get').get(asyncHandler(async(req, res) => {
+router.route('/').get(asyncHandler(async(req, res) => {
     if(!req.isAuthenticated()) {
         log(res, Status.ERROR, "User is not logged in");
         return;
     }
 
     let user = await UserSchema.findById(req.user._id)
-        .populate('colorSchemes');
+        .populate({
+            path: "colorSchemes",
+            options: {
+                sort: {
+                    ordering: 1
+                }
+            }
+        });
     res.json(user.colorSchemes);
 }));
 
 /**
+ * POST
  * Adds a color scheme to the currently logged in user
  * 
  * Body Content Required:
@@ -30,7 +39,7 @@ router.route('/get').get(asyncHandler(async(req, res) => {
  *  blue  - Integer between 0 and 255 for the green value of the color scheme
  *  label - String for the name of the color scheme
  */
-router.route('/add').post(asyncHandler(async(req, res) => {    
+router.route('/').post(asyncHandler(async(req, res) => {    
     if(!req.isAuthenticated()) {
         log(res, Status.ERROR, "User is not logged in");
         return;
@@ -51,7 +60,8 @@ router.route('/add').post(asyncHandler(async(req, res) => {
         red: Number(req.body.red),
         green: Number(req.body.green),
         blue: Number(req.body.blue),
-        label: req.body.label
+        label: req.body.label,
+        ordering: user.colorSchemes.length // add to the end of the list
     };
     let colorScheme = new ColorSchemeSchema(newColorScheme);
     await colorScheme.save();
@@ -62,16 +72,17 @@ router.route('/add').post(asyncHandler(async(req, res) => {
 }));
 
 /**
+ * PUT
  * Edits a color scheme of the currently logged in user
  * 
  * Body Content Required:
- *  red           - New integer between 0 and 255 for the red value of the color scheme
- *  green         - New integer between 0 and 255 for the blue value of the color scheme
- *  blue          - New integer between 0 and 255 for the green value of the color scheme
- *  label         - New string for the name of the color scheme
- *  colorSchemeId - MongoDB ID for the color scheme to be edited
+ *  red      - New integer between 0 and 255 for the red value of the color scheme
+ *  green    - New integer between 0 and 255 for the blue value of the color scheme
+ *  blue     - New integer between 0 and 255 for the green value of the color scheme
+ *  label    - New string for the name of the color scheme
+ *  ordering - New integer for the relative ordering of the color scheme
  */
-router.route('/edit').post(asyncHandler(async(req, res) => {
+router.route('/:queryLabel').put(asyncHandler(async(req, res) => {
     if(!req.isAuthenticated()) {
         log(res, Status.ERROR, "User is not logged in");
         return;
@@ -82,7 +93,7 @@ router.route('/edit').post(asyncHandler(async(req, res) => {
 
     let found = false;
     for(let colorScheme of user.colorSchemes) {
-        if(colorScheme._id == req.body.colorSchemeId) {
+        if(colorScheme._id == req.params.colorSchemeId) {
             found = true;
             break;
         }
@@ -92,23 +103,24 @@ router.route('/edit').post(asyncHandler(async(req, res) => {
         log(res, Status.ERROR, "Could not find color scheme with that id in the current user.");
     }
 
-    let colorScheme = await ColorSchemeSchema.findById(req.body.colorSchemeId);
-    colorScheme.red   = req.body.red;
-    colorScheme.green = req.body.green;
-    colorScheme.blue  = req.body.blue;
-    colorScheme.label = req.body.label;
+    let colorScheme = await ColorSchemeSchema.findOne({
+        label: req.params.queryLabel
+    });
+    colorScheme.red      = req.body.red;
+    colorScheme.green    = req.body.green;
+    colorScheme.blue     = req.body.blue;
+    colorScheme.label    = req.body.label;
+    colorScheme.ordering = req.body.ordering;
     await colorScheme.save();
 
     log(res, Status.SUCCESS, "Edited color scheme.");
 }));
 
 /**
+ * DELETE
  * Deletes a color scheme of the currently logged in user
- * 
- * Body Content Required:
- *  colorSchemeId - MongoDB ID for the color scheme to be deleted
  */
-router.route('/delete').post(asyncHandler(async(req, res) => {
+router.route('/:colorSchemeId').delete(asyncHandler(async(req, res) => {
     if(!req.isAuthenticated()) {
         log(res, Status.ERROR, "User is not logged in");
         return;
@@ -132,6 +144,46 @@ router.route('/delete').post(asyncHandler(async(req, res) => {
 
     await ColorSchemeSchema.findByIdAndDelete(req.body.colorSchemeId);
     log(res, Status.SUCCESS, "Color scheme deleted.");
+}));
+
+/**
+ * POST
+ * Changes the ordering values of a given set of color scheme labels
+ * 
+ * Body Content Required:
+ *  labels    - array of strings containing the labels of the color schemes to be changed
+ *  orderings - array of integers containg the corresponding new orderings of the given color schemes 
+ */
+router.route("/change-orderings").post(asyncHandler(async(req, res) => {
+    if(!req.isAuthenticated()) {
+        log(res, Status.ERROR, "User is not logged in");
+        return;
+    }
+
+    if(req.body.labels.length !== req.body.orderings.length) {
+        log(res, Status.ERROR, "Array lengths do not match");
+        return;
+    }
+
+    let user = await UserSchema.findById(req.user._id)
+        .populate('colorSchemes');
+
+    let len = req.body.labels.length;
+    
+    for(let i in req.body.labels) {
+        let label = req.body.labels[i];
+        let ordering = req.body.orderings[i];
+
+        for(let j in user.colorSchemes) {
+            if(user.colorSchemes[j].label === label) {
+                user.colorSchemes[j].ordering = ordering;
+                await user.colorSchemes[j].save();
+                break;
+            }
+        }
+    }
+
+    log(res, Status.SUCCESS, "Updated color scheme orderings!");
 }));
 
 module.exports = router;

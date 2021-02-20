@@ -87,7 +87,7 @@ class App extends React.Component {
 
     // make sure to wrap in try / catch
     async loadColorAndComments() {
-        let res = await HTTPRequest.get("data/get-year/" + this.state.year);
+        let res = await HTTPRequest.get("data/" + this.state.year);
 
         let onlineValues = res.data.values;
         let onlineComments = res.data.comments;
@@ -126,7 +126,7 @@ class App extends React.Component {
 
     // make sure to wrap in a try / catch
     async loadColorSchemes() {
-        let res = await HTTPRequest.get("color-schemes/get");
+        let res = await HTTPRequest.get("color-schemes");
         let data = res.data;
         
         // no data currently stored in account, so upload it
@@ -138,7 +138,7 @@ class App extends React.Component {
                     blue:  colorScheme[2],
                     label: colorScheme[3]
                 };
-                await HTTPRequest.post("color-schemes/add", body);
+                await HTTPRequest.post("color-schemes", body);
             }
             this.addAlert("info", "Uploaded Color Schemes", "Successfully uploaded color schemes to account.");
         }
@@ -193,15 +193,14 @@ class App extends React.Component {
 
     async uploadData() {
         try {
-            await HTTPRequest.post("data/add-year", { year: this.state.year });
+            await HTTPRequest.post("data/" + this.state.year);
             
             const body = {
-                year: this.state.year,
                 values: this.state.values,
                 comments: this.state.comments
             };
 
-            await HTTPRequest.post("/data/edit-year", body);
+            await HTTPRequest.put("/data/" + this.state.year, body);
             this.addAlert("info", "Uploaded Data", "Successfully uploaded data for new account.");
         }
         catch(err) {
@@ -271,12 +270,11 @@ class App extends React.Component {
 
         try {
             const body = {
-                year: this.state.year,
                 values: this.onlineValues,
                 comments: this.onlineComments
             };
 
-            await HTTPRequest.post("/data/edit-year", body);
+            await HTTPRequest.put("/data/" + this.state.year, body);
             this.addAlert("info", "Updated Data", "Successfully updated data for account.");
         }
         catch(err) {

@@ -7,6 +7,23 @@ const asyncHandler = require('express-async-handler');
 let {log, Status} = require('./route_logger');
 
 /**
+ * GET
+ * Returns all of the user data in JSON for the currently logged in user
+ */
+router.route('/').get(asyncHandler(async(req, res) => {
+    if(!req.isAuthenticated()) {
+        log(res, Status.ERROR, "User is not logged in");
+        return;
+    }
+
+    let user = await UserSchema.findById(req.user._id)
+        .populate("colorSchemes")
+        .populate("data");
+    res.json(user);
+}));
+
+/**
+ * POST
  * Registers the given credentials with the application
  * 
  * Body Content Required:
@@ -39,11 +56,12 @@ router.route('/register').post((req, res) => {
 });
 
 /**
+ * DELETE
  * Deletes the user that is currently logged in
  * 
  * No Body Content Required
  */
-router.route('/delete').post(asyncHandler(async(req, res) => {
+router.route('/').delete(asyncHandler(async(req, res) => {
     if(!req.isAuthenticated()) {
         log(res, Status.ERROR, "User is not logged in");
         return;
@@ -71,6 +89,7 @@ router.route('/delete').post(asyncHandler(async(req, res) => {
 }));
 
 /**
+ * GET
  * Returns whether the given username is available
  */
 router.route('/check-available/:username').get(asyncHandler(async(req, res) => {
@@ -79,21 +98,6 @@ router.route('/check-available/:username').get(asyncHandler(async(req, res) => {
     });
 
     res.json(!exists);
-}));
-
-/**
- * Returns all of the user data in JSON for the currently logged in user
- */
-router.route('/get').get(asyncHandler(async(req, res) => {
-    if(!req.isAuthenticated()) {
-        log(res, Status.ERROR, "User is not logged in");
-        return;
-    }
-
-    let user = await UserSchema.findById(req.user._id)
-        .populate("colorSchemes")
-        .populate("data");
-    res.json(user);
 }));
 
 module.exports = router;

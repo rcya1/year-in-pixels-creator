@@ -22,6 +22,10 @@ const colorSchemeSchema = new mongoose.Schema({
             required: true,
             validate: [validate.validateNonZeroLength, "Label must have a length > 0"]
         },
+        ordering: {
+            type: Number,
+            required: true
+        }
     }, {
         timestamps: true
     }
