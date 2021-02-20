@@ -20,9 +20,19 @@ class AppNavbar extends React.Component {
             color: "rgba(255,255,255,.8)"
         };
 
-        let loginButtons = [];
+        let loginArea = [];
         if(this.props.loggedIn) {
-            loginButtons.push((<Button
+            loginArea.push((<Button
+                    className="navbar-button"
+                    key="account"
+                    onClick={() => {
+                            // TODO Account Settings Page
+                        }
+                    }
+                >
+                {this.props.username}
+            </Button>));
+            loginArea.push((<Button
                     className="navbar-button"
                     key="logout"
                     onClick={async () => { 
@@ -47,7 +57,7 @@ class AppNavbar extends React.Component {
             ));
         }
         else {
-            loginButtons.push((<Button
+            loginArea.push((<Button
                     className="navbar-button"
                     key="login"
                     onClick={() => {
@@ -57,7 +67,7 @@ class AppNavbar extends React.Component {
                     Login
                 </Button>
             ));
-            loginButtons.push((<Button
+            loginArea.push((<Button
                     className="navbar-button"
                     key="register"
                     onClick={() => { 
@@ -90,7 +100,7 @@ class AppNavbar extends React.Component {
                     </NavLink>
                 </Nav>
                 <Nav className="ml-auto">
-                    { loginButtons }
+                    { loginArea }
                 </Nav>
             </Navbar>
         );

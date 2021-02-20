@@ -19,8 +19,10 @@ class App extends React.Component {
 
         this.state = {
             loggedIn: false,
+            name: "",
+            username: "",
+
             year: new Date().getFullYear(),
-            alerts: [],
             values: Array(12 * 31).fill(0),
             comments: Array(12 * 31).fill(""),
             options: [
@@ -32,6 +34,8 @@ class App extends React.Component {
                 [253, 125, 236, "Amazing Day"],
                 [255, 171, 111, "Super Special Day"]
             ],
+            
+            alerts: [],
             overrideDataPromptVisible: false
         }
 
@@ -70,6 +74,7 @@ class App extends React.Component {
     async retrieveData() {
         if(this.state.loggedIn) {
             try {
+                this.loadName();
                 this.loadColorAndComments();
                 this.loadColorSchemes();
             }
@@ -83,6 +88,22 @@ class App extends React.Component {
                 }
             }
         }
+    }
+
+    // make sure to wrap in try / catch
+    async loadName() {
+        let res = await HTTPRequest.get("users");
+        let name = res.data.name;
+        let username = res.data.username;
+
+        if(name === "") {
+            name = username;
+        }
+
+        this.setState({
+            name: name,
+            username: username
+        });
     }
 
     // make sure to wrap in try / catch
@@ -131,15 +152,18 @@ class App extends React.Component {
         
         // no data currently stored in account, so upload it
         if(data.length === 0) {
-            for(let colorScheme of this.state.options) {
+            for(let i in this.state.options) {
+                let colorScheme = this.state.options[i];
                 const body = {
                     red:   colorScheme[0],
                     green: colorScheme[1],
                     blue:  colorScheme[2],
-                    label: colorScheme[3]
+                    label: colorScheme[3],
+                    ordering: i
                 };
                 await HTTPRequest.post("color-schemes", body);
             }
+            
             this.addAlert("info", "Uploaded Color Schemes", "Successfully uploaded color schemes to account.");
         }
         else {
@@ -329,6 +353,7 @@ class App extends React.Component {
             <Router>
                 <AppNavbar
                     loggedIn={this.state.loggedIn}
+                    username={this.state.username}
                     setLoggedIn={this.setLoggedIn}
                     addAlert={this.addAlert}
                 />
