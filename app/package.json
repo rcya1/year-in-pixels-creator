@@ -10,6 +10,7 @@
     "bootstrap": "^4.6.0",
     "chroma-js": "^2.1.0",
     "react": "^17.0.1",
+    "react-beautiful-dnd": "^13.0.0",
     "react-bootstrap": "^1.4.3",
     "react-bs-notifier": "^6.0.0",
     "react-color": "2.19.3",

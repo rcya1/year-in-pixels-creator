@@ -9,8 +9,9 @@ import '../../../css/Main.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 import CellMenu from './menu/CellMenu';
-import AddColorSchemeModal from './color-scheme/AddColorSchemeModal';
-import EditColorSchemeModal from './color-scheme/EditColorSchemeModal';
+import AddColorSchemeModal from './color-scheme/modals/AddColorSchemeModal';
+import EditColorSchemeModal from './color-scheme/modals/EditColorSchemeModal';
+import ColorSchemeList from './color-scheme/list/ColorSchemeList';
 import { inLg } from '../../util/BootstrapUtils';
 import { getIndex } from '../../util/DateUtils';
 
@@ -144,6 +145,10 @@ class Main extends React.Component {
                     <Row>
                         <Col sm={{ span: 12, order: 1 }} lg={{ span: 6, order: 2 }} className="text-center">
                             <h1 className="title">2021 in Pixels</h1>
+                            <ColorSchemeList
+                                colorSchemes={this.props.options}
+                                changeColorSchemeOrder={this.props.changeColorSchemeOrder}
+                            />
                         </Col>
                         <Col sm={{ span: 12, order: 2 }} lg={{ span: 6, order: 1 }}>
                             <Board

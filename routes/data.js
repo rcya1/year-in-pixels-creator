@@ -28,11 +28,13 @@ router.route('/:year').get(asyncHandler(async(req, res) => {
         return;
     }
 
+    let year = parseInt(req.params.year);
+
     let user = await UserSchema.findById(req.user._id)
         .populate('data');
     for(let dataId of user.data) {
         let data = await DataSchema.findById(dataId);
-        if(data.year == req.params.year) {
+        if(data.year == year) {
             res.json(data);
             return;
         }
@@ -51,11 +53,13 @@ router.route('/:year').post(asyncHandler(async(req, res) => {
         return;
     }
 
+    let year = parseInt(req.params.year);
+
     let user = await UserSchema.findById(req.user._id)
         .populate('data');
 
     for(let data of user.data) {
-        if(data.year == req.params.year) {
+        if(data.year == year) {
             log(res, Status.ERROR, "Data with that year already exists.");
             break;
         }
@@ -65,7 +69,7 @@ router.route('/:year').post(asyncHandler(async(req, res) => {
     let comments = Array(12 * 31).fill("");
 
     const newData = {
-        year: req.params.year,
+        year: year,
         values: values,
         comments: comments,
     };
@@ -91,11 +95,13 @@ router.route('/:year').put(asyncHandler(async(req, res) => {
         return;
     }
 
+    let year = parseInt(req.params.year);
+
     let user = await UserSchema.findById(req.user._id)
         .populate('data');
     for(let dataId of user.data) {
         let data = await DataSchema.findById(dataId);
-        if(data.year == req.params.year) {
+        if(data.year == year) {
             for(let i = 0; i < 12 * 31; i++) {
                 data.values.set(i, req.body.values[i]);
                 data.comments.set(i, req.body.comments[i]);
@@ -119,6 +125,8 @@ router.route('/:year').delete(asyncHandler(async(req, res) => {
         return;
     }
 
+    let year = parseInt(req.params.year);
+
     let user = await UserSchema.findById(req.user._id)
         .populate('data');
 
@@ -126,7 +134,7 @@ router.route('/:year').delete(asyncHandler(async(req, res) => {
 
     for(let i in user.data) {
         let data = user.data[i];
-        if(data.year == req.params.year) {
+        if(data.year == year) {
             id = data._id;
             user.data.splice(i, 1);
             await user.save();
@@ -150,11 +158,13 @@ router.route('/values/:year').get(asyncHandler(async(req, res) => {
         return;
     }
 
+    let year = parseInt(req.params.year);
+
     let user = await UserSchema.findById(req.user._id)
         .populate('data');
     for(let dataId of user.data) {
         let data = await DataSchema.findById(dataId);
-        if(data.year == req.params.year) {
+        if(data.year == year) {
             res.json(data.values);
             return;
         }
@@ -173,11 +183,13 @@ router.route('/comments/:year').get(asyncHandler(async(req, res) => {
         return;
     }
 
+    let year = parseInt(req.params.year);
+
     let user = await UserSchema.findById(req.user._id)
         .populate('data');
     for(let dataId of user.data) {
         let data = await DataSchema.findById(dataId);
-        if(data.year == req.params.year) {
+        if(data.year == year) {
             res.json(data.comments);
             return;
         }
@@ -196,14 +208,18 @@ router.route('/:year/:month/:day').get(asyncHandler(async(req, res) => {
         return;
     }
 
-    if(!validateDate(res, req.params.month, req.params.day)) return;
+    let year = parseInt(req.params.year);
+    let month = parseInt(req.params.month);
+    let day = parseInt(req.params.day);
+
+    if(!validateDate(res, month, day)) return;
 
     let user = await UserSchema.findById(req.user._id)
         .populate('data');
     for(let dataId of user.data) {
         let data = await DataSchema.findById(dataId);
-        if(data.year == req.params.year) {
-            let index = (req.params.month - 1) * 31 + req.params.day - 1;
+        if(data.year == year) {
+            let index = (month - 1) * 31 + day - 1;
             let value = data.values[index];
             let comment = data.comments[index];
             res.json({
@@ -231,14 +247,18 @@ router.route('/:year/:month/:day').put(asyncHandler(async(req, res) => {
         return;
     }
 
-    if(!validateDate(res, req.params.month, req.params.day)) return;
+    let year = parseInt(req.params.year);
+    let month = parseInt(req.params.month);
+    let day = parseInt(req.params.day);
+
+    if(!validateDate(res, month, day)) return;
 
     let user = await UserSchema.findById(req.user._id)
         .populate('data');
     for(let dataId of user.data) {
         let data = await DataSchema.findById(dataId);
-        if(data.year == req.params.year) {
-            let index = (req.params.month - 1) * 31 + req.params.day - 1;
+        if(data.year == year) {
+            let index = (month - 1) * 31 + day - 1;
             data.values.set(index, req.body.value);
             data.comments.set(index, req.body.comment);
 
@@ -262,14 +282,18 @@ router.route('/values/:year/:month/:day').get(asyncHandler(async(req, res) => {
         return;
     }
 
-    if(!validateDate(res, req.params.month, req.params.day)) return;
+    let year = parseInt(req.params.year);
+    let month = parseInt(req.params.month);
+    let day = parseInt(req.params.day);
+
+    if(!validateDate(res, month, day)) return;
     
     let user = await UserSchema.findById(req.user._id)
         .populate('data');
     for(let dataId of user.data) {
         let data = await DataSchema.findById(dataId);
-        if(data.year == req.params.year) {
-            let index = (req.params.month - 1) * 31 + req.params.day - 1;
+        if(data.year == year) {
+            let index = (month - 1) * 31 + day - 1;
             let value = data.values[index];
             res.json(value);
             return;
@@ -292,14 +316,18 @@ router.route('/values/:year/:month/:day').put(asyncHandler(async(req, res) => {
         return;
     }
 
-    if(!validateDate(res, req.params.month, req.params.day)) return;
+    let year = parseInt(req.params.year);
+    let month = parseInt(req.params.month);
+    let day = parseInt(req.params.day);
+
+    if(!validateDate(res, month, day)) return;
 
     let user = await UserSchema.findById(req.user._id)
         .populate('data');
     for(let dataId of user.data) {
         let data = await DataSchema.findById(dataId);
-        if(data.year == req.params.year) {
-            let index = (req.params.month - 1) * 31 + req.params.day - 1;
+        if(data.year == year) {
+            let index = (month - 1) * 31 + day - 1;
             data.values.set(index, req.body.value);
 
             await data.save();
@@ -322,14 +350,18 @@ router.route('/comments/:year/:month/:day').get(asyncHandler(async(req, res) => 
         return;
     }
 
-    if(!validateDate(res, req.params.month, req.params.day)) return;
+    let year = parseInt(req.params.year);
+    let month = parseInt(req.params.month);
+    let day = parseInt(req.params.day);
+
+    if(!validateDate(res, month, day)) return;
 
     let user = await UserSchema.findById(req.user._id)
         .populate('data');
     for(let dataId of user.data) {
         let data = await DataSchema.findById(dataId);
-        if(data.year == req.params.year) {
-            let index = (req.params.month - 1) * 31 + req.params.day - 1;
+        if(data.year == year) {
+            let index = (month - 1) * 31 + day - 1;
             let comment = data.comments[index];
             res.json(comment);
             return;
@@ -352,14 +384,18 @@ router.route('/comments/:year/:month/:day').put(asyncHandler(async(req, res) => 
         return;
     }
 
-    if(!validateDate(res, req.params.month, req.params.day)) return;
+    let year = parseInt(req.params.year);
+    let month = parseInt(req.params.month);
+    let day = parseInt(req.params.day);
+
+    if(!validateDate(res, month, day)) return;
 
     let user = await UserSchema.findById(req.user._id)
         .populate('data');
     for(let dataId of user.data) {
         let data = await DataSchema.findById(dataId);
-        if(data.year == req.params.year) {
-            let index = (req.params.month - 1) * 31 + req.params.day - 1;
+        if(data.year == year) {
+            let index = (month - 1) * 31 + day - 1;
             data.comments.set(index, req.body.comment);
             return;
         }

@@ -1,5 +1,6 @@
 const router = require('express').Router();
 let UserSchema = require('../models/user.model');
+let DataSchema = require('../models/data.model');
 let ColorSchemeSchema = require('../models/color_scheme.model');
 const passport = require('passport');
 const asyncHandler = require('express-async-handler');
@@ -148,11 +149,16 @@ router.route('/:colorSchemeId').delete(asyncHandler(async(req, res) => {
 
 /**
  * POST
- * Changes the ordering values of a given set of color scheme labels
+ * Changes the ordering values of a given set of color scheme labels. Takes in an optional set of arguments that allow for
+ * returning modified data values.
  * 
  * Body Content Required:
  *  labels    - array of strings containing the labels of the color schemes to be changed
- *  orderings - array of integers containg the corresponding new orderings of the given color schemes 
+ *  orderings - array of integers containg the corresponding new orderings of the given color schemes
+ * 
+ *  indices   - (OPTIONAL) array of integers that dictate how the ordering changed. This is used to determine how to modify the
+ *              user datas to maintain the same colors
+ *  year      - (OPTIONAL) current year to process (all years will be updated, but this year will be returned)
  */
 router.route("/change-orderings").post(asyncHandler(async(req, res) => {
     if(!req.isAuthenticated()) {
@@ -166,9 +172,8 @@ router.route("/change-orderings").post(asyncHandler(async(req, res) => {
     }
 
     let user = await UserSchema.findById(req.user._id)
-        .populate('colorSchemes');
-
-    let len = req.body.labels.length;
+        .populate('colorSchemes')
+        .populate('data');
     
     for(let i in req.body.labels) {
         let label = req.body.labels[i];
@@ -183,7 +188,23 @@ router.route("/change-orderings").post(asyncHandler(async(req, res) => {
         }
     }
 
-    log(res, Status.SUCCESS, "Updated color scheme orderings!");
+    if(req.body.indices !== undefined) {
+        let returnValue = undefined;
+        for(let i in user.data) {
+            for(let d = 0; d < 12 * 31; d++) {
+                user.data[i].values.set(d, req.body.indices.indexOf(user.data[i].values[d] - 1) + 1);
+            }
+            await user.data[i].save();
+            if(user.data[i].year === req.body.year) {
+                returnValue = user.data[i].values;
+            }
+        }
+
+        res.json(returnValue);
+    }
+    else {
+        log(res, Status.SUCCESS, "Updated color scheme orderings!");
+    }
 }));
 
 module.exports = router;

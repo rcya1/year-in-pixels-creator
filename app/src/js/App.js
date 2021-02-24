@@ -26,7 +26,7 @@ class App extends React.Component {
             values: Array(12 * 31).fill(0),
             comments: Array(12 * 31).fill(""),
             options: [
-                [125, 125, 117, "Very Bad Day"], 
+                [125, 125, 117, "Very Bad Day"],
                 [184, 183, 118, "Bad Day"],
                 [175, 125, 197, "Average Day"],
                 [126, 252, 238, "Chill Day"],
@@ -43,6 +43,7 @@ class App extends React.Component {
         this.uploadData = this.uploadData.bind(this);
         this.updateDay = this.updateDay.bind(this);
         this.handleDataOverrideSubmit = this.handleDataOverrideSubmit.bind(this);
+        this.changeColorSchemeOrder = this.changeColorSchemeOrder.bind(this);
         this.setLoggedIn = this.setLoggedIn.bind(this);
         this.addAlert = this.addAlert.bind(this);
         this.onDismissAlert = this.onDismissAlert.bind(this);
@@ -75,7 +76,7 @@ class App extends React.Component {
         if(this.state.loggedIn) {
             try {
                 this.loadName();
-                this.loadColorAndComments();
+                this.loadValuesAndComments();
                 this.loadColorSchemes();
             }
             catch(err) {
@@ -107,7 +108,7 @@ class App extends React.Component {
     }
 
     // make sure to wrap in try / catch
-    async loadColorAndComments() {
+    async loadValuesAndComments() {
         let res = await HTTPRequest.get("data/" + this.state.year);
 
         let onlineValues = res.data.values;
@@ -190,13 +191,13 @@ class App extends React.Component {
             comments: commentsCopy
         });
 
-        const body = {
-            value: value,
-            comment: comment
-        }
-
         if(this.state.loggedIn) {
             try {
+                const body = {
+                    value: value,
+                    comment: comment
+                }
+
                 await HTTPRequest.put("/data/" + this.state.year + "/" + (month + 1) + "/" + (day + 1), body);
                 this.addAlert("info", "Updated Data", "Successfully updated data for account.");
             }
@@ -213,24 +214,26 @@ class App extends React.Component {
     }
 
     async uploadData() {
-        try {
-            await HTTPRequest.post("data/" + this.state.year);
-            
-            const body = {
-                values: this.state.values,
-                comments: this.state.comments
-            };
+        if(this.state.loggedIn) {
+            try {
+                await HTTPRequest.post("data/" + this.state.year);
+                
+                const body = {
+                    values: this.state.values,
+                    comments: this.state.comments
+                };
 
-            await HTTPRequest.put("/data/" + this.state.year, body);
-            this.addAlert("info", "Uploaded Data", "Successfully uploaded data for new account.");
-        }
-        catch(err) {
-            if(err.response !== undefined) {
-                let response = err.response.data;
-                this.addAlert("danger", "Unknown Error", response);
+                await HTTPRequest.put("/data/" + this.state.year, body);
+                this.addAlert("info", "Uploaded Data", "Successfully uploaded data for new account.");
             }
-            else {
-                this.addAlert("danger", "Unknown Error Has Occurred", "Please contact the developer to help fix this issue.");
+            catch(err) {
+                if(err.response !== undefined) {
+                    let response = err.response.data;
+                    this.addAlert("danger", "Unknown Error", response);
+                }
+                else {
+                    this.addAlert("danger", "Unknown Error Has Occurred", "Please contact the developer to help fix this issue.");
+                }
             }
         }
     }
@@ -316,6 +319,66 @@ class App extends React.Component {
         });
     }
 
+    // TODO Fix the flickering of the colors (caused because waiting for the server to send a response)
+    async changeColorSchemeOrder(startIndex, endIndex) {
+        let newOptions = this.state.options.slice();
+        let [removed] = newOptions.splice(startIndex, 1);
+        newOptions.splice(endIndex, 0, removed);
+
+        // update this ASAP to make a fluid user response
+        this.setState({
+            options: newOptions
+        });
+
+        let indices = Array.from(Array(newOptions.length).keys());
+        let [removedIndices] = indices.splice(startIndex, 1);
+        indices.splice(endIndex, 0, removedIndices);
+        
+        let newValues = undefined;
+        if(this.state.loggedIn) {
+            try {
+                let bodyLabels = [];
+                let bodyOrderings = [];
+
+                for(let i in newOptions) {
+                    let colorScheme = newOptions[i];
+                    bodyLabels.push(colorScheme[3]);
+                    bodyOrderings.push(i);
+                }
+
+                const body = {
+                    labels: bodyLabels,
+                    orderings: bodyOrderings,
+                    indices: indices,
+                    year: this.state.year
+                }
+
+                let res = await HTTPRequest.post("/color-schemes/change-orderings", body);
+                newValues = res.data;
+                this.addAlert("info", "Updated Data", "Successfully updated color schemes for account.");
+            }
+            catch(err) {
+                if(err.response !== undefined) {
+                    let response = err.response.data;
+                    this.addAlert("danger", "Unknown Error", response);
+                }
+                else {
+                    this.addAlert("danger", "Unknown Error Has Occurred", "Please contact the developer to help fix this issue.");
+                }
+            }
+        }
+        else {
+            newValues = this.state.values.slice();
+            for(let i = 0; i < 12 * 31; i++) {
+                newValues[i] = indices.indexOf(newValues[i] - 1) + 1;
+            }
+        }
+
+        this.setState({
+            values: newValues
+        });
+    }
+
     setLoggedIn(loggedIn) {
         this.setState({
             loggedIn: loggedIn
@@ -384,6 +447,7 @@ class App extends React.Component {
                         comments={this.state.comments}
                         options={this.state.options}
                         updateDay={this.updateDay}
+                        changeColorSchemeOrder={this.changeColorSchemeOrder}
                     />
                 </Route>
                 <Route path="/register">
