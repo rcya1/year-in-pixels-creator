@@ -9,8 +9,8 @@ import InputGroup from 'react-bootstrap/InputGroup';
 import { MdLabel } from 'react-icons/md';
 import { SketchPicker } from 'react-color';
 
-import '../../../../../css/ColorPicker.css'
-import '../../../../../css/Form.css'
+import '../../../../css/ColorPicker.css'
+import '../../../../css/Form.css'
 
 export default class EditColorSchemeModal extends React.Component {
     constructor(props) {

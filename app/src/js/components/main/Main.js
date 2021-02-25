@@ -9,9 +9,9 @@ import '../../../css/Main.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 import CellMenu from './menu/CellMenu';
-import AddColorSchemeModal from './color-scheme/modals/AddColorSchemeModal';
-import EditColorSchemeModal from './color-scheme/modals/EditColorSchemeModal';
-import ColorSchemeList from './color-scheme/list/ColorSchemeList';
+import AddColorSchemeModal from './color-scheme/AddColorSchemeModal';
+import EditColorSchemeModal from './color-scheme/EditColorSchemeModal';
+import ColorSchemeList from './color-scheme/ColorSchemeList';
 import { inLg } from '../../util/BootstrapUtils';
 import { getIndex } from '../../util/DateUtils';
 
