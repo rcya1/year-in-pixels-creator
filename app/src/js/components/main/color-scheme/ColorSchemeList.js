@@ -3,6 +3,7 @@ import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import Button from "react-bootstrap/Button"
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
+import Card from 'react-bootstrap/Card';
 
 const grid = 6;
 
@@ -11,6 +12,8 @@ const getItemBackgroundStyle = (isDragging, draggableStyle) => ({
     padding: grid,
     margin: `0 0 ${grid}px 0`,
     background: isDragging ? "lightgreen" : "white",
+    border: "1px solid rgba(0, 0, 0, 0.3)",
+    borderRadius: ".2rem",
     ...draggableStyle
 });
 
@@ -28,12 +31,6 @@ const getItemLabelStyle = () => ({
     lineHeight: "100%",
     height: "100%",
     fontSize: "18px",
-});
-  
-const getListStyle = isDraggingOver => ({
-    background: isDraggingOver ? "lightblue" : "lightgrey",
-    padding: grid,
-    width: 250
 });
 
 export default class ColorSchemeList extends React.Component {
@@ -56,38 +53,43 @@ export default class ColorSchemeList extends React.Component {
             <DragDropContext onDragEnd={this.onDragEnd}>
                 <Droppable droppableId="droppable">
                     {(provided, snapshot) => (
-                        <div
+                        <Card 
                             {...provided.droppableProps}
                             ref={provided.innerRef}
-                            style={getListStyle(snapshot.isDraggingOver)}
+                            className={this.props.className}
                         >
-                            {this.props.colorSchemes.map((colorScheme, index) => {
-                                return (
-                                <Draggable key={colorScheme[3]} draggableId={colorScheme[3]} index={index}>
-                                    {(provided, snapshot) => (
-                                        <div
-                                            ref={provided.innerRef}
-                                            {...provided.draggableProps}
-                                            {...provided.dragHandleProps}
-                                            style={getItemBackgroundStyle(snapshot.isDragging, provided.draggableProps.style)}
-                                        >
-                                            <Container>
-                                                <Row>
-                                                    <span style={getItemColorPreviewStyle(colorScheme)}> </span>
-                                                    <p className="mr-auto my-auto" style={getItemLabelStyle()}>
-                                                        {colorScheme[3]}
-                                                    </p>
-                                                    <Button className="ml-auto" variant="outline-secondary" size="sm">
-                                                        Edit
-                                                    </Button>
-                                                </Row>
-                                            </Container>
-                                        </div>
-                                    )}
-                                </Draggable>)
-                            })}
-                            {provided.placeholder}
-                        </div>
+                            <Card.Header>
+                                <h4 className="text-center">Color Schemes</h4>
+                            </Card.Header>
+                            <Card.Body>
+                                {this.props.colorSchemes.map((colorScheme, index) => {
+                                    return (
+                                    <Draggable key={colorScheme[3]} draggableId={colorScheme[3]} index={index}>
+                                        {(provided, snapshot) => (
+                                            <div
+                                                ref={provided.innerRef}
+                                                {...provided.draggableProps}
+                                                {...provided.dragHandleProps}
+                                                style={getItemBackgroundStyle(snapshot.isDragging, provided.draggableProps.style)}
+                                            >
+                                                <Container>
+                                                    <Row>
+                                                        <span style={getItemColorPreviewStyle(colorScheme)}> </span>
+                                                        <p className="mr-auto my-auto" style={getItemLabelStyle()}>
+                                                            {colorScheme[3]}
+                                                        </p>
+                                                        <Button className="ml-auto" variant="outline-secondary" size="sm">
+                                                            Edit
+                                                        </Button>
+                                                    </Row>
+                                                </Container>
+                                            </div>
+                                        )}
+                                    </Draggable>)
+                                })}
+                                {provided.placeholder}
+                            </Card.Body>
+                        </Card>
                     )}
                 </Droppable>
             </DragDropContext>

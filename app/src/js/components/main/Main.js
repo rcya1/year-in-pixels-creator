@@ -28,10 +28,12 @@ class Main extends React.Component {
             currentlySelected: [-1, -1],
 
             addColorSchemeModalVisible: false,
-            editColorSchemeModalVisible: false
+            editColorSchemeModalVisible: false,
+            inLg: inLg()
         }
 
         this.menuXYProvider = null;
+        this.handleResize = this.handleResize.bind(this);
         this.updateMenu = this.updateMenu.bind(this);
         this.updateMenuOffset = this.updateMenuOffset.bind(this);
         this.handleCellClick = this.handleCellClick.bind(this);
@@ -45,15 +47,24 @@ class Main extends React.Component {
     }
 
     componentDidMount() {
-        window.addEventListener('resize', this.updateMenu);
+        window.addEventListener('resize', this.handleResize);
         window.addEventListener('scroll', this.updateMenu);
         window.addEventListener('click', this.handleClick);
     }
 
     componentWillUnmount() {
-        window.removeEventListener('resize', this.updateMenu);
+        window.removeEventListener('resize', this.handleResize);
         window.removeEventListener('scroll', this.updateMenu);
         window.removeEventListener('click', this.handleClick);
+    }
+
+    handleResize() {
+        this.updateMenu();
+        if(this.state.inLg != inLg()) {
+            this.setState({
+                inLg: inLg()
+            });
+        }
     }
 
     updateMenu() {
@@ -139,27 +150,48 @@ class Main extends React.Component {
     }
 
     render() {
+        let title = (<h1 className="title">2021 in Pixels</h1>);
+        let colorSchemeList = (<ColorSchemeList
+            className={this.state.inLg ? "mx-auto w-50" : "mx-auto w-75"}
+            colorSchemes={this.props.options}
+            changeColorSchemeOrder={this.props.changeColorSchemeOrder}
+        />);
+        let board = (<Board
+            values={this.props.values}
+            handleClick={this.handleCellClick}
+            options={this.props.options}
+            currentlySelected={this.state.currentlySelected}
+        />);
+
+        let content = undefined;
+        if(inLg()) {
+            content = (<Container fluid>
+                <Row>
+                    <Col className="text-center">
+                        { board }
+                    </Col>
+                    <Col className="text-center">
+                        { title }
+                        { colorSchemeList }
+                    </Col>
+                </Row>
+            </Container>);
+        }
+        else {
+            content = (<Container fluid>
+                <Row>
+                    <Col className="text-center">
+                        { title }
+                        { board }
+                        { colorSchemeList }
+                    </Col>
+                </Row>
+            </Container>);
+        }
+
         return (
             <div>
-                <Container fluid>
-                    <Row>
-                        <Col sm={{ span: 12, order: 1 }} lg={{ span: 6, order: 2 }} className="text-center">
-                            <h1 className="title">2021 in Pixels</h1>
-                            <ColorSchemeList
-                                colorSchemes={this.props.options}
-                                changeColorSchemeOrder={this.props.changeColorSchemeOrder}
-                            />
-                        </Col>
-                        <Col sm={{ span: 12, order: 2 }} lg={{ span: 6, order: 1 }}>
-                            <Board
-                                values={this.props.values}
-                                handleClick={this.handleCellClick}
-                                options={this.props.options}
-                                currentlySelected={this.state.currentlySelected}
-                            ></Board>
-                        </Col>
-                    </Row>
-                </Container>
+                { content }
                 <CellMenu 
                     xPos={this.state.menuXPos + this.state.menuXOffset}
                     yPos={this.state.menuYPos + this.state.menuYOffset}
