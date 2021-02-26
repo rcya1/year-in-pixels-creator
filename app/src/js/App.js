@@ -44,6 +44,7 @@ class App extends React.Component {
         this.updateDay = this.updateDay.bind(this);
         this.handleDataOverrideSubmit = this.handleDataOverrideSubmit.bind(this);
         this.changeColorSchemeOrder = this.changeColorSchemeOrder.bind(this);
+        this.editColorScheme = this.editColorScheme.bind(this);
         this.setLoggedIn = this.setLoggedIn.bind(this);
         this.addAlert = this.addAlert.bind(this);
         this.onDismissAlert = this.onDismissAlert.bind(this);
@@ -379,6 +380,49 @@ class App extends React.Component {
         });
     }
 
+    // newColor is passed in as "#RRGGBB"
+    async editColorScheme(originalLabel, newLabel, newColor) {
+        let colorSchemes = this.state.options.slice();
+        let r = parseInt(newColor.substring(1, 3), 16);
+        let g = parseInt(newColor.substring(3, 5), 16);
+        let b = parseInt(newColor.substring(5, 7), 16);
+        let index = -1;
+        for(let i = 0; i < colorSchemes.length; i++) {
+            if(colorSchemes[i][3] === originalLabel) {
+                colorSchemes[i] = [r, g, b, newLabel];
+                index = i;
+                break;
+            }
+        }
+        this.setState({
+            options: colorSchemes
+        })
+        this.addAlert("info", "Successfully saved color scheme");
+
+        if(this.state.loggedIn && index !== -1) {
+            try {
+                const body = {
+                    red: r,
+                    green: g,
+                    blue: b,
+                    label: newLabel,
+                    ordering: index
+                };
+                await HTTPRequest.put("color-schemes/" + originalLabel, body);
+                this.addAlert("info", "Successfully uploaded edited color scheme");
+            }
+            catch(err) {
+                if(err.response !== undefined) {
+                    let response = err.response.data;
+                    this.addAlert("danger", "Unknown Error", response);
+                }
+                else {
+                    this.addAlert("danger", "Unknown Error Has Occurred", "Please contact the developer to help fix this issue.");
+                }
+            }
+        }
+    }
+
     setLoggedIn(loggedIn) {
         this.setState({
             loggedIn: loggedIn
@@ -420,7 +464,7 @@ class App extends React.Component {
                     setLoggedIn={this.setLoggedIn}
                     addAlert={this.addAlert}
                 />
-                <AlertContainer position="top-right">
+                <AlertContainer position="bottom-left">
                     {
                         this.state.alerts.map((alert) => {
                             return <StyledAlert
@@ -448,6 +492,7 @@ class App extends React.Component {
                         options={this.state.options}
                         updateDay={this.updateDay}
                         changeColorSchemeOrder={this.changeColorSchemeOrder}
+                        editColorScheme={this.editColorScheme}
                     />
                 </Route>
                 <Route path="/register">

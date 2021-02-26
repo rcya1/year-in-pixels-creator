@@ -5,15 +5,13 @@ import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 
-import '../../../css/Main.css';
-import 'bootstrap/dist/css/bootstrap.min.css';
-
 import CellMenu from './menu/CellMenu';
-import AddColorSchemeModal from './color-scheme/AddColorSchemeModal';
-import EditColorSchemeModal from './color-scheme/EditColorSchemeModal';
 import ColorSchemeList from './color-scheme/ColorSchemeList';
 import { inLg } from '../../util/BootstrapUtils';
 import { getIndex } from '../../util/DateUtils';
+
+import '../../../css/Main.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 class Main extends React.Component {
     constructor(props) {
@@ -27,8 +25,6 @@ class Main extends React.Component {
             menuVisible: false,
             currentlySelected: [-1, -1],
 
-            addColorSchemeModalVisible: false,
-            editColorSchemeModalVisible: false,
             inLg: inLg()
         }
 
@@ -39,11 +35,6 @@ class Main extends React.Component {
         this.handleCellClick = this.handleCellClick.bind(this);
         this.handleMenuClose = this.handleMenuClose.bind(this);
         this.handleClick = this.handleClick.bind(this);
-        
-        this.handleAddColorSchemeModalOpen = this.handleAddColorSchemeModalOpen.bind(this);
-        this.handleAddColorSchemeModalClose = this.handleAddColorSchemeModalClose.bind(this);
-        this.handleEditColorSchemeModalOpen = this.handleEditColorSchemeModalOpen.bind(this);
-        this.handleEditColorSchemeModalClose = this.handleEditColorSchemeModalClose.bind(this);
     }
 
     componentDidMount() {
@@ -125,36 +116,13 @@ class Main extends React.Component {
         });
     }
 
-    handleAddColorSchemeModalOpen() {
-        this.setState({
-            addColorSchemeModalVisible: true
-        });
-    }
-
-    handleAddColorSchemeModalClose() {
-        this.setState({
-            addColorSchemeModalVisible: false
-        });
-    }
-
-    handleEditColorSchemeModalOpen() {
-        this.setState({
-            editColorSchemeModalVisible: true
-        });
-    }
-
-    handleEditColorSchemeModalClose() {
-        this.setState({
-            editColorSchemeModalVisible: false
-        });
-    }
-
     render() {
         let title = (<h1 className="title">2021 in Pixels</h1>);
         let colorSchemeList = (<ColorSchemeList
-            className={this.state.inLg ? "mx-auto w-50" : "mx-auto w-75"}
+            className={this.state.inLg ? "mx-auto w-75 color-scheme-list" : "mx-auto w-75 color-scheme-list"}
             colorSchemes={this.props.options}
             changeColorSchemeOrder={this.props.changeColorSchemeOrder}
+            editColorScheme={this.props.editColorScheme}
         />);
         let board = (<Board
             values={this.props.values}
@@ -210,15 +178,6 @@ class Main extends React.Component {
                     options={this.props.options}
                     handleMenuSubmit={this.props.updateDay}
                     handleMenuClose={this.handleMenuClose}
-                />
-
-                <AddColorSchemeModal
-                    visible={this.state.addColorSchemeModalVisible}
-                    handleClose={this.handleAddColorSchemeModalClose}
-                />
-                <EditColorSchemeModal
-                    visible={this.state.editColorSchemeModalVisible}
-                    handleClose={this.handleEditColorSchemeModalClose}
                 />
             </div>
         );

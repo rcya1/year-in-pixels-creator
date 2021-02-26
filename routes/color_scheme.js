@@ -92,27 +92,28 @@ router.route('/:queryLabel').put(asyncHandler(async(req, res) => {
     let user = await UserSchema.findById(req.user._id)
         .populate('colorSchemes');
 
-    let found = false;
+    let colorSchemeFound = null;
     for(let colorScheme of user.colorSchemes) {
-        if(colorScheme._id == req.params.colorSchemeId) {
-            found = true;
+        if(colorScheme.label == req.params.queryLabel) {
+            colorSchemeFound = colorScheme;
             break;
         }
     }
 
-    if(!found) {
-        log(res, Status.ERROR, "Could not find color scheme with that id in the current user.");
+    if(colorSchemeFound === null) {
+        log(res, Status.ERROR, "Could not find color scheme with that label in the current user.");
+        return;
     }
 
-    let colorScheme = await ColorSchemeSchema.findOne({
-        label: req.params.queryLabel
-    });
-    colorScheme.red      = req.body.red;
-    colorScheme.green    = req.body.green;
-    colorScheme.blue     = req.body.blue;
-    colorScheme.label    = req.body.label;
-    colorScheme.ordering = req.body.ordering;
-    await colorScheme.save();
+    colorSchemeFound.red      = req.body.red;
+    colorSchemeFound.green    = req.body.green;
+    colorSchemeFound.blue     = req.body.blue;
+    colorSchemeFound.label    = req.body.label;
+    colorSchemeFound.ordering = req.body.ordering;
+    await colorSchemeFound.save();
+
+    console.log(req.params.queryLabel);
+    console.log(req.body.label);
 
     log(res, Status.SUCCESS, "Edited color scheme.");
 }));
@@ -121,7 +122,7 @@ router.route('/:queryLabel').put(asyncHandler(async(req, res) => {
  * DELETE
  * Deletes a color scheme of the currently logged in user
  */
-router.route('/:colorSchemeId').delete(asyncHandler(async(req, res) => {
+router.route('/:queryLabel').delete(asyncHandler(async(req, res) => {
     if(!req.isAuthenticated()) {
         log(res, Status.ERROR, "User is not logged in");
         return;
@@ -130,20 +131,23 @@ router.route('/:colorSchemeId').delete(asyncHandler(async(req, res) => {
     let user = await UserSchema.findById(req.user._id)
         .populate('colorSchemes');
 
-    let found = false;
+    let colorSchemeFound = null;
     for(let i in user.colorSchemes) {
         let colorScheme = user.colorSchemes[i];
-        if(colorScheme._id == req.body.colorSchemeId) {
-            found = true;
+        if(colorScheme.label == req.body.queryLabel) {
+            colorSchemeFound = colorScheme;
             user.colorSchemes.splice(i, 1);
             await user.save();
             break;
         }
     }
 
-    if(!found) log(res, Status.ERROR, "Could not find color scheme of that ID in the current user.");
+    if(colorSchemeFound === null) {
+        log(res, Status.ERROR, "Could not find color scheme of that label in the current user.");
+        return;
+    }
 
-    await ColorSchemeSchema.findByIdAndDelete(req.body.colorSchemeId);
+    await colorSchemeFound.delete();
     log(res, Status.SUCCESS, "Color scheme deleted.");
 }));
 

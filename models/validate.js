@@ -1,5 +1,4 @@
 function validateDataLength(arr) {
-    console.log("Validate: " + arr.length);
     return arr.length === 12 * 31;
 }
 

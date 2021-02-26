@@ -12,6 +12,8 @@ import { SketchPicker } from 'react-color';
 import '../../../../css/ColorPicker.css'
 import '../../../../css/Form.css'
 
+// TODO Determine good character max on label / way to display it if it goes over
+// TODO Maybe see if it goes over and then do ...
 export default class EditColorSchemeModal extends React.Component {
     constructor(props) {
         super(props);
@@ -19,7 +21,7 @@ export default class EditColorSchemeModal extends React.Component {
         this.state = {
             validated: false,
             label: "",
-            color: "#ddd"
+            color: "#dddddd"
         };
 
         this.formRef = React.createRef();
@@ -27,6 +29,29 @@ export default class EditColorSchemeModal extends React.Component {
         this.onChangeLabel = this.onChangeLabel.bind(this);
         this.onChangeColor = this.onChangeColor.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
+    }
+
+    componentDidUpdate(prevProps) {
+        let curr = this.props.colorScheme;
+        let prev = prevProps.colorScheme;
+
+        let diff = false;
+        for(let i = 0; i < 4; i++) {
+            if(curr[i] !== prev[i]) {
+                diff = true;
+                break;
+            }
+        }
+
+        if(diff) {
+            this.setState({
+                validated: false,
+                label: curr[3],
+                color: "#" + curr[0].toString(16) + 
+                    curr[1].toString(16) + 
+                    curr[2].toString(16)
+            });
+        }
     }
 
     onChangeLabel(e) {
@@ -50,7 +75,8 @@ export default class EditColorSchemeModal extends React.Component {
         });
 
         if(this.formRef.current.checkValidity() === true) {
-            console.log("Valid form!");
+            this.props.handleSubmit(this.props.colorScheme[3], this.state.label, this.state.color);
+            this.props.handleClose();
         }
     }
 
@@ -62,7 +88,6 @@ export default class EditColorSchemeModal extends React.Component {
                 backdrop="static"
                 size="md"
             >
-                
                 <Modal.Header>
                     <Modal.Title>Edit Color Scheme</Modal.Title>
                 </Modal.Header>
