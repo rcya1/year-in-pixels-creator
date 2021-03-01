@@ -45,6 +45,8 @@ class App extends React.Component {
         this.handleDataOverrideSubmit = this.handleDataOverrideSubmit.bind(this);
         this.changeColorSchemeOrder = this.changeColorSchemeOrder.bind(this);
         this.editColorScheme = this.editColorScheme.bind(this);
+        this.addColorScheme = this.addColorScheme.bind(this);
+        this.checkLabelAlreadyExists = this.checkLabelAlreadyExists.bind(this);
         this.setLoggedIn = this.setLoggedIn.bind(this);
         this.addAlert = this.addAlert.bind(this);
         this.onDismissAlert = this.onDismissAlert.bind(this);
@@ -423,6 +425,52 @@ class App extends React.Component {
         }
     }
 
+    // color is passed in as "#RRGGBB"
+    async addColorScheme(label, color) {
+        let colorSchemes = this.state.options.slice();
+        let r = parseInt(color.substring(1, 3), 16);
+        let g = parseInt(color.substring(3, 5), 16);
+        let b = parseInt(color.substring(5, 7), 16);
+        colorSchemes.push([r, g, b, label]);
+
+        this.setState({
+            options: colorSchemes
+        })
+        this.addAlert("info", "Successfully added color scheme");
+
+        if(this.state.loggedIn) {
+            try {
+                const body = {
+                    red: r,
+                    green: g,
+                    blue: b,
+                    label: label
+                };
+                await HTTPRequest.post("color-schemes", body);
+                this.addAlert("info", "Successfully uploaded color scheme");
+            }
+            catch(err) {
+                if(err.response !== undefined) {
+                    let response = err.response.data;
+                    this.addAlert("danger", "Unknown Error", response);
+                }
+                else {
+                    this.addAlert("danger", "Unknown Error Has Occurred", "Please contact the developer to help fix this issue.");
+                }
+            }
+        }
+    }
+
+    checkLabelAlreadyExists(label) {
+        for(let i = 0; i < this.state.options.length; i++) {
+            if(this.state.options[i][3] === label) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     setLoggedIn(loggedIn) {
         this.setState({
             loggedIn: loggedIn
@@ -493,6 +541,8 @@ class App extends React.Component {
                         updateDay={this.updateDay}
                         changeColorSchemeOrder={this.changeColorSchemeOrder}
                         editColorScheme={this.editColorScheme}
+                        addColorScheme={this.addColorScheme}
+                        checkLabelAlreadyExists={this.checkLabelAlreadyExists}
                     />
                 </Route>
                 <Route path="/register">

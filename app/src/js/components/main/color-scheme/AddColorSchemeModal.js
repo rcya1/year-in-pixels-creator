@@ -16,22 +16,36 @@ export default class AddColorSchemeModal extends React.Component {
     constructor(props) {
         super(props);
 
-        this.state = {
-            validated: false,
-            label: "",
-            color: "#ddd"
-        };
+        this.resetState();
 
         this.formRef = React.createRef();
 
+        this.resetState = this.resetState.bind(this);
         this.onChangeLabel = this.onChangeLabel.bind(this);
         this.onChangeColor = this.onChangeColor.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
     }
 
+    resetState() {
+        const stateContents = {
+            validated: false,
+            label: "",
+            labelAlreadyExists: false,
+            color: "#dddddd"
+        }
+
+        if(this.state === undefined) {
+            this.state = stateContents;
+        }
+        else {
+            this.setState(stateContents);
+        }
+    }
+
     onChangeLabel(e) {
         this.setState({
-            label: e.target.value
+            label: e.target.value,
+            labelAlreadyExists: this.props.checkLabelAlreadyExists(e.target.value)
         });
     }
 
@@ -45,12 +59,17 @@ export default class AddColorSchemeModal extends React.Component {
         e.preventDefault();
         e.stopPropagation();
 
+        if(this.state.labelAlreadyExists) return;
+
         this.setState({
             validated: true
         });
 
         if(this.formRef.current.checkValidity() === true) {
-            console.log("Valid form!");
+            this.props.handleSubmit(this.state.label, this.state.color);
+            this.props.handleClose();
+
+            this.resetState();
         }
     }
 
@@ -59,7 +78,6 @@ export default class AddColorSchemeModal extends React.Component {
             <Modal 
                 show={this.props.visible} 
                 onHide={this.props.handleClose}
-                backdrop="static"
                 size="md"
             >
                 <Modal.Header>
@@ -79,12 +97,13 @@ export default class AddColorSchemeModal extends React.Component {
                                         placeholder="Label"
                                         type="text"
                                         required
+                                        isInvalid={this.state.labelAlreadyExists}
                                         value={this.state.label}
                                         onChange={this.onChangeLabel}
                                     />
 
                                     <FormControl.Feedback type="invalid">
-                                        Please enter a label.
+                                        Label already taken / is empty.
                                     </FormControl.Feedback>
                                 </InputGroup>
                             </Form.Group>

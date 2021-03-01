@@ -85,7 +85,6 @@ export default class EditColorSchemeModal extends React.Component {
             <Modal 
                 show={this.props.visible} 
                 onHide={this.props.handleClose}
-                backdrop="static"
                 size="md"
             >
                 <Modal.Header>

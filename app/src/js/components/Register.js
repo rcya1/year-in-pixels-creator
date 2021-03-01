@@ -82,7 +82,7 @@ class CreateUser extends Component {
 
         let form = e.currentTarget;
 
-        if(this.state.password !== this.state.confirmPassword) {
+        if(this.state.password !== this.state.confirmPassword || this.state.usernameTaken) {
             return;
         }
 

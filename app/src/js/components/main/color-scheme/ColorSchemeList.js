@@ -7,6 +7,7 @@ import Card from 'react-bootstrap/Card';
 
 import AddColorSchemeModal from './AddColorSchemeModal';
 import EditColorSchemeModal from './EditColorSchemeModal';
+import AddColorSchemeButton from './AddColorSchemeButton';
 
 const grid = 6;
 
@@ -89,62 +90,68 @@ export default class ColorSchemeList extends React.Component {
     render() {
         return (
             <div>
-                <DragDropContext onDragEnd={this.onDragEnd}>
-                    <Droppable droppableId="droppable">
-                        {(provided, snapshot) => (
-                            <Card 
-                                {...provided.droppableProps}
-                                ref={provided.innerRef}
-                                className={this.props.className}
-                            >
-                                <Card.Header>
-                                    <h4 className="text-center">Colors</h4>
-                                </Card.Header>
-                                <Card.Body>
-                                    {this.props.colorSchemes.map((colorScheme, index) => {
-                                        return (
-                                        <Draggable key={colorScheme[3]} draggableId={colorScheme[3]} index={index}>
-                                            {(provided, snapshot) => (
-                                                <div
-                                                    ref={provided.innerRef}
-                                                    {...provided.draggableProps}
-                                                    {...provided.dragHandleProps}
-                                                    style={getItemBackgroundStyle(snapshot.isDragging, provided.draggableProps.style)}
-                                                >
-                                                    <Container>
-                                                        <Row>
-                                                            <span style={getItemColorPreviewStyle(colorScheme)}> </span>
-                                                            <p className="mr-auto my-auto" style={getItemLabelStyle()}>
-                                                                {colorScheme[3]}
-                                                            </p>
-                                                            <Button 
-                                                                className="ml-auto" 
-                                                                variant="outline-secondary"
-                                                                size="sm"
-                                                                onClick={
-                                                                    () => {
-                                                                        this.handleEditColorSchemeModalOpen(colorScheme);
+                <Card className={this.props.className}>
+                    <Card.Header>
+                        <h4 className="text-center">Colors</h4>
+                    </Card.Header>
+                    <Card.Body>
+                        <DragDropContext onDragEnd={this.onDragEnd}>
+                            <Droppable droppableId="droppable">
+                                {(provided, snapshot) => (
+                                    <div
+                                        {...provided.droppableProps}
+                                        ref={provided.innerRef}
+                                    >
+                                        {this.props.colorSchemes.map((colorScheme, index) => {
+                                            return (<Draggable key={colorScheme[3]} draggableId={colorScheme[3]} index={index}>
+                                                {(provided, snapshot) => (
+                                                    <div
+                                                        ref={provided.innerRef}
+                                                        {...provided.draggableProps}
+                                                        {...provided.dragHandleProps}
+                                                        style={getItemBackgroundStyle(snapshot.isDragging, provided.draggableProps.style)}
+                                                    >
+                                                        <Container>
+                                                            <Row>
+                                                                <span style={getItemColorPreviewStyle(colorScheme)}> </span>
+                                                                <p className="mr-auto my-auto" style={getItemLabelStyle()}>
+                                                                    {colorScheme[3]}
+                                                                </p>
+                                                                <Button 
+                                                                    className="ml-auto" 
+                                                                    variant="outline-secondary"
+                                                                    size="sm"
+                                                                    onClick={
+                                                                        () => {
+                                                                            this.handleEditColorSchemeModalOpen(colorScheme);
+                                                                        }
                                                                     }
-                                                                }
-                                                            >
-                                                                Edit
-                                                            </Button>
-                                                        </Row>
-                                                    </Container>
-                                                </div>
-                                            )}
-                                        </Draggable>)
-                                    })}
-                                    {provided.placeholder}
-                                </Card.Body>
-                            </Card>
-                        )}
-                    </Droppable>
-                </DragDropContext>
+                                                                >
+                                                                    Edit
+                                                                </Button>
+                                                            </Row>
+                                                        </Container>
+                                                    </div>
+                                                )}
+                                            </Draggable>)
+                                        })}
+                                        {provided.placeholder}
+                                    </div>
+                                )}
+                            </Droppable>
+                        </DragDropContext>
+
+                        <AddColorSchemeButton
+                            handleClick={this.handleAddColorSchemeModalOpen}
+                        />
+                    </Card.Body>
+                </Card>
 
                 <AddColorSchemeModal
                     visible={this.state.addColorSchemeModalVisible}
                     handleClose={this.handleAddColorSchemeModalClose}
+                    handleSubmit={this.props.addColorScheme}
+                    checkLabelAlreadyExists={this.props.checkLabelAlreadyExists}
                 />
                 <EditColorSchemeModal
                     visible={this.state.editColorSchemeModalVisible}

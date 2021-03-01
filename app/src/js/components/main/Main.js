@@ -51,7 +51,7 @@ class Main extends React.Component {
 
     handleResize() {
         this.updateMenu();
-        if(this.state.inLg != inLg()) {
+        if(this.state.inLg !== inLg()) {
             this.setState({
                 inLg: inLg()
             });
@@ -123,6 +123,8 @@ class Main extends React.Component {
             colorSchemes={this.props.options}
             changeColorSchemeOrder={this.props.changeColorSchemeOrder}
             editColorScheme={this.props.editColorScheme}
+            addColorScheme={this.props.addColorScheme}
+            checkLabelAlreadyExists={this.props.checkLabelAlreadyExists}
         />);
         let board = (<Board
             values={this.props.values}
