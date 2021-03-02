@@ -124,6 +124,7 @@ class Main extends React.Component {
             changeColorSchemeOrder={this.props.changeColorSchemeOrder}
             editColorScheme={this.props.editColorScheme}
             addColorScheme={this.props.addColorScheme}
+            deleteColorScheme={this.props.deleteColorScheme}
             checkLabelAlreadyExists={this.props.checkLabelAlreadyExists}
         />);
         let board = (<Board

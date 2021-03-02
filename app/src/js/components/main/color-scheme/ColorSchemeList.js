@@ -8,6 +8,7 @@ import Card from 'react-bootstrap/Card';
 import AddColorSchemeModal from './AddColorSchemeModal';
 import EditColorSchemeModal from './EditColorSchemeModal';
 import AddColorSchemeButton from './AddColorSchemeButton';
+import DeleteColorSchemeButton from './DeleteColorSchemeButton';
 
 const grid = 6;
 
@@ -129,6 +130,13 @@ export default class ColorSchemeList extends React.Component {
                                                                 >
                                                                     Edit
                                                                 </Button>
+                                                                <DeleteColorSchemeButton
+                                                                    handleClick={
+                                                                        () => {
+                                                                            this.props.deleteColorScheme(colorScheme[3]);
+                                                                        }
+                                                                    }
+                                                                />
                                                             </Row>
                                                         </Container>
                                                     </div>

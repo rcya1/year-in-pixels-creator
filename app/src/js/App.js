@@ -46,6 +46,7 @@ class App extends React.Component {
         this.changeColorSchemeOrder = this.changeColorSchemeOrder.bind(this);
         this.editColorScheme = this.editColorScheme.bind(this);
         this.addColorScheme = this.addColorScheme.bind(this);
+        this.deleteColorScheme = this.deleteColorScheme.bind(this);
         this.checkLabelAlreadyExists = this.checkLabelAlreadyExists.bind(this);
         this.setLoggedIn = this.setLoggedIn.bind(this);
         this.addAlert = this.addAlert.bind(this);
@@ -322,22 +323,29 @@ class App extends React.Component {
         });
     }
 
-    // TODO Fix the flickering of the colors (caused because waiting for the server to send a response)
     async changeColorSchemeOrder(startIndex, endIndex) {
+        // swap the color scheme orders orders
         let newOptions = this.state.options.slice();
         let [removed] = newOptions.splice(startIndex, 1);
         newOptions.splice(endIndex, 0, removed);
 
-        // update this ASAP to make a fluid user response
-        this.setState({
-            options: newOptions
-        });
-
+        // generate new list of indices to figure out how to map current values to the new ones
         let indices = Array.from(Array(newOptions.length).keys());
         let [removedIndices] = indices.splice(startIndex, 1);
         indices.splice(endIndex, 0, removedIndices);
+
+        // locally compute new values for the board data
+        let newValues = this.state.values.slice();
+        for(let i = 0; i < 12 * 31; i++) {
+            newValues[i] = indices.indexOf(newValues[i] - 1) + 1;
+        }
+
+        // update this ASAP to make a fluid user response
+        this.setState({
+            options: newOptions,
+            values: newValues
+        });
         
-        let newValues = undefined;
         if(this.state.loggedIn) {
             try {
                 let bodyLabels = [];
@@ -357,8 +365,12 @@ class App extends React.Component {
                 }
 
                 let res = await HTTPRequest.post("/color-schemes/change-orderings", body);
-                newValues = res.data;
                 this.addAlert("info", "Updated Data", "Successfully updated color schemes for account.");
+
+                // use online data to reupdate just in case
+                this.setState({
+                    values: res.data
+                });
             }
             catch(err) {
                 if(err.response !== undefined) {
@@ -370,16 +382,6 @@ class App extends React.Component {
                 }
             }
         }
-        else {
-            newValues = this.state.values.slice();
-            for(let i = 0; i < 12 * 31; i++) {
-                newValues[i] = indices.indexOf(newValues[i] - 1) + 1;
-            }
-        }
-
-        this.setState({
-            values: newValues
-        });
     }
 
     // newColor is passed in as "#RRGGBB"
@@ -448,6 +450,76 @@ class App extends React.Component {
                 };
                 await HTTPRequest.post("color-schemes", body);
                 this.addAlert("info", "Successfully uploaded color scheme");
+            }
+            catch(err) {
+                if(err.response !== undefined) {
+                    let response = err.response.data;
+                    this.addAlert("danger", "Unknown Error", response);
+                }
+                else {
+                    this.addAlert("danger", "Unknown Error Has Occurred", "Please contact the developer to help fix this issue.");
+                }
+            }
+        }
+    }
+
+    async deleteColorScheme(label) {
+        // delete color scheme from options
+        let newOptions = this.state.options.slice();
+        let index = -1;
+        for(let i = 0; i < newOptions.length; i++) {
+            if(newOptions[i][3] === label) {
+                index = i;
+                break;
+            }
+        }
+        newOptions.splice(index, 1);
+        
+        // generate new list of indices to figure out how to map current values to the new ones
+        let indices = Array.from(Array(this.state.options.length).keys());
+        indices.splice(index, 1);
+        
+        // locally compute new values for the board data
+        let newValues = this.state.values.slice();
+        for(let i = 0; i < 12 * 31; i++) {
+            newValues[i] = indices.indexOf(newValues[i] - 1) + 1;
+        }
+
+        this.setState({
+            options: newOptions,
+            values: newValues
+        })
+        this.addAlert("info", "Successfully removed color scheme");
+
+        if(this.state.loggedIn && index !== -1) {
+            try {
+                // actually delete the color scheme from the server
+                await HTTPRequest.delete("color-schemes/" + label);
+                this.addAlert("info", "Successfully uploaded removed color scheme");
+
+                // send change order data to the server so that it updates all online data
+                let bodyLabels = [];
+                let bodyOrderings = [];
+
+                for(let i in newOptions) {
+                    let colorScheme = newOptions[i];
+                    bodyLabels.push(colorScheme[3]);
+                    bodyOrderings.push(i);
+                }
+
+                const body = {
+                    labels: bodyLabels,
+                    orderings: bodyOrderings,
+                    indices: indices,
+                    year: this.state.year
+                }
+                
+                let res = await HTTPRequest.post("/color-schemes/change-orderings", body);
+                
+                // use online data to reupdate just in case
+                this.setState({
+                    values: res.data
+                });
             }
             catch(err) {
                 if(err.response !== undefined) {
@@ -542,6 +614,7 @@ class App extends React.Component {
                         changeColorSchemeOrder={this.changeColorSchemeOrder}
                         editColorScheme={this.editColorScheme}
                         addColorScheme={this.addColorScheme}
+                        deleteColorScheme={this.deleteColorScheme}
                         checkLabelAlreadyExists={this.checkLabelAlreadyExists}
                     />
                 </Route>

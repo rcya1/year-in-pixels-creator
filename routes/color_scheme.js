@@ -134,7 +134,7 @@ router.route('/:queryLabel').delete(asyncHandler(async(req, res) => {
     let colorSchemeFound = null;
     for(let i in user.colorSchemes) {
         let colorScheme = user.colorSchemes[i];
-        if(colorScheme.label == req.body.queryLabel) {
+        if(colorScheme.label == req.params.queryLabel) {
             colorSchemeFound = colorScheme;
             user.colorSchemes.splice(i, 1);
             await user.save();

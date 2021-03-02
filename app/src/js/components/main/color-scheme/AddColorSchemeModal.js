@@ -16,29 +16,20 @@ export default class AddColorSchemeModal extends React.Component {
     constructor(props) {
         super(props);
 
-        this.resetState();
+        this.state = this.getResetState();
 
         this.formRef = React.createRef();
-
-        this.resetState = this.resetState.bind(this);
         this.onChangeLabel = this.onChangeLabel.bind(this);
         this.onChangeColor = this.onChangeColor.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
     }
 
-    resetState() {
-        const stateContents = {
+    getResetState() {
+        return {
             validated: false,
             label: "",
             labelAlreadyExists: false,
             color: "#dddddd"
-        }
-
-        if(this.state === undefined) {
-            this.state = stateContents;
-        }
-        else {
-            this.setState(stateContents);
         }
     }
 
@@ -69,7 +60,7 @@ export default class AddColorSchemeModal extends React.Component {
             this.props.handleSubmit(this.state.label, this.state.color);
             this.props.handleClose();
 
-            this.resetState();
+            this.setState(this.getResetState());
         }
     }
 
