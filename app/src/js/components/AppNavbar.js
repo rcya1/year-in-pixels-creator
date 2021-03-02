@@ -26,7 +26,7 @@ class AppNavbar extends React.Component {
                     className="navbar-button"
                     key="account"
                     onClick={() => {
-                            // TODO Account Settings Page
+                            this.props.setRedirect("/settings");
                         }
                     }
                 >

@@ -6,6 +6,7 @@ import AppNavbar from './components/AppNavbar'
 import Main from './components/main/Main'
 import Register from './components/Register'
 import Login from './components/Login'
+import AccountSettings from './components/AccountSettings'
 import { OverrideDataPrompt, OverrideOption } from './components/OverrideDataPrompt'
 import HTTPRequest from './util/HTTPRequest';
 import { getIndex } from './util/DateUtils';
@@ -630,6 +631,13 @@ class App extends React.Component {
                         setLoggedIn={this.setLoggedIn}
                         addAlert={this.addAlert}
                         retrieveData={this.retrieveData}
+                    />
+                </Route>
+                <Route path="/settings">
+                    <AccountSettings
+                        loggedIn={this.state.loggedIn}
+                        name={this.state.name}
+                        username={this.state.username}
                     />
                 </Route>
             </Router>

@@ -7,3 +7,9 @@
     min-width: 300px;
     width: 50%;
 }
+
+.equal {
+    display: flex;
+    display: -webkit-flex;
+    flex-wrap: wrap;
+}

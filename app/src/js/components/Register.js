@@ -12,9 +12,8 @@ import HTTPRequest from '../util/HTTPRequest';
 import withRedirect from '../util/react/WithRedirect';
 
 import '../../css/Form.css';
-import axios from 'axios';
 
-class CreateUser extends Component {
+class Register extends Component {
     constructor(props) {
         super(props);
 
@@ -48,7 +47,7 @@ class CreateUser extends Component {
         let username = e.target.value;
         if(username !== "") {
             try {
-                let res = await axios.get("users/check-available/" + username);
+                let res = await HTTPRequest.get("users/check-available/" + username);
                 this.setState({
                     usernameTaken: (res.data === false)
                 });
@@ -227,4 +226,4 @@ class CreateUser extends Component {
     }
 }
 
-export default withRedirect(CreateUser);
+export default withRedirect(Register);
