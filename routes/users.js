@@ -32,37 +32,46 @@ router.route('/').get(asyncHandler(async(req, res) => {
 }));
 
 /**
- * POST
- * Registers the given credentials with the application
+ * PUT
+ * Updates the current user's name and username
  * 
- * Body Content Required:
+ * Body Content Required
  *  username - username
- *  password - password
- *  name - name
+ *  name     - name
  */
-router.route('/register').post((req, res) => {
-    const username = req.body.username;
-    const password = req.body.password;
-    const name = req.body.name;
+router.route('/').put(asyncHandler(async(req, res) => {
+    if(!req.isAuthenticated()) {
+        log(res, Status.ERROR, "User is not logged in");
+        return;
+    }
 
-    const newUser = {
-        username: username,
-        name: name,
-        colorSchemes: [],
-        data: []
-    };
+    let username = req.body.username;
+    let name     = req.body.name;
+    
+    user = await UserSchema.findById(req.user._id);
 
-    UserSchema.register(new UserSchema(newUser), password, (err) => {
-        if(err) {
-            log(res, Status.ERROR, err);
-            return;
-        }
+    user.username = username;
+    user.name = name;
+    await user.save();
+    
+    log(res, Status.SUCCESS, "User updated.");
+}));
 
-        passport.authenticate('local')(req, res, function() {
-            log(res, Status.SUCCESS, "Successfully added the user.");
-        });
-    });
-});
+router.route('/change-password').post(asyncHandler(async(req, res) => {
+    if(!req.isAuthenticated()) {
+        log(res, Status.ERROR, "User is not logged in");
+        return;
+    }
+    
+    let oldPassword = req.body.oldPassword;
+    let newPassword = req.body.newPassword;
+
+    user = await UserSchema.findById(req.user._id);
+
+    await user.changePassword(oldPassword, newPassword);
+
+    log(res, Status.SUCCESS, "Password updated.");
+}));
 
 /**
  * DELETE
@@ -96,6 +105,39 @@ router.route('/').delete(asyncHandler(async(req, res) => {
     
     log(res, Status.SUCCESS, "User deleted.");
 }));
+
+/**
+ * POST
+ * Registers the given credentials with the application
+ * 
+ * Body Content Required:
+ *  username - username
+ *  password - password
+ *  name - name
+ */
+router.route('/register').post((req, res) => {
+    const username = req.body.username;
+    const password = req.body.password;
+    const name = req.body.name;
+
+    const newUser = {
+        username: username,
+        name: name,
+        colorSchemes: [],
+        data: []
+    };
+
+    UserSchema.register(new UserSchema(newUser), password, (err) => {
+        if(err) {
+            log(res, Status.ERROR, err);
+            return;
+        }
+
+        passport.authenticate('local')(req, res, function() {
+            log(res, Status.SUCCESS, "Successfully added the user.");
+        });
+    });
+});
 
 /**
  * GET

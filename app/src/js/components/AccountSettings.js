@@ -18,8 +18,8 @@ class AccountSettings extends Component {
         super(props);
 
         this.state = {
-            name: "",
-            username: "",
+            name: this.props.name,
+            username: this.props.username,
             currentPassword: "",
             newPassword: "",
             confirmNewPassword: "",
@@ -47,9 +47,12 @@ class AccountSettings extends Component {
             this.setState({
                 name: this.props.name,
                 username: this.props.username,
-                validated: false,
+                currentPassword: "",
+                newPassword: "",
+                confirmNewPassword: "",
                 updateFormValidated: false,
-                resetPasswordFormValidated: false
+                resetPasswordFormValidated: false,
+                usernameTaken: false
             });
         }
     }
@@ -86,13 +89,13 @@ class AccountSettings extends Component {
 
     onChangePassword(e) {
         this.setState({
-            password: e.target.value
+            currentPassword: e.target.value
         });
     }
 
     onChangeNewPassword(e) {
         this.setState({
-            confirmNewPassword: e.target.value
+            newPassword: e.target.value
         });
     }
 
@@ -113,11 +116,30 @@ class AccountSettings extends Component {
         }
 
         this.setState({
-            validated: true
+            updateFormValidated: true
         });
 
         if(form.checkValidity() === true) {
-            
+            const body = {
+                username: this.state.username,
+                name: this.state.name,
+            };
+
+            try {
+                await HTTPRequest.put("users", body);
+
+                this.props.addAlert("info", "Successfully Updated Account");
+                this.props.updateName(this.state.name, this.state.username);
+            }
+            catch(err) {
+                if(err.response !== undefined) {
+                    let response = err.response.data;
+                    this.props.addAlert("danger", "Unknown Error", response);
+                }
+                else {
+                    this.props.addAlert("danger", "Unknown Error Has Occurred", "Please contact the developer to help fix this issue");
+                }
+            }
         }
     }
 
@@ -127,16 +149,34 @@ class AccountSettings extends Component {
 
         let form = e.currentTarget;
 
-        if(this.state.password == this.state.newPassword || this.state.newPassword !== this.state.confirmNewPassword) {
+        if(this.state.currentPassword === this.state.newPassword || this.state.newPassword !== this.state.confirmNewPassword) {
             return;
         }
 
         this.setState({
-            validated: true
+            resetPasswordFormValidated: true
         });
 
         if(form.checkValidity() === true) {
-            
+            const body = {
+                oldPassword: this.state.currentPassword,
+                newPassword: this.state.newPassword
+            };
+
+            try {
+                await HTTPRequest.post("users/change-password", body);
+
+                this.props.addAlert("info", "Successfully Changed Password");
+            }
+            catch(err) {
+                if(err.response !== undefined) {
+                    let response = err.response.data;
+                    this.props.addAlert("danger", "Unknown Error", response);
+                }
+                else {
+                    this.props.addAlert("danger", "Unknown Error Has Occurred", "Please contact the developer to help fix this issue");
+                }
+            }
         }
     }
 

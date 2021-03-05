@@ -41,6 +41,7 @@ class App extends React.Component {
         }
 
         this.retrieveData = this.retrieveData.bind(this);
+        this.loadName = this.loadName.bind(this);
         this.uploadData = this.uploadData.bind(this);
         this.updateDay = this.updateDay.bind(this);
         this.handleDataOverrideSubmit = this.handleDataOverrideSubmit.bind(this);
@@ -50,6 +51,7 @@ class App extends React.Component {
         this.deleteColorScheme = this.deleteColorScheme.bind(this);
         this.checkLabelAlreadyExists = this.checkLabelAlreadyExists.bind(this);
         this.setLoggedIn = this.setLoggedIn.bind(this);
+        this.updateName = this.updateName.bind(this);
         this.addAlert = this.addAlert.bind(this);
         this.onDismissAlert = this.onDismissAlert.bind(this);
         this.onlineValues = null;
@@ -544,9 +546,28 @@ class App extends React.Component {
         return false;
     }
 
-    setLoggedIn(loggedIn) {
+    setLoggedIn(loggedIn, username, name) {
+        let updateState;
+        
+        if(username !== undefined) {
+            updateState = {
+                loggedIn: loggedIn,
+                username: username,
+                name: name
+            };
+        }
+        else {
+            updateState = {
+                loggedIn: loggedIn
+            };
+        }
+        this.setState(updateState);
+    }
+
+    updateName(name, username) {
         this.setState({
-            loggedIn: loggedIn
+            name: name,
+            username: username
         });
     }
 
@@ -635,6 +656,8 @@ class App extends React.Component {
                 </Route>
                 <Route path="/settings">
                     <AccountSettings
+                        addAlert={this.addAlert}
+                        updateName={this.updateName}
                         loggedIn={this.state.loggedIn}
                         name={this.state.name}
                         username={this.state.username}

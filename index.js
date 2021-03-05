@@ -40,6 +40,21 @@ app.use(passport.session());
 
 // Set up the authentication system
 passport.use('local', userSchema.createStrategy());
+
+userSchema.serializeUser = function() {
+    return function(user, cb) {
+        cb(null, user.id);
+    }
+};
+
+userSchema.deserializeUser = function() {
+    var self = this;
+
+    return function(id, cb) {
+        self.findById(id, cb);
+    }
+};
+
 passport.serializeUser(userSchema.serializeUser());
 passport.deserializeUser(userSchema.deserializeUser());
 

@@ -98,7 +98,7 @@ class Register extends Component {
 
             try {
                 await HTTPRequest.post("users/register", body);
-                this.props.setLoggedIn(true);
+                this.props.setLoggedIn(true, this.state.username, this.state.name);
                 this.props.addAlert("info", "Successfully Registered", "You are now registered and logged in.");
                 this.props.uploadData();
                 
