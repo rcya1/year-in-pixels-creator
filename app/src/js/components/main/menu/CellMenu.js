@@ -3,6 +3,7 @@ import Select from 'react-select'
 import Button from 'react-bootstrap/Button';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
 import FormControl from 'react-bootstrap/FormControl';
 import Card from 'react-bootstrap/Card';
@@ -11,9 +12,6 @@ import Modal from 'react-bootstrap/Modal';
 import { inLg } from '../../../util/BootstrapUtils';
 import { FULL_MONTH_NAMES } from '../Constants'
 import { getOrdinalEnding } from '../../../util/DateUtils';
-
-import '../../../../css/CellMenu.css';
-import Col from 'react-bootstrap/esm/Col';
 
 let selectStyles = require('./SelectStyle').selectStyles;
 
@@ -29,10 +27,6 @@ export default class CellMenu extends React.Component {
         };
 
         this.ref = React.createRef();
-
-        this.onChangeValue = this.onChangeValue.bind(this);
-        this.onChangeComment = this.onChangeComment.bind(this);
-        this.handleSubmit = this.handleSubmit.bind(this);
     }
 
     componentDidUpdate(prevProps) {
@@ -54,25 +48,25 @@ export default class CellMenu extends React.Component {
         }
     }
 
-    onChangeValue(newValue) {
+    onChangeValue = (newValue) => {
         this.setState({
             value: newValue.value
         })
     }
 
-    onChangeComment(e) {
+    onChangeComment = (e) => {
         this.setState({
             comment: e.target.value
         })
     }
     
-    handleSubmit(e) {
+    handleSubmit = (e) => {
         e.preventDefault();
-        this.props.handleMenuClose();
-        this.props.handleMenuSubmit(this.props.month, this.props.day, this.state.value, this.state.comment);
+        this.props.closeMenu();
+        this.props.updateBoardData(this.props.month, this.props.day, this.state.value, this.state.comment);
     }
 
-    handleClick(e) {
+    handleClick = (e) => {
         e.stopPropagation();
     }
 
@@ -129,7 +123,7 @@ export default class CellMenu extends React.Component {
                         </Row>
                         <Row>
                             <Col>
-                                <Button variant="danger" block className="" onClick={this.props.handleMenuClose}>
+                                <Button variant="danger" block className="" onClick={this.props.closeMenu}>
                                     Cancel
                                 </Button>
                             </Col>
@@ -147,15 +141,19 @@ export default class CellMenu extends React.Component {
                 return (
                     <div className="menu"
                         style={{
+                            position: "absolute",
                             top: top,
-                            left: left
+                            left: left,
+                            boxShadow: "0 5px 10px rgba(0, 0, 0, 0.3)",
+                            whiteSpace: "nowrap",
+                            flexWrap: "nowrap"
                         }}
                         ref={this.ref}
                         onClick={this.handleClick}
                     >
 
                         <Card>
-                            <Card.Header className="menu-title py-2" as="h4">
+                            <Card.Header className="text-center py-2" as="h4">
                                 {title}
                             </Card.Header>
                             <Card.Body>
@@ -169,12 +167,12 @@ export default class CellMenu extends React.Component {
                 return (
                     <Modal
                         show={this.props.visible} 
-                        onHide={this.props.handleMenuClose}
+                        onHide={this.props.closeMenu}
                         size="md"
                         onClick={this.handleClick}
                     >
                         <Modal.Header>
-                            <Modal.Title className="menu-title w-100">{title}</Modal.Title>
+                            <Modal.Title className="text-center w-100">{title}</Modal.Title>
                         </Modal.Header>
                         <Modal.Body>
                             { bodyContent }

@@ -8,7 +8,6 @@ import InputGroup from 'react-bootstrap/InputGroup';
 import { FaUser, FaLock } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 
-import HTTPRequest from '../util/HTTPRequest';
 import withRedirect from '../util/react/WithRedirect';
 
 import '../../css/Form.css';
@@ -25,57 +24,41 @@ class Register extends Component {
             validated: false,
             usernameTaken: false
         }
-
-        this.onChangeName = this.onChangeName.bind(this);
-        this.onChangeUsername = this.onChangeUsername.bind(this);
-        this.onChangePassword = this.onChangePassword.bind(this);
-        this.onChangeConfirmPassword = this.onChangeConfirmPassword.bind(this);
-        this.handleSubmit = this.handleSubmit.bind(this);
     }
 
-    onChangeName(e) {
+    onChangeName = (e) => {
         this.setState({
             name: e.target.value
         });
     }
 
-    async onChangeUsername(e) {
+    onChangeUsername = async(e) => {
         this.setState({
             username: e.target.value
         });
 
         let username = e.target.value;
         if(username !== "") {
-            try {
-                let res = await HTTPRequest.get("users/check-available/" + username);
-                this.setState({
-                    usernameTaken: (res.data === false)
-                });
-            }
-            catch(err) {
-                if(err.response !== undefined) {
-                    this.props.addAlert("danger", "Unknown Error", err.response);
-                }
-                else {
-                    this.props.addAlert("danger", "Unknown Error Has Occurred", "Please contact the developer to help fix this issue");
-                }
-            }
+            let usernameAvailable = await this.props.checkUsernameAvailable(username);
+            this.setState({
+                usernameTaken: !usernameAvailable
+            })
         }
     }
 
-    onChangePassword(e) {
+    onChangePassword = (e) => {
         this.setState({
             password: e.target.value
         });
     }
 
-    onChangeConfirmPassword(e) {
+    onChangeConfirmPassword = (e) => {
         this.setState({
             confirmPassword: e.target.value
         });
     }
 
-    async handleSubmit(e) {
+    handleSubmit = async (e) => {
         e.preventDefault();
         e.stopPropagation();
 
@@ -90,34 +73,8 @@ class Register extends Component {
         });
 
         if(form.checkValidity() === true) {
-            const body = {
-                username: this.state.username,
-                password: this.state.password,
-                name: this.state.name
-            };
-
-            try {
-                await HTTPRequest.post("users/register", body);
-                this.props.setLoggedIn(true, this.state.username, this.state.name);
-                this.props.addAlert("info", "Successfully Registered", "You are now registered and logged in.");
-                this.props.uploadData();
-                
-                this.props.setRedirect("/");
-            }
-            catch(err) {
-                if(err.response !== undefined) {
-                    let response = err.response.data;
-                    if(response.includes("UserExistsError")) {
-                        this.props.addAlert("danger", "User Already Exists", "A user with that username already exists.");
-                    }
-                    else {
-                        this.props.addAlert("danger", "Unknown Error", response);
-                    }
-                }
-                else {
-                    this.props.addAlert("danger", "Unknown Error Has Occurred", "Please contact the developer to help fix this issue.");
-                }
-            }
+            let success = await this.props.register(this.state.name, this.state.username, this.state.password);
+            if(success) this.props.setRedirect("/");
         }
     }
 

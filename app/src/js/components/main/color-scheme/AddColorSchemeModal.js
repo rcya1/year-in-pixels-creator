@@ -19,12 +19,9 @@ export default class AddColorSchemeModal extends React.Component {
         this.state = this.getResetState();
 
         this.formRef = React.createRef();
-        this.onChangeLabel = this.onChangeLabel.bind(this);
-        this.onChangeColor = this.onChangeColor.bind(this);
-        this.handleSubmit = this.handleSubmit.bind(this);
     }
 
-    getResetState() {
+    getResetState = () => {
         return {
             validated: false,
             label: "",
@@ -33,20 +30,20 @@ export default class AddColorSchemeModal extends React.Component {
         }
     }
 
-    onChangeLabel(e) {
+    onChangeLabel = (e) => {
         this.setState({
             label: e.target.value,
-            labelAlreadyExists: this.props.checkLabelAlreadyExists(e.target.value)
+            labelAlreadyExists: this.props.checkLabelExists(e.target.value)
         });
     }
 
-    onChangeColor(color) {
+    onChangeColor = (color) => {
         this.setState({
             color: color.hex
         })
     }
 
-    handleSubmit(e) {
+    handleSubmit = (e) => {
         e.preventDefault();
         e.stopPropagation();
 
@@ -57,8 +54,8 @@ export default class AddColorSchemeModal extends React.Component {
         });
 
         if(this.formRef.current.checkValidity() === true) {
-            this.props.handleSubmit(this.state.label, this.state.color);
-            this.props.handleClose();
+            this.props.addColorScheme(this.state.label, this.state.color);
+            this.props.closeModal();
 
             this.setState(this.getResetState());
         }
@@ -68,7 +65,7 @@ export default class AddColorSchemeModal extends React.Component {
         return (
             <Modal 
                 show={this.props.visible} 
-                onHide={this.props.handleClose}
+                onHide={this.props.closeModal}
                 size="md"
             >
                 <Modal.Header>
@@ -110,7 +107,7 @@ export default class AddColorSchemeModal extends React.Component {
                     </Container>
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="danger" className="mr-auto" onClick={this.props.handleClose}>
+                    <Button variant="danger" className="mr-auto" onClick={this.props.closeModal}>
                         Cancel
                     </Button>
                     <Button variant="primary" onClick={this.handleSubmit}>

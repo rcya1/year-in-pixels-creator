@@ -8,7 +8,6 @@ import InputGroup from 'react-bootstrap/InputGroup';
 import { FaUser, FaLock } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 
-import HTTPRequest from '../util/HTTPRequest';
 import withRedirect from '../util/react/WithRedirect';
 
 import '../../css/Form.css';
@@ -22,25 +21,21 @@ class CreateUser extends Component {
             password: "",
             validated: false
         }
-
-        this.onChangeUsername = this.onChangeUsername.bind(this);
-        this.onChangePassword = this.onChangePassword.bind(this);
-        this.handleSubmit = this.handleSubmit.bind(this);
     }
 
-    onChangeUsername(e) {
+    onChangeUsername = (e) => {
         this.setState({
             username: e.target.value
         });
     }
 
-    onChangePassword(e) {
+    onChangePassword = (e) => {
         this.setState({
             password: e.target.value
         });
     }
 
-    async handleSubmit(e) {
+    handleSubmit = async (e) => {
         e.preventDefault();
         e.stopPropagation();
 
@@ -51,36 +46,8 @@ class CreateUser extends Component {
         });
 
         if(form.checkValidity() === true) {
-            const body = {
-                username: this.state.username,
-                password: this.state.password,
-            };
-
-            try {
-                await HTTPRequest.post("login", body);
-                this.props.setLoggedIn(true);
-                this.props.setRedirect("/");
-                this.props.retrieveData();
-
-                this.props.addAlert("info", "Successfully Logged In", "You are now signed in.");
-            }
-            catch(err) {
-                if(err.response !== undefined) {
-                    let response = err.response.data;
-                    if(response.includes("IncorrectPasswordError")) {
-                        this.props.addAlert("danger", "Incorrect Password", "The password you entered is not correct.");
-                    }
-                    else if(response.includes("IncorrectUsernameError")) {
-                        this.props.addAlert("danger", "Unknown User", "That user does not exist.");
-                    }
-                    else {
-                        this.props.addAlert("danger", "Unknown Error", response);
-                    }
-                }
-                else {
-                    this.props.addAlert("danger", "Unknown Error Has Occurred", "Please contact the developer to help fix this issue");
-                }
-            }
+            let success = await this.props.login(this.state.username, this.state.password);
+            if(success) this.props.setRedirect("/");
         }
     }
 

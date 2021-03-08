@@ -9,8 +9,6 @@ export default function withRedirect(WrappedComponent) {
             this.state = {
                 redirect: null
             }
-
-            this.setRedirect = this.setRedirect.bind(this);
         }
         
         componentDidUpdate() {
@@ -21,7 +19,7 @@ export default function withRedirect(WrappedComponent) {
             }
         }
 
-        setRedirect(redirect) {
+        setRedirect = (redirect) => {
             this.setState({
                 redirect: redirect
             });

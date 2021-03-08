@@ -4,19 +4,14 @@ import Cell from './Cell';
 import { ABBR_MONTH_NAMES, DAYS_PER_MONTH } from './Constants'
 import { getIndex } from '../../util/DateUtils'
 
-import '../../../css/Board.css';
-
 // TODO Make an option for showing it in month form
 export default class Board extends React.Component {
-    // constructor(props) {
-    //     super(props);
-    // }
-
+    
     render() {
         let chartData = [];
         for(let d = 0; d < 31; d++) {
             let rowData = [
-                <th className="table-head-day" key={"-1:" + d}>{d + 1}</th>
+                <th className="text-right pr-2" key={"-1:" + d}>{d + 1}</th>
             ];
             for(let m = 0; m < 12; m++) {
                 let value = "";
@@ -39,13 +34,13 @@ export default class Board extends React.Component {
 
         return (
             <div>
-                <table className="board">
-                    <thead>
+                <table className="mt-5 mx-auto mb-4">
+                    <thead className="text-center" style={{fontSize: "0.9rem"}}>
                         <tr>
                             <th></th>
                             {
                                 ABBR_MONTH_NAMES.map((value, index) => {
-                                    return <th key={index} className="table-head-month">{value}</th>
+                                    return <th key={index} className="pb-1">{value}</th>
                                 })
                             }
                         </tr>

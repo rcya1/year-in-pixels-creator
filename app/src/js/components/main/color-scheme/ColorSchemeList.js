@@ -47,15 +47,9 @@ export default class ColorSchemeList extends React.Component {
             editColorSchemeModalVisible: false,
             currentEditedColorScheme: [0, 0, 0, ""]
         }
-
-        this.onDragEnd = this.onDragEnd.bind(this);
-        this.handleAddColorSchemeModalOpen = this.handleAddColorSchemeModalOpen.bind(this);
-        this.handleAddColorSchemeModalClose = this.handleAddColorSchemeModalClose.bind(this);
-        this.handleEditColorSchemeModalOpen = this.handleEditColorSchemeModalOpen.bind(this);
-        this.handleEditColorSchemeModalClose = this.handleEditColorSchemeModalClose.bind(this);
     }
 
-    onDragEnd(result) {
+    onDragEnd = (result) => {
         if(!result.destination) {
             return;
         }
@@ -63,26 +57,26 @@ export default class ColorSchemeList extends React.Component {
         this.props.changeColorSchemeOrder(result.source.index, result.destination.index);
     }
 
-    handleAddColorSchemeModalOpen() {
+    openAddColorSchemeModal = () => {
         this.setState({
             addColorSchemeModalVisible: true
         });
     }
 
-    handleAddColorSchemeModalClose() {
+    closeAddColorSchemeModal = () => {
         this.setState({
             addColorSchemeModalVisible: false
         });
     }
 
-    handleEditColorSchemeModalOpen(colorScheme) {
+    openEditColorSchemeModal = (colorScheme) => {
         this.setState({
             editColorSchemeModalVisible: true,
             currentEditedColorScheme: colorScheme
         });
     }
 
-    handleEditColorSchemeModalClose() {
+    closeEditColorSchemeModal = () => {
         this.setState({
             editColorSchemeModalVisible: false
         });
@@ -124,7 +118,7 @@ export default class ColorSchemeList extends React.Component {
                                                                     size="sm"
                                                                     onClick={
                                                                         () => {
-                                                                            this.handleEditColorSchemeModalOpen(colorScheme);
+                                                                            this.openEditColorSchemeModal(colorScheme);
                                                                         }
                                                                     }
                                                                 >
@@ -150,22 +144,23 @@ export default class ColorSchemeList extends React.Component {
                         </DragDropContext>
 
                         <AddColorSchemeButton
-                            handleClick={this.handleAddColorSchemeModalOpen}
+                            handleClick={this.openAddColorSchemeModal}
                         />
                     </Card.Body>
                 </Card>
 
                 <AddColorSchemeModal
                     visible={this.state.addColorSchemeModalVisible}
-                    handleClose={this.handleAddColorSchemeModalClose}
-                    handleSubmit={this.props.addColorScheme}
-                    checkLabelAlreadyExists={this.props.checkLabelAlreadyExists}
+                    closeModal={this.closeAddColorSchemeModal}
+                    addColorScheme={this.props.addColorScheme}
+                    checkLabelExists={this.props.checkLabelExists}
                 />
                 <EditColorSchemeModal
                     visible={this.state.editColorSchemeModalVisible}
-                    handleClose={this.handleEditColorSchemeModalClose}
-                    handleSubmit={this.props.editColorScheme}
+                    closeModal={this.closeEditColorSchemeModal}
+                    editColorScheme={this.props.editColorScheme}
                     colorScheme={this.state.currentEditedColorScheme}
+                    checkLabelExists={this.props.checkLabelExists}
                 />
             </div>
         )

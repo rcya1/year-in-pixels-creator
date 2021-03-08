@@ -1,15 +1,22 @@
 import React from 'react';
-import {BrowserRouter as Router, Route} from "react-router-dom";
-import {AlertContainer} from "react-bs-notifier";
+import { BrowserRouter as Router, Route } from "react-router-dom";
+import { AlertContainer } from "react-bs-notifier";
 
+// Main Components
 import AppNavbar from './components/AppNavbar'
-import Main from './components/main/Main'
+import YearInPixels from './components/main/YearInPixels'
 import Register from './components/Register'
 import Login from './components/Login'
 import AccountSettings from './components/AccountSettings'
-import { OverrideDataPrompt, OverrideOption } from './components/OverrideDataPrompt'
+
+// Utility
 import HTTPRequest from './util/HTTPRequest';
+import { OverrideDataPrompt, OverrideOption } from './components/OverrideDataPrompt'
 import { getIndex } from './util/DateUtils';
+import { defaultOptions } from './util/ColorUtils';
+import { handleError } from './util/ErrorUtils';
+
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 let StyledAlert = require('./AlertStyle').StyledAlert;
 
@@ -26,87 +33,50 @@ class App extends React.Component {
             year: new Date().getFullYear(),
             values: Array(12 * 31).fill(0),
             comments: Array(12 * 31).fill(""),
-            options: [
-                [125, 125, 117, "Very Bad Day"],
-                [184, 183, 118, "Bad Day"],
-                [175, 125, 197, "Average Day"],
-                [126, 252, 238, "Chill Day"],
-                [253, 250, 117, "Good Day"],
-                [253, 125, 236, "Amazing Day"],
-                [255, 171, 111, "Super Special Day"]
-            ],
+            options: defaultOptions,
             
             alerts: [],
             overrideDataPromptVisible: false
         }
 
-        this.retrieveData = this.retrieveData.bind(this);
-        this.loadName = this.loadName.bind(this);
-        this.uploadData = this.uploadData.bind(this);
-        this.updateDay = this.updateDay.bind(this);
-        this.handleDataOverrideSubmit = this.handleDataOverrideSubmit.bind(this);
-        this.changeColorSchemeOrder = this.changeColorSchemeOrder.bind(this);
-        this.editColorScheme = this.editColorScheme.bind(this);
-        this.addColorScheme = this.addColorScheme.bind(this);
-        this.deleteColorScheme = this.deleteColorScheme.bind(this);
-        this.checkLabelAlreadyExists = this.checkLabelAlreadyExists.bind(this);
-        this.setLoggedIn = this.setLoggedIn.bind(this);
-        this.updateName = this.updateName.bind(this);
-        this.addAlert = this.addAlert.bind(this);
-        this.onDismissAlert = this.onDismissAlert.bind(this);
         this.onlineValues = null;
         this.onlineComments = null;
     }
 
-    async componentDidMount() {
+    componentDidMount = async () => {
         try {
             let res = await HTTPRequest.get("authenticated");
+
             this.setState({
                 loggedIn: res.data
             });
+
             if(res.data === true) {
-                this.retrieveData();
+                this.syncData();
             }
         }
         catch(err) {
-            if(err.response !== undefined) {
-                let response = err.response.data;
-                this.addAlert("danger", "Unknown Error", response);
-            }
-            else {
-                this.addAlert("danger", "Unknown Error Has Occurred", "Please contact the developer to help fix this issue.");
-            }
+            handleError(err, this.addAlert);
         }
     }
 
-    async retrieveData() {
+    syncData = async () => {
         if(this.state.loggedIn) {
             try {
                 this.loadName();
-                this.loadValuesAndComments();
-                this.loadColorSchemes();
+                this.syncValuesAndComments();
+                this.syncColorSchemes();
             }
             catch(err) {
-                if(err.response !== undefined) {
-                    let response = err.response.data;
-                    this.addAlert("danger", "Unknown Error", response);
-                }
-                else {
-                    this.addAlert("danger", "Unknown Error Has Occurred", "Please contact the developer to help fix this issue.");
-                }
+                handleError(err, this.addAlert);
             }
         }
     }
 
-    // make sure to wrap in try / catch
-    async loadName() {
+    loadName = async () => {
         let res = await HTTPRequest.get("users");
         let name = res.data.name;
         let username = res.data.username;
-
-        if(name === "") {
-            name = username;
-        }
 
         this.setState({
             name: name,
@@ -114,8 +84,7 @@ class App extends React.Component {
         });
     }
 
-    // make sure to wrap in try / catch
-    async loadValuesAndComments() {
+    syncValuesAndComments = async () => {
         let res = await HTTPRequest.get("data/" + this.state.year);
 
         let onlineValues = res.data.values;
@@ -133,7 +102,7 @@ class App extends React.Component {
             if(versionsDifferent && currentModified) break;
         }
 
-        // display override prompt to see how to reconcile the differences
+        // display override prompt to see how to reconcile changes
         if(versionsDifferent && currentModified) {
             this.setState({
                 overrideDataPromptVisible: true
@@ -142,19 +111,19 @@ class App extends React.Component {
             this.onlineComments = onlineComments;
         }
         // no differences or current version not modified
+        // just take the online data
         else {
             this.setState({
                 values: res.data.values,
                 comments: res.data.comments
             });
-            this.addAlert("info", "Loaded Data", "Successfully loaded data from account.");
+            this.addAlert("info", "Loaded Data");
             this.onlineValues = null;
             this.onlineComments = null;
         }
     }
 
-    // make sure to wrap in a try / catch
-    async loadColorSchemes() {
+    syncColorSchemes = async () => {
         let res = await HTTPRequest.get("color-schemes");
         let data = res.data;
         
@@ -172,7 +141,7 @@ class App extends React.Component {
                 await HTTPRequest.post("color-schemes", body);
             }
             
-            this.addAlert("info", "Uploaded Color Schemes", "Successfully uploaded color schemes to account.");
+            this.addAlert("info", "Uploaded Color Schemes");
         }
         else {
             let options = [];
@@ -182,45 +151,60 @@ class App extends React.Component {
             this.setState({
                 options: options
             });
-            this.addAlert("info", "Loaded Color Schemes", "Successfully loaded color schemes from account.");
+            this.addAlert("info", "Loaded Color Schemes");
         }
     }
 
-    async updateDay(month, day, value, comment) {
-        let valuesCopy = this.state.values.slice();
-        valuesCopy[getIndex(month, day)] = value;
-
-        let commentsCopy = this.state.comments.slice();
-        commentsCopy[getIndex(month, day)] = comment;
-
-        this.setState({
-            values: valuesCopy,
-            comments: commentsCopy
-        });
-
-        if(this.state.loggedIn) {
-            try {
-                const body = {
-                    value: value,
-                    comment: comment
-                }
-
-                await HTTPRequest.put("/data/" + this.state.year + "/" + (month + 1) + "/" + (day + 1), body);
-                this.addAlert("info", "Updated Data", "Successfully updated data for account.");
-            }
-            catch(err) {
-                if(err.response !== undefined) {
-                    let response = err.response.data;
-                    this.addAlert("danger", "Unknown Error", response);
-                }
-                else {
-                    this.addAlert("danger", "Unknown Error Has Occurred", "Please contact the developer to help fix this issue.");
-                }
-            }
+    navbarLogout = async () => {
+        try {
+            await HTTPRequest.post("logout");
+            this.setState({
+                loggedIn: false
+            });
+            this.addAlert("info", "Successfully Logged Out");
+        }
+        catch(err) {
+            handleError(err, this.addAlert);
         }
     }
 
-    async uploadData() {
+    checkUsernameAvailable = async (username) => {
+        try {
+            let res = await HTTPRequest.get("users/check-available/" + username);
+            return res.data === true;
+        }
+        catch(err) {
+            handleError(err, this.addAlert);
+        }
+    }
+
+    register = async (name, username, password) => {
+        const body = {
+            name: name,
+            username: username,
+            password: password
+        };
+
+        try {
+            await HTTPRequest.post("users/register", body);
+            this.setState({
+                loggedIn: true,
+                name: name,
+                username: username
+            });
+            this.addAlert("info", "Successfully Registered");
+            this.uploadValuesAndComments();
+            this.syncColorSchemes();
+        }
+        catch(err) {
+            handleError(err, this.addAlert, [["UserExistsError", "User Already Exists"]]);
+            return false;
+        }
+
+        return true;
+    }
+
+    uploadValuesAndComments = async () => {
         if(this.state.loggedIn) {
             try {
                 await HTTPRequest.post("data/" + this.state.year);
@@ -231,21 +215,72 @@ class App extends React.Component {
                 };
 
                 await HTTPRequest.put("/data/" + this.state.year, body);
-                this.addAlert("info", "Uploaded Data", "Successfully uploaded data for new account.");
+                this.addAlert("info", "Uploaded Data");
             }
             catch(err) {
-                if(err.response !== undefined) {
-                    let response = err.response.data;
-                    this.addAlert("danger", "Unknown Error", response);
-                }
-                else {
-                    this.addAlert("danger", "Unknown Error Has Occurred", "Please contact the developer to help fix this issue.");
-                }
+                handleError(err);
             }
         }
     }
 
-    async handleDataOverrideSubmit(overrideOption) {
+    login = async (username, password) => {
+        const body = {
+            username: username,
+            password: password,
+        };
+
+        try {
+            await HTTPRequest.post("login", body);
+            this.setState({
+                loggedIn: true
+            });
+            this.syncData();
+            this.addAlert("info", "Successfully Logged In");
+        }
+        catch(error) {
+            handleError(error, this.addAlert, [["IncorrectPasswordError", "Incorrect Password"],
+                ["IncorrectUsernameError", "Unknown User"]]);
+            return false;
+        }
+        
+        return true;
+    }
+
+    updateAccountInfo = async(name, username) => {
+        const body = {
+            name: name,
+            username: username
+        };
+
+        try {
+            await HTTPRequest.put("users", body);
+            this.setState({
+                name: name,
+                username: username
+            });
+            this.addAlert("info", "Successfully Updated Account Info");
+        }
+        catch(err) {
+            handleError(err, this.addAlert);
+        }
+    }
+
+    changePassword = async(oldPassword, newPassword) => {
+        const body = {
+            oldPassword: oldPassword,
+            newPassword: newPassword
+        };
+
+        try {
+            await HTTPRequest.post("users/change-password", body);
+            this.addAlert("info", "Successfully Changed Password");
+        }
+        catch(err) {
+            handleError(err, this.addAlert);
+        }
+    }
+
+    handleDataOverride = async (overrideOption) => {
         switch(overrideOption) {
             case OverrideOption.REPLACE_CURRENT:
                 this.onlineValues = this.state.values;
@@ -306,16 +341,10 @@ class App extends React.Component {
             };
 
             await HTTPRequest.put("/data/" + this.state.year, body);
-            this.addAlert("info", "Updated Data", "Successfully updated data for account.");
+            this.addAlert("info", "Handled Data Merging");
         }
         catch(err) {
-            if(err.response !== undefined) {
-                let response = err.response.data;
-                this.addAlert("danger", "Unknown Error", response);
-            }
-            else {
-                this.addAlert("danger", "Unknown Error Has Occurred", "Please contact the developer to help fix this issue.");
-            }
+            handleError(err, this.addAlert);
         }
 
         this.onlineValues = null;
@@ -326,7 +355,35 @@ class App extends React.Component {
         });
     }
 
-    async changeColorSchemeOrder(startIndex, endIndex) {
+    updateBoardData = async (month, day, value, comment) => {
+        let valuesCopy = this.state.values.slice();
+        valuesCopy[getIndex(month, day)] = value;
+
+        let commentsCopy = this.state.comments.slice();
+        commentsCopy[getIndex(month, day)] = comment;
+
+        this.setState({
+            values: valuesCopy,
+            comments: commentsCopy
+        });
+
+        if(this.state.loggedIn) {
+            try {
+                const body = {
+                    value: value,
+                    comment: comment
+                }
+
+                await HTTPRequest.put("/data/" + this.state.year + "/" + (month + 1) + "/" + (day + 1), body);
+                this.addAlert("info", "Updated Board Data");
+            }
+            catch(err) {
+                handleError(err, this.addAlert);
+            }
+        }
+    }
+
+    changeColorSchemeOrder = async(startIndex, endIndex) => {
         // swap the color scheme orders orders
         let newOptions = this.state.options.slice();
         let [removed] = newOptions.splice(startIndex, 1);
@@ -368,7 +425,7 @@ class App extends React.Component {
                 }
 
                 let res = await HTTPRequest.post("/color-schemes/change-orderings", body);
-                this.addAlert("info", "Updated Data", "Successfully updated color schemes for account.");
+                this.addAlert("info", "Updated Color Scheme Order");
 
                 // use online data to reupdate just in case
                 this.setState({
@@ -376,62 +433,13 @@ class App extends React.Component {
                 });
             }
             catch(err) {
-                if(err.response !== undefined) {
-                    let response = err.response.data;
-                    this.addAlert("danger", "Unknown Error", response);
-                }
-                else {
-                    this.addAlert("danger", "Unknown Error Has Occurred", "Please contact the developer to help fix this issue.");
-                }
-            }
-        }
-    }
-
-    // newColor is passed in as "#RRGGBB"
-    async editColorScheme(originalLabel, newLabel, newColor) {
-        let colorSchemes = this.state.options.slice();
-        let r = parseInt(newColor.substring(1, 3), 16);
-        let g = parseInt(newColor.substring(3, 5), 16);
-        let b = parseInt(newColor.substring(5, 7), 16);
-        let index = -1;
-        for(let i = 0; i < colorSchemes.length; i++) {
-            if(colorSchemes[i][3] === originalLabel) {
-                colorSchemes[i] = [r, g, b, newLabel];
-                index = i;
-                break;
-            }
-        }
-        this.setState({
-            options: colorSchemes
-        })
-        this.addAlert("info", "Successfully saved color scheme");
-
-        if(this.state.loggedIn && index !== -1) {
-            try {
-                const body = {
-                    red: r,
-                    green: g,
-                    blue: b,
-                    label: newLabel,
-                    ordering: index
-                };
-                await HTTPRequest.put("color-schemes/" + originalLabel, body);
-                this.addAlert("info", "Successfully uploaded edited color scheme");
-            }
-            catch(err) {
-                if(err.response !== undefined) {
-                    let response = err.response.data;
-                    this.addAlert("danger", "Unknown Error", response);
-                }
-                else {
-                    this.addAlert("danger", "Unknown Error Has Occurred", "Please contact the developer to help fix this issue.");
-                }
+                handleError(err, this.addAlert);
             }
         }
     }
 
     // color is passed in as "#RRGGBB"
-    async addColorScheme(label, color) {
+    addColorScheme = async(label, color) => {
         let colorSchemes = this.state.options.slice();
         let r = parseInt(color.substring(1, 3), 16);
         let g = parseInt(color.substring(3, 5), 16);
@@ -466,7 +474,44 @@ class App extends React.Component {
         }
     }
 
-    async deleteColorScheme(label) {
+    // newColor is passed in as "#RRGGBB"
+    editColorScheme = async(originalLabel, newLabel, newColor) => {
+        let colorSchemes = this.state.options.slice();
+        let r = parseInt(newColor.substring(1, 3), 16);
+        let g = parseInt(newColor.substring(3, 5), 16);
+        let b = parseInt(newColor.substring(5, 7), 16);
+        let index = -1;
+        for(let i = 0; i < colorSchemes.length; i++) {
+            if(colorSchemes[i][3] === originalLabel) {
+                colorSchemes[i] = [r, g, b, newLabel];
+                index = i;
+                break;
+            }
+        }
+        this.setState({
+            options: colorSchemes
+        })
+        this.addAlert("info", "Successfully saved color scheme");
+
+        if(this.state.loggedIn && index !== -1) {
+            try {
+                const body = {
+                    red: r,
+                    green: g,
+                    blue: b,
+                    label: newLabel,
+                    ordering: index
+                };
+                await HTTPRequest.put("color-schemes/" + originalLabel, body);
+                this.addAlert("info", "Successfully uploaded edited color scheme");
+            }
+            catch(err) {
+                handleError(err, this.addAlert);
+            }
+        }
+    }
+
+    deleteColorScheme = async(label) => {
         // delete color scheme from options
         let newOptions = this.state.options.slice();
         let index = -1;
@@ -525,18 +570,12 @@ class App extends React.Component {
                 });
             }
             catch(err) {
-                if(err.response !== undefined) {
-                    let response = err.response.data;
-                    this.addAlert("danger", "Unknown Error", response);
-                }
-                else {
-                    this.addAlert("danger", "Unknown Error Has Occurred", "Please contact the developer to help fix this issue.");
-                }
+                handleError(err, this.addAlert);
             }
         }
     }
 
-    checkLabelAlreadyExists(label) {
+    checkLabelExists = (label) => {
         for(let i = 0; i < this.state.options.length; i++) {
             if(this.state.options[i][3] === label) {
                 return true;
@@ -546,32 +585,7 @@ class App extends React.Component {
         return false;
     }
 
-    setLoggedIn(loggedIn, username, name) {
-        let updateState;
-        
-        if(username !== undefined) {
-            updateState = {
-                loggedIn: loggedIn,
-                username: username,
-                name: name
-            };
-        }
-        else {
-            updateState = {
-                loggedIn: loggedIn
-            };
-        }
-        this.setState(updateState);
-    }
-
-    updateName(name, username) {
-        this.setState({
-            name: name,
-            username: username
-        });
-    }
-
-    addAlert(type, headline, message) {
+    addAlert = (type, headline, message) => {
         let alerts = this.state.alerts.slice();
         alerts.push({
             id: new Date().getTime(),
@@ -585,7 +599,7 @@ class App extends React.Component {
         });
     }
 
-    onDismissAlert(alert) {
+    onDismissAlert = (alert) => {
         let i = this.state.alerts.indexOf(alert);
         if(i < 0) return;
 
@@ -603,8 +617,46 @@ class App extends React.Component {
                 <AppNavbar
                     loggedIn={this.state.loggedIn}
                     username={this.state.username}
-                    setLoggedIn={this.setLoggedIn}
-                    addAlert={this.addAlert}
+                    logout={this.navbarLogout}
+                />
+                <Route path="/" exact>
+                    <YearInPixels
+                        loggedIn={this.state.loggedIn}
+                        values={this.state.values}
+                        comments={this.state.comments}
+                        options={this.state.options}
+                        updateBoardData={this.updateBoardData}
+                        changeColorSchemeOrder={this.changeColorSchemeOrder}
+                        addColorScheme={this.addColorScheme}
+                        editColorScheme={this.editColorScheme}
+                        deleteColorScheme={this.deleteColorScheme}
+                        checkLabelExists={this.checkLabelExists}
+                    />
+                </Route>
+                <Route path="/register">
+                    <Register
+                        register={this.register}
+                        checkUsernameAvailable={this.checkUsernameAvailable}
+                    />
+                </Route>
+                <Route path="/login">
+                    <Login
+                        login={this.login}
+                    />
+                </Route>
+                <Route path="/settings">
+                    <AccountSettings
+                        loggedIn={this.state.loggedIn}
+                        name={this.state.name}
+                        username={this.state.username}
+                        checkUsernameAvailable={this.checkUsernameAvailable}
+                        updateAccountInfo={this.updateAccountInfo}
+                        changePassword={this.changePassword}
+                    />
+                </Route>
+                <OverrideDataPrompt
+                    visible={this.state.overrideDataPromptVisible}
+                    handleDataOverride={this.handleDataOverride}
                 />
                 <AlertContainer position="bottom-left">
                     {
@@ -621,48 +673,6 @@ class App extends React.Component {
                         })
                     }
                 </AlertContainer>
-                <OverrideDataPrompt
-                    visible={this.state.overrideDataPromptVisible}
-                    handleSubmit={this.handleDataOverrideSubmit}
-                />
-                <Route path="/" exact>
-                    <Main
-                        loggedIn={this.state.loggedIn}
-                        addAlert={this.addAlert}
-                        values={this.state.values}
-                        comments={this.state.comments}
-                        options={this.state.options}
-                        updateDay={this.updateDay}
-                        changeColorSchemeOrder={this.changeColorSchemeOrder}
-                        editColorScheme={this.editColorScheme}
-                        addColorScheme={this.addColorScheme}
-                        deleteColorScheme={this.deleteColorScheme}
-                        checkLabelAlreadyExists={this.checkLabelAlreadyExists}
-                    />
-                </Route>
-                <Route path="/register">
-                    <Register
-                        setLoggedIn={this.setLoggedIn}
-                        addAlert={this.addAlert}
-                        uploadData={this.uploadData}
-                    />
-                </Route>
-                <Route path="/login">
-                    <Login
-                        setLoggedIn={this.setLoggedIn}
-                        addAlert={this.addAlert}
-                        retrieveData={this.retrieveData}
-                    />
-                </Route>
-                <Route path="/settings">
-                    <AccountSettings
-                        addAlert={this.addAlert}
-                        updateName={this.updateName}
-                        loggedIn={this.state.loggedIn}
-                        name={this.state.name}
-                        username={this.state.username}
-                    />
-                </Route>
             </Router>
         )
     }

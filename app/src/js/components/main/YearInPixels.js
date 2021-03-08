@@ -1,19 +1,15 @@
-import Board from './Board'
-
 import React from 'react';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 
+import Board from './Board'
 import CellMenu from './menu/CellMenu';
 import ColorSchemeList from './color-scheme/ColorSchemeList';
 import { inLg } from '../../util/BootstrapUtils';
 import { getIndex } from '../../util/DateUtils';
 
-import '../../../css/Main.css';
-import 'bootstrap/dist/css/bootstrap.min.css';
-
-class Main extends React.Component {
+export default class YearInPixels extends React.Component {
     constructor(props) {
         super(props);
 
@@ -29,28 +25,22 @@ class Main extends React.Component {
         }
 
         this.menuXYProvider = null;
-        this.handleResize = this.handleResize.bind(this);
-        this.updateMenu = this.updateMenu.bind(this);
-        this.updateMenuOffset = this.updateMenuOffset.bind(this);
-        this.handleCellClick = this.handleCellClick.bind(this);
-        this.handleMenuClose = this.handleMenuClose.bind(this);
-        this.handleClick = this.handleClick.bind(this);
     }
 
     componentDidMount() {
         window.addEventListener('resize', this.handleResize);
-        window.addEventListener('scroll', this.updateMenu);
+        window.addEventListener('scroll', this.updateMenuPosition);
         window.addEventListener('click', this.handleClick);
     }
 
     componentWillUnmount() {
         window.removeEventListener('resize', this.handleResize);
-        window.removeEventListener('scroll', this.updateMenu);
+        window.removeEventListener('scroll', this.updateMenuPosition);
         window.removeEventListener('click', this.handleClick);
     }
 
-    handleResize() {
-        this.updateMenu();
+    handleResize = () => {
+        this.updateMenuPosition();
         if(this.state.inLg !== inLg()) {
             this.setState({
                 inLg: inLg()
@@ -58,19 +48,17 @@ class Main extends React.Component {
         }
     }
 
-    updateMenu() {
-        if(this.menuXYProvider != null) {
-            let xy = this.menuXYProvider();
-            this.setState({
-                menuXPos: xy[0],
-                menuYPos: xy[1],
-                menuXOffset: 0,
-                menuYOffset: 0
-            });
+    handleScroll = () => {
+        this.updateMenuPosition();
+    }
+
+    handleClick = () => {
+        if(inLg()) {
+            this.closeMenu();
         }
     }
 
-    handleCellClick(xyProvider, month, day) {
+    handleCellClick = (xyProvider, month, day) => {
         this.menuXYProvider = xyProvider;
         let xy = this.menuXYProvider();
         this.setState({
@@ -83,7 +71,19 @@ class Main extends React.Component {
         })
     }
 
-    handleMenuClose() {
+    updateMenuPosition = () => {
+        if(this.menuXYProvider != null) {
+            let xy = this.menuXYProvider();
+            this.setState({
+                menuXPos: xy[0],
+                menuYPos: xy[1],
+                menuXOffset: 0,
+                menuYOffset: 0
+            });
+        }
+    }
+
+    closeMenu = () => {
         this.menuXYProvider = null;
         this.setState({
             menuVisible: false,
@@ -91,13 +91,7 @@ class Main extends React.Component {
         });
     }
 
-    handleClick() {
-        if(inLg()) {
-            this.handleMenuClose();
-        }
-    }
-
-    updateMenuOffset(top, bottom) {
+    updateMenuOffset = (top, bottom) => {
         let newMenuXOffset = this.state.menuXOffset;
         let newMenuYOffset = this.state.menuYOffset;
 
@@ -117,15 +111,16 @@ class Main extends React.Component {
     }
 
     render() {
-        let title = (<h1 className="title">2021 in Pixels</h1>);
+        let title = (<h1 className="title mt-3 mb-3">2021 in Pixels</h1>);
         let colorSchemeList = (<ColorSchemeList
-            className={this.state.inLg ? "mx-auto w-75 color-scheme-list" : "mx-auto w-75 color-scheme-list"}
+            className={"mx-auto w-75"}
+            style={{ maxWidth: "500px" }}
             colorSchemes={this.props.options}
             changeColorSchemeOrder={this.props.changeColorSchemeOrder}
             editColorScheme={this.props.editColorScheme}
             addColorScheme={this.props.addColorScheme}
             deleteColorScheme={this.props.deleteColorScheme}
-            checkLabelAlreadyExists={this.props.checkLabelAlreadyExists}
+            checkLabelExists={this.props.checkLabelExists}
         />);
         let board = (<Board
             values={this.props.values}
@@ -179,12 +174,10 @@ class Main extends React.Component {
                         Math.max(this.state.currentlySelected[1], 0)
                     )]}
                     options={this.props.options}
-                    handleMenuSubmit={this.props.updateDay}
-                    handleMenuClose={this.handleMenuClose}
+                    updateBoardData={this.props.updateBoardData}
+                    closeMenu={this.closeMenu}
                 />
             </div>
         );
     }
 }
-
-export default Main;

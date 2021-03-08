@@ -14,6 +14,7 @@ import '../../../../css/Form.css'
 
 // TODO Determine good character max on label / way to display it if it goes over
 // TODO Maybe see if it goes over and then do ...
+// TODO Experiment with .text-truncate in Bootstrap
 export default class EditColorSchemeModal extends React.Component {
     constructor(props) {
         super(props);
@@ -21,14 +22,11 @@ export default class EditColorSchemeModal extends React.Component {
         this.state = {
             validated: false,
             label: "",
+            labelAlreadyExists: false,
             color: "#dddddd"
         };
 
         this.formRef = React.createRef();
-
-        this.onChangeLabel = this.onChangeLabel.bind(this);
-        this.onChangeColor = this.onChangeColor.bind(this);
-        this.handleSubmit = this.handleSubmit.bind(this);
     }
 
     componentDidUpdate(prevProps) {
@@ -54,29 +52,43 @@ export default class EditColorSchemeModal extends React.Component {
         }
     }
 
-    onChangeLabel(e) {
-        this.setState({
-            label: e.target.value
-        });
+    onChangeLabel = async (e) => {
+        let newLabel = e.target.value;
+
+        if(newLabel === this.props.label) {
+            this.setState({
+                label: newLabel,
+                labelAlreadyExists: false
+            });
+        }
+        else {
+            let labelAlreadyExists = await this.props.checkLabelExists(newLabel);
+            this.setState({
+                label: newLabel,
+                labelAlreadyExists: labelAlreadyExists
+            })
+        }
     }
 
-    onChangeColor(color) {
+    onChangeColor = (color) => {
         this.setState({
             color: color.hex
         })
     }
 
-    handleSubmit(e) {
+    handleSubmit = (e) => {
         e.preventDefault();
         e.stopPropagation();
+
+        if(this.state.labelAlreadyExists) return;
 
         this.setState({
             validated: true
         });
 
         if(this.formRef.current.checkValidity() === true) {
-            this.props.handleSubmit(this.props.colorScheme[3], this.state.label, this.state.color);
-            this.props.handleClose();
+            this.props.editColorScheme(this.props.colorScheme[3], this.state.label, this.state.color);
+            this.props.closeModal();
         }
     }
 
@@ -84,7 +96,7 @@ export default class EditColorSchemeModal extends React.Component {
         return (
             <Modal 
                 show={this.props.visible} 
-                onHide={this.props.handleClose}
+                onHide={this.props.closeModal}
                 size="md"
             >
                 <Modal.Header>
@@ -104,12 +116,13 @@ export default class EditColorSchemeModal extends React.Component {
                                         placeholder="Label"
                                         type="text"
                                         required
+                                        isInvalid={this.state.labelAlreadyExists}
                                         value={this.state.label}
                                         onChange={this.onChangeLabel}
                                     />
 
                                     <FormControl.Feedback type="invalid">
-                                        Please enter a label.
+                                        Label already taken / is empty.
                                     </FormControl.Feedback>
                                 </InputGroup>
                             </Form.Group>
@@ -125,7 +138,7 @@ export default class EditColorSchemeModal extends React.Component {
                     </Container>
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="danger" className="mr-auto" onClick={this.props.handleClose}>
+                    <Button variant="danger" className="mr-auto" onClick={this.props.closeModal}>
                         Cancel
                     </Button>
                     <Button variant="primary" onClick={this.handleSubmit}>

@@ -9,7 +9,6 @@ import Button from 'react-bootstrap/Button';
 import InputGroup from 'react-bootstrap/InputGroup';
 import { FaUser, FaLock } from 'react-icons/fa';
 
-import HTTPRequest from '../util/HTTPRequest';
 import withRedirect from '../util/react/WithRedirect';
 
 class AccountSettings extends Component {
@@ -24,17 +23,9 @@ class AccountSettings extends Component {
             newPassword: "",
             confirmNewPassword: "",
             updateFormValidated: false,
-            resetPasswordFormValidated: false,
+            changePasswordFormValidated: false,
             usernameTaken: false
         };
-
-        this.onChangeName = this.onChangeName.bind(this);
-        this.onChangeUsername = this.onChangeUsername.bind(this);
-        this.onChangePassword = this.onChangePassword.bind(this);
-        this.onChangeNewPassword = this.onChangeNewPassword.bind(this);
-        this.onChangeConfirmNewPassword = this.onChangeConfirmNewPassword.bind(this);
-        this.handleUpdateSubmit = this.handleUpdateSubmit.bind(this);
-        this.handlePasswordSubmit = this.handlePasswordSubmit.bind(this);
     }
 
     componentDidUpdate(prevProps) {
@@ -51,61 +42,51 @@ class AccountSettings extends Component {
                 newPassword: "",
                 confirmNewPassword: "",
                 updateFormValidated: false,
-                resetPasswordFormValidated: false,
+                changePasswordFormValidated: false,
                 usernameTaken: false
             });
         }
     }
 
-    onChangeName(e) {
+    onChangeName = (e) => {
         this.setState({
             name: e.target.value
         });
     }
 
-    async onChangeUsername(e) {
+    onChangeUsername = async (e) => {
         this.setState({
             username: e.target.value
         });
 
         let username = e.target.value;
         if(username !== "" && username !== this.props.username) {
-            try {
-                let res = await HTTPRequest.get("users/check-available/" + username);
-                this.setState({
-                    usernameTaken: (res.data === false)
-                });
-            }
-            catch(err) {
-                if(err.response !== undefined) {
-                    this.props.addAlert("danger", "Unknown Error", err.response);
-                }
-                else {
-                    this.props.addAlert("danger", "Unknown Error Has Occurred", "Please contact the developer to help fix this issue");
-                }
-            }
+            let usernameAvailable = await this.props.checkUsernameAvailable(username);
+            this.setState({
+                usernameTaken: !usernameAvailable
+            });
         }
     }
 
-    onChangePassword(e) {
+    onChangePassword = (e) => {
         this.setState({
             currentPassword: e.target.value
         });
     }
 
-    onChangeNewPassword(e) {
+    onChangeNewPassword = (e) => {
         this.setState({
             newPassword: e.target.value
         });
     }
 
-    onChangeConfirmNewPassword(e) {
+    onChangeConfirmNewPassword = (e) => {
         this.setState({
             confirmNewPassword: e.target.value
         });
     }
 
-    async handleUpdateSubmit(e) {
+    handleUpdateSubmit = async (e) => {
         e.preventDefault();
         e.stopPropagation();
 
@@ -120,30 +101,11 @@ class AccountSettings extends Component {
         });
 
         if(form.checkValidity() === true) {
-            const body = {
-                username: this.state.username,
-                name: this.state.name,
-            };
-
-            try {
-                await HTTPRequest.put("users", body);
-
-                this.props.addAlert("info", "Successfully Updated Account");
-                this.props.updateName(this.state.name, this.state.username);
-            }
-            catch(err) {
-                if(err.response !== undefined) {
-                    let response = err.response.data;
-                    this.props.addAlert("danger", "Unknown Error", response);
-                }
-                else {
-                    this.props.addAlert("danger", "Unknown Error Has Occurred", "Please contact the developer to help fix this issue");
-                }
-            }
+            this.props.updateAccountInfo(this.state.name, this.state.username);
         }
     }
 
-    async handlePasswordSubmit(e) {
+    handlePasswordSubmit = async (e) => {
         e.preventDefault();
         e.stopPropagation();
 
@@ -154,29 +116,11 @@ class AccountSettings extends Component {
         }
 
         this.setState({
-            resetPasswordFormValidated: true
+            changePasswordFormValidated: true
         });
 
         if(form.checkValidity() === true) {
-            const body = {
-                oldPassword: this.state.currentPassword,
-                newPassword: this.state.newPassword
-            };
-
-            try {
-                await HTTPRequest.post("users/change-password", body);
-
-                this.props.addAlert("info", "Successfully Changed Password");
-            }
-            catch(err) {
-                if(err.response !== undefined) {
-                    let response = err.response.data;
-                    this.props.addAlert("danger", "Unknown Error", response);
-                }
-                else {
-                    this.props.addAlert("danger", "Unknown Error Has Occurred", "Please contact the developer to help fix this issue");
-                }
-            }
+            this.props.changePassword(this.state.currentPassword, this.state.newPassword);
         }
     }
 
@@ -253,12 +197,12 @@ class AccountSettings extends Component {
                             <Col>
                                 <Form 
                                     noValidate
-                                    validated={this.state.resetPasswordFormValidated}
+                                    validated={this.state.changePasswordFormValidated}
                                     onSubmit={this.handlePasswordSubmit}
                                     className="w-75 mx-auto d-flex flex-column h-100"
                                 >
                                     <Form.Label as="h5">
-                                        Reset Password
+                                        Change Password
                                     </Form.Label>
 
                                     <Form.Group>
@@ -331,7 +275,7 @@ class AccountSettings extends Component {
                                         block
                                         className="mt-auto"
                                     >
-                                        Reset Password
+                                        Change Password
                                     </Button>
                                 </Form>
                             </Col>

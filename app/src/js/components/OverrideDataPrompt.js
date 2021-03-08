@@ -15,9 +15,6 @@ export let OverrideOption = Object.freeze({
 });
 
 export class OverrideDataPrompt extends React.Component {
-    // constructor(props) {
-    //     super(props);
-    // }
 
     render() {
         return (
@@ -42,7 +39,7 @@ export class OverrideDataPrompt extends React.Component {
                                             className="mx-auto d-block"
                                             onClick={
                                                 () => {
-                                                    this.props.handleSubmit(OverrideOption.REPLACE_CURRENT);
+                                                    this.props.handleDataOverride(OverrideOption.REPLACE_CURRENT);
                                                 }
                                             }
                                         >
@@ -54,7 +51,7 @@ export class OverrideDataPrompt extends React.Component {
                                             className="mx-auto d-block"
                                             onClick={
                                                 () => {
-                                                    this.props.handleSubmit(OverrideOption.REPLACE_ONLINE);
+                                                    this.props.handleDataOverride(OverrideOption.REPLACE_ONLINE);
                                                 }
                                             }
                                         >
@@ -78,7 +75,7 @@ export class OverrideDataPrompt extends React.Component {
                                             className="mx-auto d-block"
                                             onClick={
                                                 () => {
-                                                    this.props.handleSubmit(OverrideOption.MERGE_CURRENT);
+                                                    this.props.handleDataOverride(OverrideOption.MERGE_CURRENT);
                                                 }
                                             }
                                         >
@@ -90,7 +87,7 @@ export class OverrideDataPrompt extends React.Component {
                                             className="mx-auto d-block"
                                             onClick={
                                                 () => {
-                                                    this.props.handleSubmit(OverrideOption.MERGE_ONLINE);
+                                                    this.props.handleDataOverride(OverrideOption.MERGE_ONLINE);
                                                 }
                                             }
                                         >

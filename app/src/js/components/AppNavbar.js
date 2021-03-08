@@ -4,16 +4,11 @@ import Nav from 'react-bootstrap/Nav'
 import { NavLink } from 'react-router-dom';
 import Button from 'react-bootstrap/Button';
 
-import HTTPRequest from '../util/HTTPRequest';
 import withRedirect from '../util/react/WithRedirect';
 
 import '../../css/Navbar.css'
 
 class AppNavbar extends React.Component {
-
-    // constructor(props) {
-    //     super(props);
-    // }
 
     render() {
         let activeStyle = {
@@ -26,30 +21,16 @@ class AppNavbar extends React.Component {
                     className="navbar-button"
                     key="account"
                     onClick={() => {
-                            this.props.setRedirect("/settings");
-                        }
-                    }
+                        this.props.setRedirect("/settings");
+                    }}
                 >
                 {this.props.username}
             </Button>));
             loginArea.push((<Button
                     className="navbar-button"
                     key="logout"
-                    onClick={async () => { 
-                        try {
-                            await HTTPRequest.post("logout");
-                            this.props.addAlert("info", "Successfully Logged Out", "You are now signed out");
-                        }
-                        catch(err) {
-                            if(err.response !== undefined) {
-                                let response = err.response.data;
-                                this.props.addAlert("danger", "Unknown Error", response);
-                            }
-                            else {
-                                this.props.addAlert("danger", "Unknown Error Has Occurred", "Please contact the developer to help fix this issue.");
-                            }
-                        }
-                        this.props.setLoggedIn(false);
+                    onClick={() => {
+                        this.props.logout();
                     }}
                 >
                     Logout
