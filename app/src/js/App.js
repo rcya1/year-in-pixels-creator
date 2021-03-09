@@ -1,5 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Route } from "react-router-dom";
+import Button from "react-bootstrap/Button";
 import { AlertContainer } from "react-bs-notifier";
 
 // Main Components
@@ -610,6 +611,12 @@ class App extends React.Component {
             alerts: alerts
         });
     }
+
+    clearAllAlerts = () => {
+        this.setState({
+            alerts: []
+        });
+    }
     
     render() {
         return (
@@ -659,6 +666,12 @@ class App extends React.Component {
                     handleDataOverride={this.handleDataOverride}
                 />
                 <AlertContainer position="bottom-left">
+                    {   
+                        this.state.alerts.length > 0 && 
+                        <Button className="mb-1" variant="danger" onClick={this.clearAllAlerts}>
+                            Clear All Alerts
+                        </Button>
+                    }
                     {
                         this.state.alerts.map((alert) => {
                             return <StyledAlert
