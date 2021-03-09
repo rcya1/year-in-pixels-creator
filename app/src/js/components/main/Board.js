@@ -1,8 +1,8 @@
 import React from 'react';
 
-import Cell from './Cell';
-import { ABBR_MONTH_NAMES, DAYS_PER_MONTH } from './Constants'
-import { getIndex } from '../../util/DateUtils'
+import Cell from 'js/components/main/Cell';
+import { ABBR_MONTH_NAMES, DAYS_PER_MONTH } from 'js/components/main/Constants'
+import { getIndex } from 'js/util/DateUtils'
 
 // TODO Make an option for showing it in month form
 export default class Board extends React.Component {

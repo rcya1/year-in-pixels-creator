@@ -9,7 +9,7 @@ import Button from 'react-bootstrap/Button';
 import InputGroup from 'react-bootstrap/InputGroup';
 import { FaUser, FaLock } from 'react-icons/fa';
 
-import withRedirect from '../util/react/WithRedirect';
+import withRedirect from 'js/util/react/WithRedirect';
 
 class AccountSettings extends Component {
 

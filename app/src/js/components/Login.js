@@ -8,9 +8,9 @@ import InputGroup from 'react-bootstrap/InputGroup';
 import { FaUser, FaLock } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 
-import withRedirect from '../util/react/WithRedirect';
+import withRedirect from 'js/util/react/WithRedirect';
 
-import '../../css/Form.css';
+import 'css/Form.css';
 
 class CreateUser extends Component {
     constructor(props) {

@@ -3,11 +3,11 @@ import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 
-import Board from './Board'
-import CellMenu from './menu/CellMenu';
-import ColorSchemeList from './color-scheme/ColorSchemeList';
-import { inLg } from '../../util/BootstrapUtils';
-import { getIndex } from '../../util/DateUtils';
+import Board from 'js/components/main/Board'
+import CellMenu from 'js/components/main/menu/CellMenu';
+import ColorSchemeList from 'js/components/main/color-scheme/ColorSchemeList';
+import { inLg } from 'js/util/BootstrapUtils';
+import { getIndex } from 'js/util/DateUtils';
 
 export default class YearInPixels extends React.Component {
     constructor(props) {

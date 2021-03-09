@@ -9,9 +9,9 @@ import FormControl from 'react-bootstrap/FormControl';
 import Card from 'react-bootstrap/Card';
 import Modal from 'react-bootstrap/Modal';
 
-import { inLg } from '../../../util/BootstrapUtils';
-import { FULL_MONTH_NAMES } from '../Constants'
-import { getOrdinalEnding } from '../../../util/DateUtils';
+import { inLg } from 'js/util/BootstrapUtils';
+import { FULL_MONTH_NAMES } from 'js/components/main/Constants'
+import { getOrdinalEnding } from 'js/util/DateUtils';
 
 let selectStyles = require('./SelectStyle').selectStyles;
 
