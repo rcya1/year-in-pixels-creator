@@ -16,9 +16,18 @@ export default class AddColorSchemeButton extends React.Component {
 
     }
 
+    getIconStyle(disabled) {
+        return {
+            fontSize: "1.5rem",
+            cursor: disabled ? "" : "pointer",
+            color: "#6c757d",
+            opacity: disabled ? ".65" : "1.0",
+        }
+    }
+
     render() {
         let Icon;
-        if(this.state.hover) {
+        if(this.state.hover && !this.props.disabled) {
             Icon = BsPlusSquareFill;
         }
         else {
@@ -29,12 +38,8 @@ export default class AddColorSchemeButton extends React.Component {
             <Icon
                 onMouseEnter={() => this.setState({ hover: true })}
                 onMouseLeave={() => this.setState({ hover: false })}
-                onClick={this.props.handleClick}
-                style={{
-                    fontSize: "1.5rem",
-                    cursor: "pointer",
-                    color: "#6c757d"
-                }}
+                onClick={this.props.disabled ? null : this.props.handleClick}
+                style={this.getIconStyle(this.props.disabled)}
             />
         );
     }

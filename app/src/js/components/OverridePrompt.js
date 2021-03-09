@@ -14,12 +14,17 @@ export let OverrideOption = Object.freeze({
     MERGE_ONLINE: "MERGE_ONLINE"
 });
 
-export class OverrideDataPrompt extends React.Component {
+export let PromptStatus = Object.freeze({
+    DATA: "DATA",
+    NONE: "NONE"
+});
+
+export class OverridePrompt extends React.Component {
 
     render() {
         return (
             <Modal 
-                show={this.props.visible} 
+                show={this.props.status !== PromptStatus.NONE} 
                 backdrop="static"
                 size="md"
             >

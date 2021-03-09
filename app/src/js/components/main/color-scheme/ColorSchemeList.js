@@ -98,7 +98,13 @@ export default class ColorSchemeList extends React.Component {
                                         ref={provided.innerRef}
                                     >
                                         {this.props.colorSchemes.map((colorScheme, index) => {
-                                            return (<Draggable key={colorScheme[3]} draggableId={colorScheme[3]} index={index}>
+                                            return (
+                                            <Draggable 
+                                                key={colorScheme[3]}
+                                                draggableId={colorScheme[3]}
+                                                index={index}
+                                                isDragDisabled={!this.props.loggedIn}
+                                            >
                                                 {(provided, snapshot) => (
                                                     <div
                                                         ref={provided.innerRef}
@@ -116,6 +122,7 @@ export default class ColorSchemeList extends React.Component {
                                                                     className="ml-auto" 
                                                                     variant="outline-secondary"
                                                                     size="sm"
+                                                                    disabled={!this.props.loggedIn}
                                                                     onClick={
                                                                         () => {
                                                                             this.openEditColorSchemeModal(colorScheme);
@@ -125,6 +132,7 @@ export default class ColorSchemeList extends React.Component {
                                                                     Edit
                                                                 </Button>
                                                                 <DeleteColorSchemeButton
+                                                                    disabled={!this.props.loggedIn}
                                                                     handleClick={
                                                                         () => {
                                                                             this.props.deleteColorScheme(colorScheme[3]);
@@ -144,6 +152,7 @@ export default class ColorSchemeList extends React.Component {
                         </DragDropContext>
 
                         <AddColorSchemeButton
+                            disabled={!this.props.loggedIn}
                             handleClick={this.openAddColorSchemeModal}
                         />
                     </Card.Body>

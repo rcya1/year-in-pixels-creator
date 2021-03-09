@@ -12,14 +12,14 @@ import AccountSettings from './components/AccountSettings'
 
 // Utility
 import HTTPRequest from './util/HTTPRequest';
-import { OverrideDataPrompt, OverrideOption } from './components/OverrideDataPrompt'
+import { OverridePrompt, OverrideOption, PromptStatus } from './components/OverridePrompt'
 import { getIndex } from './util/DateUtils';
 import { defaultOptions } from './util/ColorUtils';
 import { handleError } from './util/ErrorUtils';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-let StyledAlert = require('./AlertStyle').StyledAlert;
+let StyledAlert = require('./components/AlertStyle').StyledAlert;
 
 class App extends React.Component {
     
@@ -37,7 +37,7 @@ class App extends React.Component {
             options: defaultOptions,
             
             alerts: [],
-            overrideDataPromptVisible: false
+            overrideDataPromptStatus: PromptStatus.NONE
         }
 
         this.onlineValues = null;
@@ -106,7 +106,7 @@ class App extends React.Component {
         // display override prompt to see how to reconcile changes
         if(versionsDifferent && currentModified) {
             this.setState({
-                overrideDataPromptVisible: true
+                overrideDataPromptStatus: PromptStatus.DATA
             });
             this.onlineValues = onlineValues;
             this.onlineComments = onlineComments;
@@ -352,7 +352,7 @@ class App extends React.Component {
         this.onlineComments = null;
 
         this.setState({
-            overrideDataPromptVisible: false
+            overrideDataPromptStatus: PromptStatus.NONE
         });
     }
 
@@ -661,9 +661,10 @@ class App extends React.Component {
                         changePassword={this.changePassword}
                     />
                 </Route>
-                <OverrideDataPrompt
-                    visible={this.state.overrideDataPromptVisible}
+                <OverridePrompt
+                    status={this.state.overrideDataPromptStatus}
                     handleDataOverride={this.handleDataOverride}
+                    handleColorSchemeOverride={this.handleColorSchemeOverride}
                 />
                 <AlertContainer position="bottom-left">
                     {   

@@ -116,6 +116,7 @@ export default class YearInPixels extends React.Component {
             className={"mx-auto w-75"}
             style={{ maxWidth: "500px" }}
             colorSchemes={this.props.options}
+            loggedIn={this.props.loggedIn}
             changeColorSchemeOrder={this.props.changeColorSchemeOrder}
             editColorScheme={this.props.editColorScheme}
             addColorScheme={this.props.addColorScheme}
