@@ -4,6 +4,8 @@ import Button from "react-bootstrap/Button"
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Card from 'react-bootstrap/Card';
+import OverlayTrigger from 'react-bootstrap/OverlayTrigger'
+import Tooltip from 'react-bootstrap/Tooltip'
 
 import AddColorSchemeModal from './AddColorSchemeModal';
 import EditColorSchemeModal from './EditColorSchemeModal';
@@ -82,6 +84,57 @@ export default class ColorSchemeList extends React.Component {
         });
     }
 
+    addOverlay = (component) => {
+        return (<OverlayTrigger
+            overlay={<Tooltip id="tooltip-disabled">Create an account to use custom color schemes!</Tooltip>}
+        >
+            {component}
+        </OverlayTrigger>);
+    }
+
+    createEditButton = (colorScheme) => {
+        let button = (<Button 
+            className="ml-auto" 
+            variant="outline-secondary"
+            size="sm"
+            disabled={!this.props.loggedIn}
+            onClick={
+                () => {
+                    this.openEditColorSchemeModal(colorScheme);
+                }
+            }
+        >
+            Edit
+        </Button>);
+
+        if(this.props.loggedIn) return button;
+        return this.addOverlay(button);
+    }
+
+    createDeleteButton = (colorScheme) => {
+        let button = (<DeleteColorSchemeButton
+            disabled={!this.props.loggedIn}
+            handleClick={
+                () => {
+                    this.props.deleteColorScheme(colorScheme[3]);
+                }
+            }
+        />);
+
+        if(this.props.loggedIn) return button;
+        return this.addOverlay(button);
+    }
+
+    createAddButton = () => {
+        let button = (<AddColorSchemeButton
+            disabled={!this.props.loggedIn}
+            handleClick={this.openAddColorSchemeModal}
+        />);
+
+        if(this.props.loggedIn) return button;
+        return this.addOverlay(button);
+    }
+
     render() {
         return (
             <div>
@@ -118,27 +171,8 @@ export default class ColorSchemeList extends React.Component {
                                                                 <p className="mr-auto my-auto" style={getItemLabelStyle()}>
                                                                     {colorScheme[3]}
                                                                 </p>
-                                                                <Button 
-                                                                    className="ml-auto" 
-                                                                    variant="outline-secondary"
-                                                                    size="sm"
-                                                                    disabled={!this.props.loggedIn}
-                                                                    onClick={
-                                                                        () => {
-                                                                            this.openEditColorSchemeModal(colorScheme);
-                                                                        }
-                                                                    }
-                                                                >
-                                                                    Edit
-                                                                </Button>
-                                                                <DeleteColorSchemeButton
-                                                                    disabled={!this.props.loggedIn}
-                                                                    handleClick={
-                                                                        () => {
-                                                                            this.props.deleteColorScheme(colorScheme[3]);
-                                                                        }
-                                                                    }
-                                                                />
+                                                                {this.createEditButton(colorScheme)}
+                                                                {this.createDeleteButton(colorScheme)}
                                                             </Row>
                                                         </Container>
                                                     </div>
@@ -150,11 +184,7 @@ export default class ColorSchemeList extends React.Component {
                                 )}
                             </Droppable>
                         </DragDropContext>
-
-                        <AddColorSchemeButton
-                            disabled={!this.props.loggedIn}
-                            handleClick={this.openAddColorSchemeModal}
-                        />
+                        {this.createAddButton()}
                     </Card.Body>
                 </Card>
 
