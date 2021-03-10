@@ -32,6 +32,7 @@ class App extends React.Component {
             username: "",
 
             year: new Date().getFullYear(),
+            years: [new Date().getFullYear()],
             values: Array(12 * 31).fill(0),
             comments: Array(12 * 31).fill(""),
             options: defaultOptions,
@@ -65,8 +66,9 @@ class App extends React.Component {
         if(this.state.loggedIn) {
             try {
                 this.loadName();
-                this.syncValuesAndComments();
                 this.syncColorSchemes();
+                await this.loadYears(); // this must finish before loading values and comments
+                this.syncValuesAndComments();
             }
             catch(err) {
                 handleError(err, this.addAlert);
@@ -82,6 +84,25 @@ class App extends React.Component {
         this.setState({
             name: name,
             username: username
+        });
+    }
+
+    loadYears = async () => {
+        const body = {
+            includeData: false
+        };
+        let res = await HTTPRequest.get("data", body);
+        console.log(res);
+
+        let years = [];
+        for(let i in res.data) {
+            years.push(res.data[i].year);
+        }
+        years.sort();
+
+        this.setState({
+            year: years[years.length - 1],
+            years: years
         });
     }
 
@@ -279,6 +300,48 @@ class App extends React.Component {
         catch(err) {
             handleError(err, this.addAlert);
         }
+    }
+
+    changeYear = async (newYear) => {
+        // wipe data to prevent any overriding issues
+        this.setState({
+            year: newYear,
+            values: Array(12 * 31).fill(0),
+            comments: Array(12 * 31).fill(""),
+        }, () => {
+            // make sure the state is updated before we start getting new year
+            try {
+                this.syncValuesAndComments();
+                this.addAlert("info", "Successfully Changed Year");
+            }
+            catch(err) {
+                handleError(err, this.addAlert);
+            }
+        });
+    }
+
+    addYear = async (newYear) => {
+        if(this.state.loggedIn) {
+            try {
+                await HTTPRequest.post("data/" + newYear);
+                this.addAlert("info", "Successfully Added Year");
+            }
+            catch(err) {
+                handleError(err, this.addAlert);
+            }
+            this.changeYear(newYear);       
+            this.loadYears();
+        }
+    }
+    
+    checkYearExists = async (year) => {
+        for(let i = 0; i < this.state.years.length; i++) {
+            if(String(this.state.years[i]) === String(year)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     handleDataOverride = async (overrideOption) => {
@@ -629,6 +692,12 @@ class App extends React.Component {
                 <Route path="/" exact>
                     <YearInPixels
                         loggedIn={this.state.loggedIn}
+                        year={this.state.year}
+                        years={this.state.years}
+                        changeYear={this.changeYear}
+                        addYear={this.addYear}
+                        checkYearExists={this.checkYearExists}
+                        showAddYearModal={this.showAddYearModal}
                         values={this.state.values}
                         comments={this.state.comments}
                         options={this.state.options}

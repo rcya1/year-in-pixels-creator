@@ -57,6 +57,14 @@ router.route('/').put(asyncHandler(async(req, res) => {
     log(res, Status.SUCCESS, "User updated.");
 }));
 
+/**
+ * POST
+ * Changes the user's password
+ * 
+ * Body Content Required
+ *  oldPassword - original password before changing
+ *  newPassword - new password after changing
+ */
 router.route('/change-password').post(asyncHandler(async(req, res) => {
     if(!req.isAuthenticated()) {
         log(res, Status.ERROR, "User is not logged in");

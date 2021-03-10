@@ -1,6 +1,6 @@
 import React from 'react';
 
-import Cell from 'js/components/main/Cell';
+import Cell from './Cell';
 import { ABBR_MONTH_NAMES, DAYS_PER_MONTH } from 'js/components/main/Constants'
 import { getIndex } from 'js/util/DateUtils'
 
@@ -34,7 +34,7 @@ export default class Board extends React.Component {
 
         return (
             <div>
-                <table className="mt-5 mx-auto mb-4">
+                <table className="mt-3 mx-auto mb-4">
                     <thead className="text-center" style={{fontSize: "0.9rem"}}>
                         <tr>
                             <th></th>

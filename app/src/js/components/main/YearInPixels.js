@@ -3,9 +3,12 @@ import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 
-import Board from 'js/components/main/Board'
-import CellMenu from 'js/components/main/menu/CellMenu';
-import ColorSchemeList from 'js/components/main/color-scheme/ColorSchemeList';
+import Board from './board/Board'
+import CellMenu from './menu/CellMenu';
+import ColorSchemeList from './color-scheme/ColorSchemeList';
+import YearSelector from './year-selector/YearSelector';
+import AddYearModal from './year-selector/AddYearModal';
+
 import { inLg } from 'js/util/BootstrapUtils';
 import { getIndex } from 'js/util/DateUtils';
 
@@ -19,6 +22,7 @@ export default class YearInPixels extends React.Component {
             menuXOffset: 0,
             menuYOffset: 0,
             menuVisible: false,
+            showAddYearModal: false,
             currentlySelected: [-1, -1],
 
             inLg: inLg()
@@ -110,8 +114,20 @@ export default class YearInPixels extends React.Component {
         });
     }
 
+    showAddYearModal = () => {
+        this.setState({
+            showAddYearModal: true
+        });
+    }
+
+    closeAddYearModal = () => {
+        this.setState({
+            showAddYearModal: false
+        });
+    }
+
     render() {
-        let title = (<h1 className="title mt-3 mb-3">2021 in Pixels</h1>);
+        let title = (<h1 className="title mt-3">2021 in Pixels</h1>);
         let colorSchemeList = (<ColorSchemeList
             className={"mx-auto w-75"}
             style={{ maxWidth: "500px" }}
@@ -129,16 +145,24 @@ export default class YearInPixels extends React.Component {
             options={this.props.options}
             currentlySelected={this.state.currentlySelected}
         />);
+        let yearSelector = (<YearSelector
+            year={String(this.props.year)}
+            years={this.props.years}
+            changeYear={this.props.changeYear}
+            showAddYearModal={this.showAddYearModal}
+            className="mt-4 mb-4 mx-auto w-50"
+        />);
 
         let content = undefined;
         if(inLg()) {
             content = (<Container fluid>
                 <Row>
                     <Col className="text-center">
+                        { title }
                         { board }
                     </Col>
                     <Col className="text-center">
-                        { title }
+                        { yearSelector }
                         { colorSchemeList }
                     </Col>
                 </Row>
@@ -149,6 +173,7 @@ export default class YearInPixels extends React.Component {
                 <Row>
                     <Col className="text-center">
                         { title }
+                        { yearSelector }
                         { board }
                         { colorSchemeList }
                     </Col>
@@ -177,6 +202,12 @@ export default class YearInPixels extends React.Component {
                     options={this.props.options}
                     updateBoardData={this.props.updateBoardData}
                     closeMenu={this.closeMenu}
+                />
+                <AddYearModal
+                    visible={this.state.showAddYearModal}
+                    addYear={this.props.addYear}
+                    checkYearExists={this.props.checkYearExists}
+                    closeModal={this.closeAddYearModal}
                 />
             </div>
         );

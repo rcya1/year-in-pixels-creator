@@ -7,6 +7,9 @@ let {log, Status} = require('./route_logger');
 /**
  * GET
  * Returns an array of JSON objects with all of the color/comments data for the currently logged in user
+ * 
+ * Body Content Required:
+ *  includeData - whether or not to include the full color scheme and data parameters
  */
 router.route('/').get(asyncHandler(async(req, res) => {
     if(!req.isAuthenticated()) {
@@ -16,6 +19,14 @@ router.route('/').get(asyncHandler(async(req, res) => {
 
     let user = await UserSchema.findById(req.user._id)
         .populate('data');
+
+    if(!req.body.includeData) {
+        for(let i in user.data) {
+            user.data[i].values = null;
+            user.data[i].comments = null;
+        }
+    }
+
     res.json(user.data);
 }));
 /**

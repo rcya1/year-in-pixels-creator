@@ -140,7 +140,7 @@ export default class ColorSchemeList extends React.Component {
             <div>
                 <Card className={this.props.className}>
                     <Card.Header>
-                        <h4 className="text-center">Colors</h4>
+                        <h3 className="text-center">Colors</h3>
                     </Card.Header>
                     <Card.Body>
                         <DragDropContext onDragEnd={this.onDragEnd}>

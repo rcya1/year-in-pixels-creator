@@ -13,7 +13,7 @@ import { inLg } from 'js/util/BootstrapUtils';
 import { FULL_MONTH_NAMES } from 'js/components/main/Constants'
 import { getOrdinalEnding } from 'js/util/DateUtils';
 
-let selectStyles = require('./SelectStyle').selectStyles;
+let selectStyles = require('./MenuSelectStyle').selectStyles;
 
 // TODO Look into: https://stackoverflow.com/questions/8328886/sticky-top-div-with-absolute-positioning
 // and other position: sticky things
