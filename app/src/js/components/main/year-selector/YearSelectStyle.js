@@ -13,8 +13,11 @@ export const selectStyles = {
     }),
     option: (styles, { data, isDisabled, isFocused, isSelected }) => {
         let backgroundColor = chroma('#FFF').css();
-        if(isFocused) {
+        if(isSelected) {
             backgroundColor = chroma('#DDD').css();
+        }
+        else if(isFocused) {
+            backgroundColor = chroma('#DDD').alpha(0.6).css();
         }
         return {
             ...styles,
@@ -23,5 +26,5 @@ export const selectStyles = {
             fontSize: '1.0rem',
             maxWidth: "250px"
         };
-    }
+    },
 };

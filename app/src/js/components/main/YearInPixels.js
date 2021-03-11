@@ -127,12 +127,12 @@ export default class YearInPixels extends React.Component {
     }
 
     render() {
-        let title = (<h1 className="title mt-3">2021 in Pixels</h1>);
+        let title = (<h1 className="title mt-3">{this.props.year + " in Pixels"}</h1>);
         let colorSchemeList = (<ColorSchemeList
             className={"mx-auto w-75"}
             style={{ maxWidth: "500px" }}
             colorSchemes={this.props.options}
-            loggedIn={this.props.loggedIn}
+            disabled={!this.props.loggedIn}
             changeColorSchemeOrder={this.props.changeColorSchemeOrder}
             editColorScheme={this.props.editColorScheme}
             addColorScheme={this.props.addColorScheme}
@@ -148,6 +148,7 @@ export default class YearInPixels extends React.Component {
         let yearSelector = (<YearSelector
             year={String(this.props.year)}
             years={this.props.years}
+            disabled={!this.props.loggedIn}
             changeYear={this.props.changeYear}
             showAddYearModal={this.showAddYearModal}
             className="mt-4 mb-4 mx-auto w-50"

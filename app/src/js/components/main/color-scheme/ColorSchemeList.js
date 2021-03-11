@@ -97,7 +97,7 @@ export default class ColorSchemeList extends React.Component {
             className="ml-auto" 
             variant="outline-secondary"
             size="sm"
-            disabled={!this.props.loggedIn}
+            disabled={this.props.disabled}
             onClick={
                 () => {
                     this.openEditColorSchemeModal(colorScheme);
@@ -107,13 +107,13 @@ export default class ColorSchemeList extends React.Component {
             Edit
         </Button>);
 
-        if(this.props.loggedIn) return button;
+        if(!this.props.disabled) return button;
         return this.addOverlay(button);
     }
 
     createDeleteButton = (colorScheme) => {
         let button = (<DeleteColorSchemeButton
-            disabled={!this.props.loggedIn}
+            disabled={this.props.disabled}
             handleClick={
                 () => {
                     this.props.deleteColorScheme(colorScheme[3]);
@@ -121,17 +121,17 @@ export default class ColorSchemeList extends React.Component {
             }
         />);
 
-        if(this.props.loggedIn) return button;
+        if(!this.props.disabled) return button;
         return this.addOverlay(button);
     }
 
     createAddButton = () => {
         let button = (<AddColorSchemeButton
-            disabled={!this.props.loggedIn}
+            disabled={this.props.disabled}
             handleClick={this.openAddColorSchemeModal}
         />);
 
-        if(this.props.loggedIn) return button;
+        if(!this.props.disabled) return button;
         return this.addOverlay(button);
     }
 
@@ -156,7 +156,7 @@ export default class ColorSchemeList extends React.Component {
                                                 key={colorScheme[3]}
                                                 draggableId={colorScheme[3]}
                                                 index={index}
-                                                isDragDisabled={!this.props.loggedIn}
+                                                isDragDisabled={this.props.disabled}
                                             >
                                                 {(provided, snapshot) => (
                                                     <div

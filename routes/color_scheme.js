@@ -194,12 +194,13 @@ router.route("/change-orderings").post(asyncHandler(async(req, res) => {
 
     if(req.body.indices !== undefined) {
         let returnValue = undefined;
+        let year = parseInt(req.body.year);
         for(let i in user.data) {
             for(let d = 0; d < 12 * 31; d++) {
                 user.data[i].values.set(d, req.body.indices.indexOf(user.data[i].values[d] - 1) + 1);
             }
             await user.data[i].save();
-            if(user.data[i].year === req.body.year) {
+            if(user.data[i].year === year) {
                 returnValue = user.data[i].values;
             }
         }
