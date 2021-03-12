@@ -51,11 +51,11 @@ class App extends React.Component {
 
             this.setState({
                 loggedIn: res.data
+            }, () => {
+                if(res.data === true) {
+                    this.syncData();
+                }
             });
-
-            if(res.data === true) {
-                this.syncData();
-            }
         }
         catch(err) {
             handleError(err, this.addAlert);
@@ -88,22 +88,29 @@ class App extends React.Component {
     }
 
     loadYears = async () => {
-        const body = {
-            includeData: false
-        };
-        let res = await HTTPRequest.get("data", body);
-        console.log(res);
+        if(this.state.loggedIn) {
+            const body = {
+                includeData: false
+            };
+            let res = await HTTPRequest.get("data", body);
 
-        let years = [];
-        for(let i in res.data) {
-            years.push(res.data[i].year);
+            let years = [];
+            let currentYearIncluded = false;
+            for(let i in res.data) {
+                years.push(res.data[i].year);
+                if(String(res.data[i].year) === String(this.state.year)) {
+                    currentYearIncluded = true;
+                }
+            }
+            years.sort();
+
+            return new Promise((resolve) => {
+                this.setState({
+                    year: currentYearIncluded ? this.state.year : years[years.length - 1],
+                    years: years
+                }, resolve);
+            });
         }
-        years.sort();
-
-        this.setState({
-            year: years[years.length - 1],
-            years: years
-        });
     }
 
     syncValuesAndComments = async () => {
@@ -213,10 +220,12 @@ class App extends React.Component {
                 loggedIn: true,
                 name: name,
                 username: username
+            }, async () => {
+                this.addAlert("info", "Successfully Registered");
+                this.syncColorSchemes();
+                await this.addYear(this.state.year);
+                this.uploadValuesAndComments();
             });
-            this.addAlert("info", "Successfully Registered");
-            this.uploadValuesAndComments();
-            this.syncColorSchemes();
         }
         catch(err) {
             handleError(err, this.addAlert, [["UserExistsError", "User Already Exists"]]);
@@ -229,8 +238,6 @@ class App extends React.Component {
     uploadValuesAndComments = async () => {
         if(this.state.loggedIn) {
             try {
-                await HTTPRequest.post("data/" + this.state.year);
-                
                 const body = {
                     values: this.state.values,
                     comments: this.state.comments
@@ -308,10 +315,10 @@ class App extends React.Component {
             year: newYear,
             values: Array(12 * 31).fill(0),
             comments: Array(12 * 31).fill(""),
-        }, () => {
+        }, async () => {
             // make sure the state is updated before we start getting new year
             try {
-                this.syncValuesAndComments();
+                await this.syncValuesAndComments();
                 this.addAlert("info", "Successfully Changed Year");
             }
             catch(err) {
@@ -329,8 +336,8 @@ class App extends React.Component {
             catch(err) {
                 handleError(err, this.addAlert);
             }
-            this.changeYear(newYear);       
-            this.loadYears();
+            await this.changeYear(newYear);
+            await this.loadYears();
         }
     }
     
@@ -430,7 +437,7 @@ class App extends React.Component {
             values: valuesCopy,
             comments: commentsCopy
         });
-
+        
         if(this.state.loggedIn) {
             try {
                 const body = {
