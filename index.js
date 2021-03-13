@@ -5,6 +5,7 @@ const loginRouter = require('./routes/login');
 const usersRouter = require('./routes/users');
 const colorSchemeRouter = require('./routes/color_scheme');
 const dataRouter = require('./routes/data');
+const settingsRouter = require('./routes/settings');
 const bodyParser = require('body-parser');
 const expressSession = require('express-session');
 const passport = require('passport');
@@ -76,6 +77,7 @@ app.use('/', loginRouter);
 app.use('/users', usersRouter);
 app.use('/color-schemes', colorSchemeRouter);
 app.use('/data', dataRouter);
+app.use('/settings', settingsRouter);
 
 // Serve frontend
 app.use(express.static('app/build'));

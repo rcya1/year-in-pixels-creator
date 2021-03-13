@@ -10,8 +10,14 @@ function validateNonZeroLength(string) {
     return string.length > 0;
 }
 
+function validateBoolean(string) {
+    let lower = string.toLowerCase();
+    return lower === "true" || lower === "false";
+}
+
 module.exports = {
     validateDataLength: validateDataLength,
     validateColorValue: validateColorValue,
-    validateNonZeroLength: validateNonZeroLength
+    validateNonZeroLength: validateNonZeroLength,
+    validateBoolean: validateBoolean
 };

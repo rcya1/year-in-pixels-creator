@@ -57,8 +57,7 @@ export default class YearSelector extends React.Component {
         select = this.props.disabled ? this.addOverlay(select) : select;
 
         return (
-        <Container
-            {...this.props}>
+        <Container {...this.props}>
             <Row>
                 <Col className="d-flex justify-content-center"
                 >

@@ -2,6 +2,7 @@ const router = require('express').Router();
 let UserSchema = require('../models/user.model');
 let ColorSchemeSchema = require('../models/color_scheme.model');
 let DataSchema = require('../models/data.model');
+let SettingsSchema = require('../models/settings.model');
 const passport = require('passport');
 const asyncHandler = require('express-async-handler');
 let {log, Status} = require('./route_logger');
@@ -11,7 +12,7 @@ let {log, Status} = require('./route_logger');
  * Returns all of the user data in JSON for the currently logged in user
  * 
  * Body Content Required:
- *  includeData - whether or not to include the full color scheme and data parameters
+ *  includeData - whether or not to include the full color scheme and data and settings parameters
  */
 router.route('/').get(asyncHandler(async(req, res) => {
     if(!req.isAuthenticated()) {
@@ -23,7 +24,8 @@ router.route('/').get(asyncHandler(async(req, res) => {
     if(req.body.includeData) {
         user = await UserSchema.findById(req.user._id)
             .populate("colorSchemes")
-            .populate("data");
+            .populate("data")
+            .populate("settings");
     }
     else {
         user = await UserSchema.findById(req.user._id);

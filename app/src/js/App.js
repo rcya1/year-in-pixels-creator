@@ -8,14 +8,16 @@ import AppNavbar from './components/AppNavbar'
 import YearInPixels from './components/main/YearInPixels'
 import Register from './components/Register'
 import Login from './components/Login'
-import AccountSettings from './components/AccountSettings'
+import Settings from './components/settings/Settings'
 
 // Utility
 import HTTPRequest from './util/HTTPRequest';
 import { OverridePrompt, OverrideOption, PromptStatus } from './components/OverridePrompt'
 import { getIndex } from './util/DateUtils';
-import { defaultOptions } from './util/ColorUtils';
+import { defaultColorSchemes } from './util/ColorUtils';
+import { defaultBoardSettings } from './util/SettingsUtils';
 import { handleError } from './util/ErrorUtils';
+import { inLg } from 'js/util/BootstrapUtils';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 
@@ -32,20 +34,42 @@ class App extends React.Component {
             username: "",
 
             year: new Date().getFullYear(),
+            currentDay: new Date().getMonth() * 31 + new Date().getDate() - 1,
             years: [new Date().getFullYear()],
             values: Array(12 * 31).fill(0),
             comments: Array(12 * 31).fill(""),
-            options: defaultOptions,
+            colorSchemes: defaultColorSchemes,
+            boardSettings: defaultBoardSettings,
             
             alerts: [],
-            overrideDataPromptStatus: PromptStatus.NONE
+            overrideDataPromptStatus: PromptStatus.NONE,
+            inLg: inLg()
         }
 
         this.onlineValues = null;
         this.onlineComments = null;
     }
 
-    componentDidMount = async () => {
+    componentDidMount = () => {
+        window.addEventListener('resize', this.handleResize);
+        this.checkAuthenticated();
+        this.addNewDayCallback();
+    }
+
+    componentWillUnmount = () => {
+        window.removeEventListener('resize', this.handleResize);
+        this.removeNewDayCallback();
+    }
+    
+    handleResize = () => {
+        if(this.state.inLg !== inLg()) {
+            this.setState({
+                inLg: inLg()
+            });
+        }
+    }
+
+    checkAuthenticated = async () => {
         try {
             let res = await HTTPRequest.get("authenticated");
 
@@ -158,8 +182,8 @@ class App extends React.Component {
         
         // no data currently stored in account, so upload it
         if(data.length === 0) {
-            for(let i in this.state.options) {
-                let colorScheme = this.state.options[i];
+            for(let i in this.state.colorSchemes) {
+                let colorScheme = this.state.colorSchemes[i];
                 const body = {
                     red:   colorScheme[0],
                     green: colorScheme[1],
@@ -173,12 +197,12 @@ class App extends React.Component {
             this.addAlert("info", "Uploaded Color Schemes");
         }
         else {
-            let options = [];
+            let colorSchemes = [];
             for(let colorScheme of data) {
-                options.push([colorScheme.red, colorScheme.green, colorScheme.blue, colorScheme.label]);
+                colorSchemes.push([colorScheme.red, colorScheme.green, colorScheme.blue, colorScheme.label]);
             }
             this.setState({
-                options: options
+                colorSchemes: colorSchemes
             });
             this.addAlert("info", "Loaded Color Schemes");
         }
@@ -307,6 +331,14 @@ class App extends React.Component {
         catch(err) {
             handleError(err, this.addAlert);
         }
+    }
+
+    updateBoardSettings = async(newBoardSettings) => {
+        this.setState({
+            boardSettings: newBoardSettings
+        });
+
+        // TODO Server stuff
     }
 
     changeYear = async (newYear) => {
@@ -456,12 +488,12 @@ class App extends React.Component {
 
     changeColorSchemeOrder = async(startIndex, endIndex) => {
         // swap the color scheme orders orders
-        let newOptions = this.state.options.slice();
-        let [removed] = newOptions.splice(startIndex, 1);
-        newOptions.splice(endIndex, 0, removed);
+        let newColorSchemes = this.state.colorSchemes.slice();
+        let [removed] = newColorSchemes.splice(startIndex, 1);
+        newColorSchemes.splice(endIndex, 0, removed);
 
         // generate new list of indices to figure out how to map current values to the new ones
-        let indices = Array.from(Array(newOptions.length).keys());
+        let indices = Array.from(Array(newColorSchemes.length).keys());
         let [removedIndices] = indices.splice(startIndex, 1);
         indices.splice(endIndex, 0, removedIndices);
 
@@ -473,7 +505,7 @@ class App extends React.Component {
 
         // update this ASAP to make a fluid user response
         this.setState({
-            options: newOptions,
+            colorSchemes: newColorSchemes,
             values: newValues
         });
         
@@ -482,8 +514,8 @@ class App extends React.Component {
                 let bodyLabels = [];
                 let bodyOrderings = [];
 
-                for(let i in newOptions) {
-                    let colorScheme = newOptions[i];
+                for(let i in newColorSchemes) {
+                    let colorScheme = newColorSchemes[i];
                     bodyLabels.push(colorScheme[3]);
                     bodyOrderings.push(i);
                 }
@@ -511,14 +543,14 @@ class App extends React.Component {
 
     // color is passed in as "#RRGGBB"
     addColorScheme = async(label, color) => {
-        let colorSchemes = this.state.options.slice();
+        let colorSchemes = this.state.colorSchemes.slice();
         let r = parseInt(color.substring(1, 3), 16);
         let g = parseInt(color.substring(3, 5), 16);
         let b = parseInt(color.substring(5, 7), 16);
         colorSchemes.push([r, g, b, label]);
 
         this.setState({
-            options: colorSchemes
+            colorSchemes: colorSchemes
         })
         this.addAlert("info", "Successfully added color scheme");
 
@@ -547,7 +579,7 @@ class App extends React.Component {
 
     // newColor is passed in as "#RRGGBB"
     editColorScheme = async(originalLabel, newLabel, newColor) => {
-        let colorSchemes = this.state.options.slice();
+        let colorSchemes = this.state.colorSchemes.slice();
         let r = parseInt(newColor.substring(1, 3), 16);
         let g = parseInt(newColor.substring(3, 5), 16);
         let b = parseInt(newColor.substring(5, 7), 16);
@@ -560,7 +592,7 @@ class App extends React.Component {
             }
         }
         this.setState({
-            options: colorSchemes
+            colorSchemes: colorSchemes
         })
         this.addAlert("info", "Successfully saved color scheme");
 
@@ -583,19 +615,19 @@ class App extends React.Component {
     }
 
     deleteColorScheme = async(label) => {
-        // delete color scheme from options
-        let newOptions = this.state.options.slice();
+        // delete color scheme from colorSchemes
+        let newColorSchemes = this.state.colorSchemes.slice();
         let index = -1;
-        for(let i = 0; i < newOptions.length; i++) {
-            if(newOptions[i][3] === label) {
+        for(let i = 0; i < newColorSchemes.length; i++) {
+            if(newColorSchemes[i][3] === label) {
                 index = i;
                 break;
             }
         }
-        newOptions.splice(index, 1);
+        newColorSchemes.splice(index, 1);
         
         // generate new list of indices to figure out how to map current values to the new ones
-        let indices = Array.from(Array(this.state.options.length).keys());
+        let indices = Array.from(Array(this.state.colorSchemes.length).keys());
         indices.splice(index, 1);
         
         // locally compute new values for the board data
@@ -605,7 +637,7 @@ class App extends React.Component {
         }
 
         this.setState({
-            options: newOptions,
+            colorSchemes: newColorSchemes,
             values: newValues
         })
         this.addAlert("info", "Successfully removed color scheme");
@@ -620,8 +652,8 @@ class App extends React.Component {
                 let bodyLabels = [];
                 let bodyOrderings = [];
 
-                for(let i in newOptions) {
-                    let colorScheme = newOptions[i];
+                for(let i in newColorSchemes) {
+                    let colorScheme = newColorSchemes[i];
                     bodyLabels.push(colorScheme[3]);
                     bodyOrderings.push(i);
                 }
@@ -647,13 +679,34 @@ class App extends React.Component {
     }
 
     checkLabelExists = (label) => {
-        for(let i = 0; i < this.state.options.length; i++) {
-            if(this.state.options[i][3] === label) {
+        for(let i = 0; i < this.state.colorSchemes.length; i++) {
+            if(this.state.colorSchemes[i][3] === label) {
                 return true;
             }
         }
 
         return false;
+    }
+
+    addNewDayCallback = () => {
+        let today = new Date();
+        let midnight = new Date();
+        midnight.setHours(24, 0, 0, 0);
+        let millis = (midnight.getTime() - today.getTime());
+        
+        setTimeout(this.updateDay, millis);
+    }
+
+    removeNewDayCallback = () => {
+        clearTimeout(this.updateDay);
+    }
+
+    updateDay = () => {
+        this.setState({
+            currentDay: new Date().getMonth() * 31 + new Date().getDate() - 1,
+        });
+
+        this.addNewDayCallback();
     }
 
     addAlert = (type, headline, message) => {
@@ -699,21 +752,29 @@ class App extends React.Component {
                 <Route path="/" exact>
                     <YearInPixels
                         loggedIn={this.state.loggedIn}
+
                         year={this.state.year}
                         years={this.state.years}
                         changeYear={this.changeYear}
                         addYear={this.addYear}
                         checkYearExists={this.checkYearExists}
                         showAddYearModal={this.showAddYearModal}
+
+                        currentDay={this.state.currentDay}
                         values={this.state.values}
                         comments={this.state.comments}
-                        options={this.state.options}
+                        colorSchemes={this.state.colorSchemes}
+
                         updateBoardData={this.updateBoardData}
                         changeColorSchemeOrder={this.changeColorSchemeOrder}
                         addColorScheme={this.addColorScheme}
                         editColorScheme={this.editColorScheme}
                         deleteColorScheme={this.deleteColorScheme}
                         checkLabelExists={this.checkLabelExists}
+
+                        boardSettings={this.state.boardSettings}
+
+                        inLg={this.state.inLg}
                     />
                 </Route>
                 <Route path="/register">
@@ -728,13 +789,18 @@ class App extends React.Component {
                     />
                 </Route>
                 <Route path="/settings">
-                    <AccountSettings
+                    <Settings
                         loggedIn={this.state.loggedIn}
+                        inLg={this.state.inLg}
+
                         name={this.state.name}
                         username={this.state.username}
                         checkUsernameAvailable={this.checkUsernameAvailable}
                         updateAccountInfo={this.updateAccountInfo}
                         changePassword={this.changePassword}
+
+                        boardSettings={this.state.boardSettings}
+                        updateBoardSettings={this.updateBoardSettings}
                     />
                 </Route>
                 <OverridePrompt

@@ -9,7 +9,6 @@ import ColorSchemeList from './color-scheme/ColorSchemeList';
 import YearSelector from './year-selector/YearSelector';
 import AddYearModal from './year-selector/AddYearModal';
 
-import { inLg } from 'js/util/BootstrapUtils';
 import { getIndex } from 'js/util/DateUtils';
 
 export default class YearInPixels extends React.Component {
@@ -23,9 +22,7 @@ export default class YearInPixels extends React.Component {
             menuYOffset: 0,
             menuVisible: false,
             showAddYearModal: false,
-            currentlySelected: [-1, -1],
-
-            inLg: inLg()
+            currentlySelected: [-1, -1]
         }
 
         this.menuXYProvider = null;
@@ -45,11 +42,6 @@ export default class YearInPixels extends React.Component {
 
     handleResize = () => {
         this.updateMenuPosition();
-        if(this.state.inLg !== inLg()) {
-            this.setState({
-                inLg: inLg()
-            });
-        }
     }
 
     handleScroll = () => {
@@ -57,7 +49,7 @@ export default class YearInPixels extends React.Component {
     }
 
     handleClick = () => {
-        if(inLg()) {
+        if(this.props.inLg) {
             this.closeMenu();
         }
     }
@@ -131,7 +123,7 @@ export default class YearInPixels extends React.Component {
         let colorSchemeList = (<ColorSchemeList
             className={"mx-auto w-75"}
             style={{ maxWidth: "500px" }}
-            colorSchemes={this.props.options}
+            colorSchemes={this.props.colorSchemes}
             disabled={!this.props.loggedIn}
             changeColorSchemeOrder={this.props.changeColorSchemeOrder}
             editColorScheme={this.props.editColorScheme}
@@ -140,9 +132,12 @@ export default class YearInPixels extends React.Component {
             checkLabelExists={this.props.checkLabelExists}
         />);
         let board = (<Board
+            currentDay={this.props.currentDay}
+            showTodayMarker={this.props.boardSettings.showTodayMarker}
+            invalidCellsDisplayType={this.props.boardSettings.invalidCellsDisplayType}
             values={this.props.values}
             handleClick={this.handleCellClick}
-            options={this.props.options}
+            colorSchemes={this.props.colorSchemes}
             currentlySelected={this.state.currentlySelected}
         />);
         let yearSelector = (<YearSelector
@@ -155,7 +150,7 @@ export default class YearInPixels extends React.Component {
         />);
 
         let content = undefined;
-        if(inLg()) {
+        if(this.props.inLg) {
             content = (<Container fluid>
                 <Row>
                     <Col className="text-center">
@@ -200,7 +195,7 @@ export default class YearInPixels extends React.Component {
                         Math.max(this.state.currentlySelected[0], 0),
                         Math.max(this.state.currentlySelected[1], 0)
                     )]}
-                    options={this.props.options}
+                    colorSchemes={this.props.colorSchemes}
                     updateBoardData={this.props.updateBoardData}
                     closeMenu={this.closeMenu}
                 />

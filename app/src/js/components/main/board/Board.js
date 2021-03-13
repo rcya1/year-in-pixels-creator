@@ -17,6 +17,7 @@ export default class Board extends React.Component {
                 let value = "";
                 let valid = d + 1 <= DAYS_PER_MONTH[m];
                 let active = this.props.currentlySelected[0] === m && this.props.currentlySelected[1] === d;
+                let showTodayMarker = (m * 31 + d === this.props.currentDay) && this.props.showTodayMarker;
 
                 if(valid) value = this.props.values[getIndex(m, d)];
 
@@ -25,9 +26,12 @@ export default class Board extends React.Component {
                     day={d}
                     handleClick={this.props.handleClick}
                     valid={valid}
+                    invalidCellsDisplayType={this.props.invalidCellsDisplayType}
                     active={active}
-                    options={this.props.options}
-                    key={m + ":" + d}></Cell>);
+                    showTodayMarker={showTodayMarker}
+                    colorSchemes={this.props.colorSchemes}
+                    key={m + ":" + d}
+                />);
             }
             chartData.push(<tr key={d}>{rowData}</tr>);
         }

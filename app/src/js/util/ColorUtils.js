@@ -1,4 +1,4 @@
-export let defaultOptions = [
+export let defaultColorSchemes = [
     [125, 125, 117, "Very Bad Day"],
     [184, 183, 118, "Bad Day"],
     [175, 125, 197, "Average Day"],

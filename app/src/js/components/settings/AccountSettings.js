@@ -9,9 +9,7 @@ import Button from 'react-bootstrap/Button';
 import InputGroup from 'react-bootstrap/InputGroup';
 import { FaUser, FaLock } from 'react-icons/fa';
 
-import withRedirect from 'js/util/react/WithRedirect';
-
-class AccountSettings extends Component {
+export default class AccountSettings extends Component {
 
     constructor(props) {
         super(props);
@@ -29,11 +27,6 @@ class AccountSettings extends Component {
     }
 
     componentDidUpdate(prevProps) {
-        if(!this.props.loggedIn) {
-            this.props.setRedirect("/");
-            return;
-        }
-        
         if(this.props.name !== prevProps.name || this.props.username !== prevProps.username) {
             this.setState({
                 name: this.props.name,
@@ -125,7 +118,7 @@ class AccountSettings extends Component {
     }
 
     render() {
-        return (<Container className="mt-3 form">
+        return (
             <Card className="bg-light">
                 <Card.Header>
                     <h3 className="text-center">Account Settings</h3>
@@ -133,7 +126,7 @@ class AccountSettings extends Component {
                 <Card.Body className="w-100 mx-auto">
                     <Container className="w-100 mw-100">
                         <Row className="equal">
-                            <Col>
+                            <Col lg={6} className={this.props.inLg ? "" : "mb-5"}>
                                 <Form noValidate
                                     validated={this.state.updateFormValidated} 
                                     onSubmit={this.handleUpdateSubmit}
@@ -194,7 +187,7 @@ class AccountSettings extends Component {
                                     </Button>
                                 </Form>
                             </Col>
-                            <Col>
+                            <Col lg={6}>
                                 <Form 
                                     noValidate
                                     validated={this.state.changePasswordFormValidated}
@@ -281,13 +274,8 @@ class AccountSettings extends Component {
                             </Col>
                         </Row>
                     </Container>
-
-                    <br></br>
-                    
                 </Card.Body>
             </Card>
-        </Container>);
+        );
     }
 }
-
-export default withRedirect(AccountSettings);

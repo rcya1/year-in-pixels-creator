@@ -6,8 +6,6 @@ const passport = require('passport');
 const asyncHandler = require('express-async-handler');
 let {log, Status} = require('./route_logger');
 
-// TODO Need to add a way to modify the order of these color schemes (probably need to add an index variable to the schema)
-
 /**
  * GET
  * Returns an array of all of the color schemes for the currently logged in user
@@ -111,9 +109,6 @@ router.route('/:queryLabel').put(asyncHandler(async(req, res) => {
     colorSchemeFound.label    = req.body.label;
     colorSchemeFound.ordering = req.body.ordering;
     await colorSchemeFound.save();
-
-    console.log(req.params.queryLabel);
-    console.log(req.body.label);
 
     log(res, Status.SUCCESS, "Edited color scheme.");
 }));
