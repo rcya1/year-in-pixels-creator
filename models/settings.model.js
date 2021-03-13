@@ -2,12 +2,10 @@ const mongoose = require('mongoose');
 
 const settingsSchema = new mongoose.Schema({
         showTodayMarker: {
-            type: String,
-            required: true
+            type: String
         },
         invalidCellsDisplayType: {
-            type: String,
-            required: true
+            type: String
         }
     }, {
         timestamps: false

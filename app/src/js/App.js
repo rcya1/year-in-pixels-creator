@@ -91,6 +91,7 @@ class App extends React.Component {
             try {
                 this.loadName();
                 this.syncColorSchemes();
+                this.syncSettings();
                 await this.loadYears(); // this must finish before loading values and comments
                 this.syncValuesAndComments();
             }
@@ -208,6 +209,38 @@ class App extends React.Component {
         }
     }
 
+    syncSettings = async () => {
+        let res = await HTTPRequest.get("settings");
+        // no settings currently stored in account, so upload it
+        if(res.data === "") {
+            await HTTPRequest.post("settings");
+            for(let [key, value] of Object.entries(this.state.boardSettings)) {
+                await HTTPRequest.put("settings/" + key, { newValue: value });
+            }
+
+            this.addAlert("info", "Uploaded Settings");
+        }
+        else {
+            let boardSettings = {};
+            for(let key of Object.keys(this.state.boardSettings)) {
+                let res = await HTTPRequest.get("settings/" + key);
+                if(res.data !== "") {
+                    boardSettings[key] = res.data;
+                }
+                else {
+                    await HTTPRequest.put("settings/" + key, { newValue: this.state.boardSettings[key] });
+                    boardSettings[key] = this.state.boardSettings[key];
+                }
+            }
+
+            this.setState({
+                boardSettings: boardSettings
+            });
+
+            this.addAlert("info", "Loaded Settings");
+        }
+    }
+
     navbarLogout = async () => {
         try {
             await HTTPRequest.post("logout");
@@ -247,6 +280,7 @@ class App extends React.Component {
             }, async () => {
                 this.addAlert("info", "Successfully Registered");
                 this.syncColorSchemes();
+                this.syncSettings();
                 await this.addYear(this.state.year);
                 this.uploadValuesAndComments();
             });
@@ -338,7 +372,11 @@ class App extends React.Component {
             boardSettings: newBoardSettings
         });
 
-        // TODO Server stuff
+        for(let [key, value] of Object.entries(newBoardSettings)) {
+            await HTTPRequest.put("settings/" + key, { newValue: value });
+        }
+
+        this.addAlert("info", "Updated Board Settings");
     }
 
     changeYear = async (newYear) => {
