@@ -17,3 +17,17 @@ export let getOrdinalEnding = function(number) {
 export let getIndex = function(month, day) {
     return month * 31 + day;
 }
+
+export let isLeapYear = function(year) {
+    let y = parseInt(year);
+    if(y % 400 === 0) {
+        return true;
+    }
+    if(year % 100 === 0) {
+        return false;
+    }
+    if(year % 4 === 0) {
+        return true;
+    }
+    return false;
+}

@@ -25,6 +25,11 @@ let getCellStyle = (active, valid, invalidCellsDisplayType, backgroundColor) => 
                 backgroundColor: valid ? backgroundColor : "rgba(0, 0, 0, 0.25)",
             };
             break;
+        default: 
+            colorOptions = {
+
+            };
+            break;
     }
     
     return {

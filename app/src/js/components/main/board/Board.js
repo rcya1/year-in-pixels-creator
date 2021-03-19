@@ -2,9 +2,8 @@ import React from 'react';
 
 import Cell from './Cell';
 import { ABBR_MONTH_NAMES, DAYS_PER_MONTH } from 'js/components/main/Constants'
-import { getIndex } from 'js/util/DateUtils'
+import { getIndex, isLeapYear } from 'js/util/DateUtils'
 
-// TODO Make an option for showing it in month form
 export default class Board extends React.Component {
     
     render() {
@@ -15,9 +14,11 @@ export default class Board extends React.Component {
             ];
             for(let m = 0; m < 12; m++) {
                 let value = "";
-                let valid = d + 1 <= DAYS_PER_MONTH[m];
+                 // add on one to days per month if it's a leap year
+                let valid = d + 1 <= DAYS_PER_MONTH[m] + (isLeapYear(this.props.year) && m == 1 ? 1 : 0);
                 let active = this.props.currentlySelected[0] === m && this.props.currentlySelected[1] === d;
-                let showTodayMarker = (m * 31 + d === this.props.currentDay) && this.props.showTodayMarker;
+                let showTodayMarker = (m * 31 + d === this.props.currentDay) && this.props.showTodayMarker
+                    && String(new Date().getFullYear()) === String(this.props.year);
 
                 if(valid) value = this.props.values[getIndex(m, d)];
 

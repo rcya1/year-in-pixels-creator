@@ -133,6 +133,7 @@ export default class YearInPixels extends React.Component {
         />);
         let board = (<Board
             currentDay={this.props.currentDay}
+            year={this.props.year}
             showTodayMarker={this.props.boardSettings.showTodayMarker}
             invalidCellsDisplayType={this.props.boardSettings.invalidCellsDisplayType}
             values={this.props.values}
@@ -195,7 +196,7 @@ export default class YearInPixels extends React.Component {
                         Math.max(this.state.currentlySelected[0], 0),
                         Math.max(this.state.currentlySelected[1], 0)
                     )]}
-                    colorSchemes={this.props.colorSchemes}
+                    options={this.props.colorSchemes}
                     updateBoardData={this.props.updateBoardData}
                     closeMenu={this.closeMenu}
                 />

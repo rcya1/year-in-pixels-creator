@@ -171,7 +171,6 @@ class App extends React.Component {
                 values: res.data.values,
                 comments: res.data.comments
             });
-            this.addAlert("info", "Loaded Data");
             this.onlineValues = null;
             this.onlineComments = null;
         }
@@ -194,8 +193,6 @@ class App extends React.Component {
                 };
                 await HTTPRequest.post("color-schemes", body);
             }
-            
-            this.addAlert("info", "Uploaded Color Schemes");
         }
         else {
             let colorSchemes = [];
@@ -205,7 +202,6 @@ class App extends React.Component {
             this.setState({
                 colorSchemes: colorSchemes
             });
-            this.addAlert("info", "Loaded Color Schemes");
         }
     }
 
@@ -217,8 +213,6 @@ class App extends React.Component {
             for(let [key, value] of Object.entries(this.state.boardSettings)) {
                 await HTTPRequest.put("settings/" + key, { newValue: value });
             }
-
-            this.addAlert("info", "Uploaded Settings");
         }
         else {
             let boardSettings = {};
@@ -236,8 +230,6 @@ class App extends React.Component {
             this.setState({
                 boardSettings: boardSettings
             });
-
-            this.addAlert("info", "Loaded Settings");
         }
     }
 
@@ -302,7 +294,6 @@ class App extends React.Component {
                 };
 
                 await HTTPRequest.put("/data/" + this.state.year, body);
-                this.addAlert("info", "Uploaded Data");
             }
             catch(err) {
                 handleError(err);
@@ -345,7 +336,6 @@ class App extends React.Component {
                 name: name,
                 username: username
             });
-            this.addAlert("info", "Successfully Updated Account Info");
         }
         catch(err) {
             handleError(err, this.addAlert);
@@ -375,8 +365,6 @@ class App extends React.Component {
         for(let [key, value] of Object.entries(newBoardSettings)) {
             await HTTPRequest.put("settings/" + key, { newValue: value });
         }
-
-        this.addAlert("info", "Updated Board Settings");
     }
 
     changeYear = async (newYear) => {
@@ -389,7 +377,6 @@ class App extends React.Component {
             // make sure the state is updated before we start getting new year
             try {
                 await this.syncValuesAndComments();
-                this.addAlert("info", "Successfully Changed Year");
             }
             catch(err) {
                 handleError(err, this.addAlert);
@@ -400,8 +387,7 @@ class App extends React.Component {
     addYear = async (newYear) => {
         if(this.state.loggedIn) {
             try {
-                await HTTPRequest.post("data/" + newYear);
-                this.addAlert("info", "Successfully Added Year");
+                await HTTPRequest.post("data/" + newYear);  
             }
             catch(err) {
                 handleError(err, this.addAlert);
@@ -516,7 +502,6 @@ class App extends React.Component {
                 }
 
                 await HTTPRequest.put("/data/" + this.state.year + "/" + (month + 1) + "/" + (day + 1), body);
-                this.addAlert("info", "Updated Board Data");
             }
             catch(err) {
                 handleError(err, this.addAlert);
@@ -566,7 +551,6 @@ class App extends React.Component {
                 }
 
                 let res = await HTTPRequest.post("/color-schemes/change-orderings", body);
-                this.addAlert("info", "Updated Color Scheme Order");
 
                 // use online data to reupdate just in case
                 this.setState({
@@ -590,7 +574,6 @@ class App extends React.Component {
         this.setState({
             colorSchemes: colorSchemes
         })
-        this.addAlert("info", "Successfully added color scheme");
 
         if(this.state.loggedIn) {
             try {
@@ -601,16 +584,9 @@ class App extends React.Component {
                     label: label
                 };
                 await HTTPRequest.post("color-schemes", body);
-                this.addAlert("info", "Successfully uploaded color scheme");
             }
             catch(err) {
-                if(err.response !== undefined) {
-                    let response = err.response.data;
-                    this.addAlert("danger", "Unknown Error", response);
-                }
-                else {
-                    this.addAlert("danger", "Unknown Error Has Occurred", "Please contact the developer to help fix this issue.");
-                }
+                handleError(err, this.addAlert);
             }
         }
     }
@@ -632,7 +608,6 @@ class App extends React.Component {
         this.setState({
             colorSchemes: colorSchemes
         })
-        this.addAlert("info", "Successfully saved color scheme");
 
         if(this.state.loggedIn && index !== -1) {
             try {
@@ -644,7 +619,6 @@ class App extends React.Component {
                     ordering: index
                 };
                 await HTTPRequest.put("color-schemes/" + originalLabel, body);
-                this.addAlert("info", "Successfully uploaded edited color scheme");
             }
             catch(err) {
                 handleError(err, this.addAlert);
@@ -678,13 +652,11 @@ class App extends React.Component {
             colorSchemes: newColorSchemes,
             values: newValues
         })
-        this.addAlert("info", "Successfully removed color scheme");
 
         if(this.state.loggedIn && index !== -1) {
             try {
                 // actually delete the color scheme from the server
                 await HTTPRequest.delete("color-schemes/" + label);
-                this.addAlert("info", "Successfully uploaded removed color scheme");
 
                 // send change order data to the server so that it updates all online data
                 let bodyLabels = [];
