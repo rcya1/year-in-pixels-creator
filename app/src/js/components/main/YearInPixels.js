@@ -119,7 +119,7 @@ export default class YearInPixels extends React.Component {
     }
 
     render() {
-        let title = (<h1 className="title mt-3">{this.props.year + " in Pixels"}</h1>);
+        let title = (<h1 className="display-5 mt-3">{this.props.year + " in Pixels"}</h1>);
         let colorSchemeList = (<ColorSchemeList
             className={"mx-auto w-75"}
             style={{ maxWidth: "500px" }}

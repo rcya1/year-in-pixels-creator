@@ -1,8 +1,9 @@
 import React from 'react';
 import Navbar from 'react-bootstrap/Navbar'
 import Nav from 'react-bootstrap/Nav'
-import { NavLink } from 'react-router-dom';
+import { Link, NavLink } from 'react-router-dom';
 import Button from 'react-bootstrap/Button';
+import { FaGithub } from 'react-icons/fa'
 
 import withRedirect from 'js/util/react/WithRedirect';
 
@@ -12,7 +13,7 @@ class AppNavbar extends React.Component {
 
     render() {
         let activeStyle = {
-            color: "rgba(255,255,255,.8)"
+            color: "rgba(255,255,255)"
         };
 
         let loginArea = [];
@@ -70,7 +71,7 @@ class AppNavbar extends React.Component {
                 >
                     Year in Pixels
                 </NavLink>
-                <Nav className="mr-auto">
+                <Nav className="">
                     <NavLink
                         to="/"
                         className="navbar-link"
@@ -79,6 +80,36 @@ class AppNavbar extends React.Component {
                     >
                         Home
                     </NavLink>
+                </Nav>
+                <Nav>
+                    <NavLink
+                        to="/about"
+                        className="navbar-link"
+                        activeStyle={activeStyle}
+                        exact
+                    >
+                        About
+                    </NavLink>
+                </Nav>
+                <Nav>
+                    <NavLink
+                        to="/privacypolicy"
+                        className="navbar-link"
+                        activeStyle={activeStyle}
+                        exact
+                    >
+                        Privacy Policy
+                    </NavLink>
+                </Nav>
+                <Nav className="mr-auto">
+                    <a
+                        href="https://github.com/Ryan10145/year-in-pixels-creator"
+                        className="navbar-link"
+                        target="_blank"
+                        exact
+                    >
+                        <FaGithub style={{marginBottom: ".15rem"}}/> GitHub
+                    </a>
                 </Nav>
                 <Nav className="ml-auto">
                     { loginArea }

@@ -9,6 +9,8 @@ import YearInPixels from './components/main/YearInPixels'
 import Register from './components/Register'
 import Login from './components/Login'
 import Settings from './components/settings/Settings'
+import About from './components/About'
+import PrivacyPolicy from './components/PrivacyPolicy'
 
 // Utility
 import HTTPRequest from './util/HTTPRequest';
@@ -20,6 +22,7 @@ import { handleError } from './util/ErrorUtils';
 import { inLg } from 'js/util/BootstrapUtils';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
+import 'css/BootstrapOverrides.css';
 
 let StyledAlert = require('./components/AlertStyle').StyledAlert;
 
@@ -812,6 +815,12 @@ class App extends React.Component {
                         boardSettings={this.state.boardSettings}
                         updateBoardSettings={this.updateBoardSettings}
                     />
+                </Route>
+                <Route path="/about">
+                    <About/>
+                </Route>
+                <Route path="/privacypolicy">
+                    <PrivacyPolicy/>
                 </Route>
                 <OverridePrompt
                     status={this.state.overrideDataPromptStatus}
