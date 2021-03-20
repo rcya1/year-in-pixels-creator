@@ -1,12 +1,18 @@
 # Year in Pixels Creator
 
-Year in Pixels Creator is a tool for keeping track of your mood through colors. It is built with a React frontend, an Express backend, and a MongoDB database. See https://year-in-pixels-creator.herokuapp.com/#/about for more information
+Year in Pixels Creator is a tool for keeping track of your mood through colors. It is built with a React frontend, an Express backend, and a MongoDB database. See https://year-in-pixels-creator.herokuapp.com/#/about for more information.
 
 ## Current Features
 
 - Accounts to store all user information online
 - One board per year to keep track of your mood visually with colors
 - Fully customizable color schemes
+
+## Known Issues
+
+- Lag when scrolling with the popup menu open
+- Mobile formatting isn't working well
+- No tooltip on mobile for user feedback
 
 ## Planned Features
 

@@ -761,6 +761,8 @@ class App extends React.Component {
                     loggedIn={this.state.loggedIn}
                     username={this.state.username}
                     logout={this.navbarLogout}
+
+                    inLg={this.state.inLg}
                 />
                 <Route path="/" exact>
                     <YearInPixels

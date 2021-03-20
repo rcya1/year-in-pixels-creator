@@ -16,6 +16,68 @@ class AppNavbar extends React.Component {
             color: "rgba(255,255,255)"
         };
 
+        let title = (
+            <NavLink
+                to="/"
+                exact
+                className="navbar-link"
+                id="navbar-brand"
+                eventKey="1"
+            >
+                Year in Pixels
+            </NavLink>
+        );
+
+        let primaryContent = (
+            <Navbar.Collapse id="basic-navbar-nav">
+                <Nav className="">
+                    <NavLink
+                        to="/"
+                        className="navbar-link"
+                        activeStyle={activeStyle}
+                        exact
+                        eventKey="2"
+                    >
+                        Home
+                    </NavLink>
+                </Nav>
+                <Nav>
+                    <NavLink
+                        to="/about"
+                        className="navbar-link"
+                        activeStyle={activeStyle}
+                        exact
+                        eventKey="3"
+                    >
+                        About
+                    </NavLink>
+                </Nav>
+                <Nav>
+                    <NavLink
+                        to="/privacypolicy"
+                        className="navbar-link"
+                        activeStyle={activeStyle}
+                        exact
+                        eventKey="4"
+                    >
+                        Privacy Policy
+                    </NavLink>
+                </Nav>
+                <Nav className="mr-auto">
+                    <a
+                        href="https://github.com/Ryan10145/year-in-pixels-creator"
+                        className="navbar-link"
+                        target="_blank"
+                        rel="noreferrer"
+                        exact
+                        eventKey="5"
+                    >
+                        <FaGithub style={{marginBottom: ".15rem"}}/> GitHub
+                    </a>
+                </Nav>
+            </Navbar.Collapse>
+        );
+
         let loginArea = [];
         if(this.props.loggedIn) {
             loginArea.push((<Button
@@ -24,6 +86,7 @@ class AppNavbar extends React.Component {
                     onClick={() => {
                         this.props.setRedirect("/settings");
                     }}
+                    eventKey="10"
                 >
                 {this.props.username}
             </Button>));
@@ -33,6 +96,7 @@ class AppNavbar extends React.Component {
                     onClick={() => {
                         this.props.logout();
                     }}
+                    eventKey="11"
                 >
                     Logout
                 </Button>
@@ -45,6 +109,7 @@ class AppNavbar extends React.Component {
                     onClick={() => {
                         this.props.setRedirect("/login");
                     }}
+                    eventKey="12"
                 >
                     Login
                 </Button>
@@ -60,61 +125,24 @@ class AppNavbar extends React.Component {
                 </Button>
             ));
         }
+
+        let navbar = [];
+
+        if(this.props.inLg) {
+            navbar.push(title);
+            navbar.push(primaryContent);
+            navbar.push(<Nav className="ml-auto">{loginArea}</Nav>);
+        }
+        else {
+            navbar.push(<Navbar.Toggle className="mr-2" aria-controls="basic-navbar-nav" />);
+            navbar.push(title);
+            navbar.push(primaryContent);
+            navbar.push(<Nav className="ml-auto" style={{flexDirection: "row"}}>{loginArea}</Nav>);
+        }
     
         return (
-            <Navbar bg="dark" variant="dark">
-                <NavLink
-                    to="/"
-                    exact
-                    className="navbar-link"
-                    id="navbar-brand"
-                >
-                    Year in Pixels
-                </NavLink>
-                <Nav className="">
-                    <NavLink
-                        to="/"
-                        className="navbar-link"
-                        activeStyle={activeStyle}
-                        exact
-                    >
-                        Home
-                    </NavLink>
-                </Nav>
-                <Nav>
-                    <NavLink
-                        to="/about"
-                        className="navbar-link"
-                        activeStyle={activeStyle}
-                        exact
-                    >
-                        About
-                    </NavLink>
-                </Nav>
-                <Nav>
-                    <NavLink
-                        to="/privacypolicy"
-                        className="navbar-link"
-                        activeStyle={activeStyle}
-                        exact
-                    >
-                        Privacy Policy
-                    </NavLink>
-                </Nav>
-                <Nav className="mr-auto">
-                    <a
-                        href="https://github.com/Ryan10145/year-in-pixels-creator"
-                        className="navbar-link"
-                        target="_blank"
-                        rel="noreferrer"
-                        exact
-                    >
-                        <FaGithub style={{marginBottom: ".15rem"}}/> GitHub
-                    </a>
-                </Nav>
-                <Nav className="ml-auto">
-                    { loginArea }
-                </Nav>
+            <Navbar collapseOnSelect id="navbar" expand="lg" bg="dark" variant="dark">
+                {navbar}
             </Navbar>
         );
     }
