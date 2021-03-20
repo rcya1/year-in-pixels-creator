@@ -1,7 +1,7 @@
 import React from 'react';
 import Navbar from 'react-bootstrap/Navbar'
 import Nav from 'react-bootstrap/Nav'
-import { Link, NavLink } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 import Button from 'react-bootstrap/Button';
 import { FaGithub } from 'react-icons/fa'
 
@@ -106,6 +106,7 @@ class AppNavbar extends React.Component {
                         href="https://github.com/Ryan10145/year-in-pixels-creator"
                         className="navbar-link"
                         target="_blank"
+                        rel="noreferrer"
                         exact
                     >
                         <FaGithub style={{marginBottom: ".15rem"}}/> GitHub

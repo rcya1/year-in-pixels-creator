@@ -1,5 +1,5 @@
 import { Component } from 'react';
-import { Card, CardDeck, Container } from 'react-bootstrap';
+import { CardDeck, Container } from 'react-bootstrap';
 import { createInfoCard } from 'js/util/react/CustomCard'
 
 let headerClassName = "display-4 text-center mx-auto mb-4";
