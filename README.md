@@ -10,18 +10,23 @@ Year in Pixels Creator is a tool for keeping track of your mood through colors. 
 
 ## Known Issues
 
-- Lag when scrolling with the popup menu open
 - Mobile formatting isn't working well
 - No tooltip on mobile for user feedback
+- Year selector is not centered properly and does not have proper width on mobile
+- Color scheme menu list can go below page when scrolling
+  - Potential fix: utilize the maxMenuHeight prop
 
 ## Planned Features
 
 - Add statistics for each day on the bottom right and have a select menu to select either entire year or per month, or all time
   - Different types of graphs such as pie charts, bar graphs, line charts
 - Add the month view for the board
-- Fix menu scroll lag
-- Fix the color scheme label text overflow
-- Add button to quickly modify the current day (if you are on the current year)
 - Exporting board as an image file
+- Add button to quickly modify the current day (if you are on the current year)
 - Add exporting color schemes
-- Implement https://getbootstrap.com/docs/4.0/examples/floating-labels/
+
+## Maybe Features
+
+- Maybe fix menu jittering while scrolling
+- Look into floating labels
+- Add email accounts for password recovery

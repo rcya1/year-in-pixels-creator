@@ -832,7 +832,7 @@ class App extends React.Component {
                 <AlertContainer position="bottom-left">
                     {   
                         this.state.alerts.length > 0 && 
-                        <Button className="mb-1" variant="outline-danger" onClick={this.clearAllAlerts}>
+                        <Button className="mb-1" variant="danger" onClick={this.clearAllAlerts}>
                             Clear All Alerts
                         </Button>
                     }

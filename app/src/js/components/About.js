@@ -15,7 +15,7 @@ export default class About extends Component {
                     A tool for keeping track of your mood through colors
                 </p>
                 <p className="lead">
-                    Created by Ryan Chang
+                    Created by Ryan Chang and inspired by Lillian Jiang
                 </p>
             </div>
 

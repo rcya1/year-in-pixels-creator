@@ -35,9 +35,10 @@ const getItemColorPreviewStyle = (colorScheme) => ({
 });
 
 const getItemLabelStyle = () => ({
-    lineHeight: "100%",
+    lineHeight: "normal",
     height: "100%",
-    fontSize: "18px",
+    fontSize: "1.1rem",
+    maxWidth: "50%"
 });
 
 export default class ColorSchemeList extends React.Component {
@@ -168,7 +169,7 @@ export default class ColorSchemeList extends React.Component {
                                                         <Container>
                                                             <Row>
                                                                 <span style={getItemColorPreviewStyle(colorScheme)}> </span>
-                                                                <p className="mr-auto my-auto" style={getItemLabelStyle()}>
+                                                                <p className="mr-auto my-auto text-truncate" style={getItemLabelStyle()}>
                                                                     {colorScheme[3]}
                                                                 </p>
                                                                 {this.createEditButton(colorScheme)}
