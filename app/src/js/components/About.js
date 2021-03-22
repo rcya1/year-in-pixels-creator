@@ -11,11 +11,14 @@ export default class About extends Component {
                 <h1 className="display-4">
                     Year in Pixels
                 </h1>
-                <p className="lead mb-1">
+                <p className="lead mb-3">
                     A tool for keeping track of your mood through colors
                 </p>
+                <p className="lead mb-0">
+                    Created by Ryan Chang
+                </p>
                 <p className="lead">
-                    Created by Ryan Chang and inspired by Lillian Jiang
+                    Inspired by and made for Lillian Jiang
                 </p>
             </div>
 
