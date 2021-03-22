@@ -12,9 +12,6 @@ import { SketchPicker } from 'react-color';
 import 'css/ColorPicker.css'
 import 'css/Form.css'
 
-// TODO Determine good character max on label / way to display it if it goes over
-// TODO Maybe see if it goes over and then do ...
-// TODO Experiment with .text-truncate in Bootstrap
 export default class EditColorSchemeModal extends React.Component {
     constructor(props) {
         super(props);

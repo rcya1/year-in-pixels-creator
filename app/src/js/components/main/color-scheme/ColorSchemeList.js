@@ -89,7 +89,7 @@ export default class ColorSchemeList extends React.Component {
         return (<OverlayTrigger
             overlay={<Tooltip id="tooltip-disabled">Create an account to use custom color schemes!</Tooltip>}
         >
-            {component}
+            <span style={{display: "inline-block"}}>{component}</span>
         </OverlayTrigger>);
     }
 
@@ -104,6 +104,7 @@ export default class ColorSchemeList extends React.Component {
                     this.openEditColorSchemeModal(colorScheme);
                 }
             }
+            style={this.props.disabled ? {pointerEvents: "none"} : {}}
         >
             Edit
         </Button>);
