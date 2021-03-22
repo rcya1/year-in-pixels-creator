@@ -20,7 +20,7 @@ class AppNavbar extends React.Component {
             <NavLink
                 to="/"
                 exact
-                className="navbar-link"
+                className="navbar-link mr-auto"
                 id="navbar-brand"
                 eventKey="1"
             >
