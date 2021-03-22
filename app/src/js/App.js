@@ -19,7 +19,7 @@ import { getIndex } from './util/DateUtils';
 import { defaultColorSchemes } from './util/ColorUtils';
 import { defaultBoardSettings } from './util/SettingsUtils';
 import { handleError } from './util/ErrorUtils';
-import { inLg } from 'js/util/BootstrapUtils';
+import { inLg, inSm } from 'js/util/BootstrapUtils';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'css/BootstrapOverrides.css';
@@ -46,7 +46,8 @@ class App extends React.Component {
             
             alerts: [],
             overrideDataPromptStatus: PromptStatus.NONE,
-            inLg: inLg()
+            inLg: inLg(),
+            inSm: inSm()
         }
 
         this.onlineValues = null;
@@ -68,6 +69,11 @@ class App extends React.Component {
         if(this.state.inLg !== inLg()) {
             this.setState({
                 inLg: inLg()
+            });
+        }
+        if(this.state.inSm !== inSm()) {
+            this.setState({
+                inSm: inSm()
             });
         }
     }
@@ -790,6 +796,7 @@ class App extends React.Component {
                         boardSettings={this.state.boardSettings}
 
                         inLg={this.state.inLg}
+                        inSm={this.state.inSm}
                     />
                 </Route>
                 <Route path="/register">

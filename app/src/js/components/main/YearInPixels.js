@@ -121,8 +121,6 @@ export default class YearInPixels extends React.Component {
     render() {
         let title = (<h1 className="display-5 mt-3">{this.props.year + " in Pixels"}</h1>);
         let colorSchemeList = (<ColorSchemeList
-            className={"mx-auto w-75 mb-5"}
-            style={{ maxWidth: "500px" }}
             colorSchemes={this.props.colorSchemes}
             disabled={!this.props.loggedIn}
             changeColorSchemeOrder={this.props.changeColorSchemeOrder}
@@ -130,6 +128,8 @@ export default class YearInPixels extends React.Component {
             addColorScheme={this.props.addColorScheme}
             deleteColorScheme={this.props.deleteColorScheme}
             checkLabelExists={this.props.checkLabelExists}
+            style={{ maxWidth: "500px" }}
+            className={"mx-auto mb-5 " + (this.props.inSm ? "w-100" : "w-75")}
         />);
         let board = (<Board
             currentDay={this.props.currentDay}
@@ -147,7 +147,7 @@ export default class YearInPixels extends React.Component {
             disabled={!this.props.loggedIn}
             changeYear={this.props.changeYear}
             showAddYearModal={this.showAddYearModal}
-            className="mt-4 mb-4 mx-auto w-50"
+            className={"mt-4 mb-4 mx-auto " + (this.props.inSm ? "w-100" : "w-50")}
         />);
 
         let content = undefined;

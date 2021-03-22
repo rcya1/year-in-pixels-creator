@@ -11,7 +11,6 @@ Year in Pixels Creator is a tool for keeping track of your mood through colors. 
 ## Known Issues
 
 - Mobile formatting isn't working well
-- Year selector is not centered properly and does not have proper width on mobile
 
 ## Planned Features
 

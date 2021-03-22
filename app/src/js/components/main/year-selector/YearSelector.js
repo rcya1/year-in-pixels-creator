@@ -25,7 +25,7 @@ export default class YearSelector extends React.Component {
         return (<OverlayTrigger
             overlay={<Tooltip id="tooltip-disabled">Create an account to access multiple years!</Tooltip>}
         >
-            <div className="flex-grow-1">
+            <div className="flex-grow-1" style={{maxWidth: "250px"}}>
                 {component}
             </div>
         </OverlayTrigger>);
@@ -49,7 +49,6 @@ export default class YearSelector extends React.Component {
             options={options}
             isDisabled={this.props.disabled}
             onChange={this.onChangeYear}
-            className="flex-grow-1"
             styles={selectStyles}
             style={{maxWidth: "250px"}}
         />);
@@ -59,7 +58,7 @@ export default class YearSelector extends React.Component {
         return (
         <Container {...this.props}>
             <Row>
-                <Col className="d-flex justify-content-center"
+                <Col className="d-flex justify-content-center px-0"
                 >
                     <p className="text-right my-auto mr-2"
                         style={{fontWeight: 520, fontSize: "1.15rem"}}    
