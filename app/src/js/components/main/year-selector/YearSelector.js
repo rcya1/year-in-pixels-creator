@@ -50,6 +50,8 @@ export default class YearSelector extends React.Component {
             isDisabled={this.props.disabled}
             onChange={this.onChangeYear}
             styles={selectStyles}
+            className="flex-grow-1"
+            isSearchable={false}
             style={{maxWidth: "250px"}}
         />);
 
