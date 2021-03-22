@@ -57,7 +57,7 @@ export default class BoardSettings extends Component {
                         <Row className="equal">
                             <Col>
                                 <Row className="w-75 mx-auto">
-                                    <Col lg={6} className="d-flex px-0">
+                                    <Col lg={6} className="d-flex px-0 mb-1">
                                         <p className="my-auto">Show Invalid Cells: </p>
                                     </Col>
                                     <Col lg={6} className="px-0">

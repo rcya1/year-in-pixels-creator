@@ -769,6 +769,7 @@ class App extends React.Component {
                     logout={this.navbarLogout}
 
                     inLg={this.state.inLg}
+                    inSm={this.state.inSm}
                 />
                 <Route path="/" exact>
                     <YearInPixels

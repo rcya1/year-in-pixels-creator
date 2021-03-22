@@ -81,15 +81,19 @@ class AppNavbar extends React.Component {
         let loginArea = [];
         if(this.props.loggedIn) {
             loginArea.push((<Button
-                    className="navbar-button"
+                    className="navbar-button text-truncate"
                     key="account"
                     onClick={() => {
                         this.props.setRedirect("/settings");
                     }}
+                    style={{
+                        maxWidth: this.props.inSm ? "80px" : "200px"
+                    }}
                     eventKey="10"
                 >
-                {this.props.username}
-            </Button>));
+                    {this.props.username}
+                </Button>
+            ));
             loginArea.push((<Button
                     className="navbar-button"
                     key="logout"

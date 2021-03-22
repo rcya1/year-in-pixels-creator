@@ -10,7 +10,7 @@ Year in Pixels Creator is a tool for keeping track of your mood through colors. 
 
 ## Known Issues
 
-- Mobile formatting isn't working well
+- Improve custom buttons on mobile with ripples / some other effect (hover is inconsistent)
 
 ## Planned Features
 
