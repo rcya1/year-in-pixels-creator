@@ -94,10 +94,10 @@ export default class YearInPixels extends React.Component {
         let padding = 10;
         
         if(top - padding < 0) {
-            newMenuYOffset -= top - padding;
+            newMenuYOffset -= (top - padding);
         }
         if(bottom + padding > window.innerHeight) {
-            newMenuYOffset += window.innerHeight - (bottom + padding);
+            newMenuYOffset += (window.innerHeight - (bottom + padding));
         }
 
         this.setState({

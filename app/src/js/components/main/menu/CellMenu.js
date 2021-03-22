@@ -96,7 +96,7 @@ export default class CellMenu extends React.Component {
             if(this.state.value > options.length) {
                 value = 0;
             }
-
+            
             let bodyContent = (
                 <Form>
                     <Container>
@@ -107,6 +107,8 @@ export default class CellMenu extends React.Component {
                                     options={options}
                                     onChange={this.onChangeValue}
                                     styles={selectStyles}
+                                    isSearchable={false}
+                                    menuShouldScrollIntoView={false}
                                 />
                             </Col>
                         </Row>
