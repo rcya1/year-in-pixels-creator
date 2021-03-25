@@ -21,6 +21,10 @@ export default class YearInPixels extends React.Component {
             menuXOffset: 0,
             menuYOffset: 0,
             menuVisible: false,
+            menuMaxHeight: 10000,
+            menuMaxWidth: 10000,
+            menuMaxTextHeight: 10000,
+
             showAddYearModal: false,
             currentlySelected: [-1, -1]
         }
@@ -88,22 +92,30 @@ export default class YearInPixels extends React.Component {
         });
     }
 
-    updateMenuOffset = (top, bottom) => {
+    updateMenuOffset = (rect, textHeight) => {
         let newMenuXOffset = this.state.menuXOffset;
         let newMenuYOffset = this.state.menuYOffset;
 
-        let padding = 10;
+        let verticalPadding = 10;
+        let horizontalPadding = 30;
         
-        if(top - padding < 0) {
-            newMenuYOffset -= (top - padding);
+        if(rect.top - verticalPadding < 0) {
+            newMenuYOffset -= (rect.top - verticalPadding);
         }
-        if(bottom + padding > window.innerHeight) {
-            newMenuYOffset += (window.innerHeight - (bottom + padding));
+        if(rect.bottom + verticalPadding > window.innerHeight) {
+            newMenuYOffset += (window.innerHeight - (rect.bottom + verticalPadding));
         }
+
+        let maxHeight = Math.min(window.innerHeight * 2 / 3, window.innerHeight - rect.top - verticalPadding);
+        let maxWidth = Math.min(window.innerWidth * 2 / 3, window.innerWidth - rect.left - horizontalPadding);
+        let maxTextHeight = maxHeight - (rect.height - textHeight);
 
         this.setState({
             menuXOffset: newMenuXOffset,
-            menuYOffset: newMenuYOffset
+            menuYOffset: newMenuYOffset,
+            menuMaxHeight: maxHeight,
+            menuMaxWidth: maxWidth,
+            menuMaxTextHeight: maxTextHeight
         });
     }
 
@@ -186,7 +198,11 @@ export default class YearInPixels extends React.Component {
                     xPos={this.state.menuXPos + this.state.menuXOffset}
                     yPos={this.state.menuYPos + this.state.menuYOffset}
                     updateMenuOffset={this.updateMenuOffset}
+                    maxWidth={this.state.menuMaxWidth}
+                    maxHeight={this.state.menuMaxHeight}
+                    maxTextHeight={this.state.menuMaxTextHeight}
                     visible={this.state.menuVisible}
+
                     month={this.state.currentlySelected[0]}
                     day={this.state.currentlySelected[1]}
                     value={this.props.values[getIndex(

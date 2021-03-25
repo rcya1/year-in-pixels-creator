@@ -21,10 +21,7 @@ export default class CellMenu extends React.Component {
 
         this.state = {
             value: 0,
-            comment: "",
-            maxHeight: 1000,
-            maxWidth: 1000,
-            minWidth: 0
+            comment: ""
         };
 
         this.menuRef = React.createRef();
@@ -45,25 +42,9 @@ export default class CellMenu extends React.Component {
             // TODO Look into IntersectionObserver instead of this
             if(prevProps.xPos !== this.props.xPos || prevProps.yPos !== this.props.yPos) {
                 let rect = this.menuRef.current.getBoundingClientRect();
-                this.props.updateMenuOffset(rect.top, rect.bottom);
-                this.updateSizing(rect);
+                this.props.updateMenuOffset(rect, this.textRef.current.getBoundingClientRect().height);
             }
         }
-    }
-
-    updateSizing = (rect) => {
-        let verticalPadding = 10;
-        let horizontalPadding = 30;
-
-        let maxHeight = window.innerHeight - rect.top - verticalPadding;
-        let maxWidth = window.innerWidth - rect.left - horizontalPadding;
-        let maxTextHeight = maxHeight - (rect.height - this.textRef.current.getBoundingClientRect().height);
-
-        this.setState({
-            maxHeight: maxHeight,
-            maxWidth: maxWidth,
-            maxTextHeight: maxTextHeight
-        });
     }
 
     onChangeValue = (newValue) => {
@@ -142,7 +123,7 @@ export default class CellMenu extends React.Component {
                                         resize: "both",
                                         maxWidth: "100%",
                                         minWidth: "100%",
-                                        maxHeight: this.state.maxTextHeight,
+                                        maxHeight: this.props.maxTextHeight,
                                         minHeight: "50px"
                                     }}
                                     ref={this.textRef}
@@ -175,16 +156,16 @@ export default class CellMenu extends React.Component {
                             boxShadow: "0 5px 10px rgba(0, 0, 0, 0.3)",
                             whiteSpace: "nowrap",
                             flexWrap: "nowrap",
-                            maxWidth: this.state.maxWidth,
-                            maxHeight: this.state.maxHeight,
+                            maxWidth: this.props.maxWidth,
+                            maxHeight: this.props.maxHeight,
                         }}
                         ref={this.menuRef}
                         onMouseDown={this.handleClick}
                     >
 
                         <Card style={{
-                            maxWidth: this.state.maxWidth,
-                            maxHeight: this.state.maxHeight,
+                            maxWidth: this.props.maxWidth,
+                            maxHeight: this.props.maxHeight,
                         }}>
                             <Card.Header className="text-center py-2" as="h4">
                                 {title}
