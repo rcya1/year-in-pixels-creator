@@ -16,13 +16,17 @@ Currently deployed on Heroku using free web dynos and uses cron-job to keep the 
 
 ## Planned Features
 
-- Add a changelog
+- Add a changelog for each version
+- Add loading bar indicator for when HTTP requests are being made and show popup if user tries to end them early
 - Add statistics for each day on the bottom right and have a select menu to select either entire year or per month, or all time
   - Different types of graphs such as pie charts, bar graphs, line charts
 - Add the month view for the board
 - Exporting board as an image file
 - Add button to quickly modify the current day (if you are on the current year)
 - Add exporting color schemes
+- Deleting accounts
+- Exporting all data as text for backups
+- Move this TODO list out of here and instead to projects or something
 
 ## Maybe Features
 
