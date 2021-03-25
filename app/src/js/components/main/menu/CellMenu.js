@@ -15,18 +15,20 @@ import { getOrdinalEnding } from 'js/util/DateUtils';
 
 let selectStyles = require('./MenuSelectStyle').selectStyles;
 
-// TODO Look into: https://stackoverflow.com/questions/8328886/sticky-top-div-with-absolute-positioning
-// and other position: sticky things
 export default class CellMenu extends React.Component {
     constructor(props) {
         super(props);
 
         this.state = {
             value: 0,
-            comment: ""
+            comment: "",
+            maxHeight: 1000,
+            maxWidth: 1000,
+            minWidth: 0
         };
 
-        this.ref = React.createRef();
+        this.menuRef = React.createRef();
+        this.textRef = React.createRef();
     }
 
     componentDidUpdate(prevProps) {
@@ -42,10 +44,26 @@ export default class CellMenu extends React.Component {
         if(inLg()) {
             // TODO Look into IntersectionObserver instead of this
             if(prevProps.xPos !== this.props.xPos || prevProps.yPos !== this.props.yPos) {
-                let rect = this.ref.current.getBoundingClientRect();
+                let rect = this.menuRef.current.getBoundingClientRect();
                 this.props.updateMenuOffset(rect.top, rect.bottom);
+                this.updateSizing(rect);
             }
         }
+    }
+
+    updateSizing = (rect) => {
+        let verticalPadding = 10;
+        let horizontalPadding = 30;
+
+        let maxHeight = window.innerHeight - rect.top - verticalPadding;
+        let maxWidth = window.innerWidth - rect.left - horizontalPadding;
+        let maxTextHeight = maxHeight - (rect.height - this.textRef.current.getBoundingClientRect().height);
+
+        this.setState({
+            maxHeight: maxHeight,
+            maxWidth: maxWidth,
+            maxTextHeight: maxTextHeight
+        });
     }
 
     onChangeValue = (newValue) => {
@@ -120,6 +138,14 @@ export default class CellMenu extends React.Component {
                                     value={this.state.comment}
                                     onChange={this.onChangeComment}
                                     as="textarea"
+                                    style={{ 
+                                        resize: "both",
+                                        maxWidth: "100%",
+                                        minWidth: "100%",
+                                        maxHeight: this.state.maxTextHeight,
+                                        minHeight: "50px"
+                                    }}
+                                    ref={this.textRef}
                                 />
                             </Col>
                         </Row>
@@ -141,20 +167,25 @@ export default class CellMenu extends React.Component {
 
             if(inLg()) {
                 return (
-                    <div className="menu"
+                    <div className=""
                         style={{
                             position: "absolute",
                             top: top,
                             left: left,
                             boxShadow: "0 5px 10px rgba(0, 0, 0, 0.3)",
                             whiteSpace: "nowrap",
-                            flexWrap: "nowrap"
+                            flexWrap: "nowrap",
+                            maxWidth: this.state.maxWidth,
+                            maxHeight: this.state.maxHeight,
                         }}
-                        ref={this.ref}
-                        onClick={this.handleClick}
+                        ref={this.menuRef}
+                        onMouseDown={this.handleClick}
                     >
 
-                        <Card>
+                        <Card style={{
+                            maxWidth: this.state.maxWidth,
+                            maxHeight: this.state.maxHeight,
+                        }}>
                             <Card.Header className="text-center py-2" as="h4">
                                 {title}
                             </Card.Header>

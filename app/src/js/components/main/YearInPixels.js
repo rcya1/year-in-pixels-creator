@@ -31,13 +31,13 @@ export default class YearInPixels extends React.Component {
     componentDidMount() {
         window.addEventListener('resize', this.handleResize);
         window.addEventListener('scroll', this.updateMenuPosition);
-        window.addEventListener('click', this.handleClick);
+        window.addEventListener('mousedown', this.handleClick);
     }
 
     componentWillUnmount() {
         window.removeEventListener('resize', this.handleResize);
         window.removeEventListener('scroll', this.updateMenuPosition);
-        window.removeEventListener('click', this.handleClick);
+        window.removeEventListener('mousedown', this.handleClick);
     }
 
     handleResize = () => {
@@ -50,6 +50,7 @@ export default class YearInPixels extends React.Component {
 
     handleClick = () => {
         if(this.props.inLg) {
+            console.log("TEST");
             this.closeMenu();
         }
     }
