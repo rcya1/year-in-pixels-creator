@@ -15,6 +15,7 @@ Year in Pixels Creator is a tool for keeping track of your mood through colors. 
 ## Planned Features
 
 - Add a changelog for each version
+- Add loading bar indicator for when HTTP requests are being made and show popup if user tries to end them early
 - Add statistics for each day on the bottom right and have a select menu to select either entire year or per month, or all time
   - Different types of graphs such as pie charts, bar graphs, line charts
 - Add the month view for the board
