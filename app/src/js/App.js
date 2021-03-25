@@ -11,6 +11,7 @@ import Login from './components/Login'
 import Settings from './components/settings/Settings'
 import About from './components/About'
 import PrivacyPolicy from './components/PrivacyPolicy'
+import Changelog from './components/Changelog'
 
 // Utility
 import HTTPRequest from './util/HTTPRequest';
@@ -831,6 +832,9 @@ class App extends React.Component {
                 </Route>
                 <Route path="/privacypolicy">
                     <PrivacyPolicy/>
+                </Route>
+                <Route path="/changelog">
+                    <Changelog/>
                 </Route>
                 <OverridePrompt
                     status={this.state.overrideDataPromptStatus}
