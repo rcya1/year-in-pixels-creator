@@ -12,6 +12,7 @@ import Settings from './components/settings/Settings'
 import About from './components/About'
 import PrivacyPolicy from './components/PrivacyPolicy'
 import Changelog from './components/Changelog'
+import LoadingIndicator from './components/LoadingIndicator'
 
 // Utility
 import HTTPRequest from './util/HTTPRequest';
@@ -45,6 +46,7 @@ class App extends React.Component {
             colorSchemes: defaultColorSchemes,
             boardSettings: defaultBoardSettings,
             
+            loadingMessages: [],
             alerts: [],
             overrideDataPromptStatus: PromptStatus.NONE,
             inLg: inLg(),
@@ -80,8 +82,11 @@ class App extends React.Component {
     }
 
     checkAuthenticated = async () => {
+        let loadingMessage = this.createLoadingMessage("Checking User Authentication");
         try {
+            loadingMessage.add();
             let res = await HTTPRequest.get("authenticated");
+            loadingMessage.remove();
 
             this.setState({
                 loggedIn: res.data
@@ -93,20 +98,29 @@ class App extends React.Component {
         }
         catch(err) {
             handleError(err, this.addAlert);
+            loadingMessage.remove();
         }
     }
 
     syncData = async () => {
+        let loadingMessage = this.createLoadingMessage("Syncing User Data");
         if(this.state.loggedIn) {
             try {
-                this.loadName();
-                this.syncColorSchemes();
-                this.syncSettings();
-                await this.loadYears(); // this must finish before loading values and comments
-                this.syncValuesAndComments();
+                loadingMessage.add();
+
+                let requests = [this.loadName(),
+                    this.loadName(),
+                    this.syncColorSchemes(),
+                    this.syncSettings(),
+                    this.loadYears().then(() => this.syncValuesAndComments())];
+                
+                await Promise.all(requests);
+
+                loadingMessage.remove();
             }
             catch(err) {
                 handleError(err, this.addAlert);
+                loadingMessage.remove();
             }
         }
     }
@@ -244,25 +258,33 @@ class App extends React.Component {
     }
 
     navbarLogout = async () => {
+        let loadingMessage = this.createLoadingMessage("Logging Out");
         try {
+            loadingMessage.add();
             await HTTPRequest.post("logout");
             this.setState({
                 loggedIn: false
             });
             this.addAlert("info", "Successfully Logged Out");
+            loadingMessage.remove();
         }
         catch(err) {
             handleError(err, this.addAlert);
+            loadingMessage.remove();
         }
     }
 
     checkUsernameAvailable = async (username) => {
+        let loadingMessage = this.createLoadingMessage("Checking Username Availability");
         try {
+            loadingMessage.add();
             let res = await HTTPRequest.get("users/check-available/" + username);
+            loadingMessage.remove();
             return res.data === true;
         }
         catch(err) {
             handleError(err, this.addAlert);
+            loadingMessage.remove();
         }
     }
 
@@ -273,7 +295,9 @@ class App extends React.Component {
             password: password
         };
 
+        let loadingMessage = this.createLoadingMessage("Registering User");
         try {
+            loadingMessage.add();
             await HTTPRequest.post("users/register", body);
             this.setState({
                 loggedIn: true,
@@ -285,10 +309,12 @@ class App extends React.Component {
                 this.syncSettings();
                 await this.addYear(this.state.year);
                 this.uploadValuesAndComments();
+                loadingMessage.remove();
             });
         }
         catch(err) {
             handleError(err, this.addAlert, [["UserExistsError", "User Already Exists"]]);
+            loadingMessage.remove();
             return false;
         }
 
@@ -297,16 +323,20 @@ class App extends React.Component {
 
     uploadValuesAndComments = async () => {
         if(this.state.loggedIn) {
+            let loadingMessage = this.createLoadingMessage("Uploading Data");
             try {
                 const body = {
                     values: this.state.values,
                     comments: this.state.comments
                 };
 
+                loadingMessage.add();
                 await HTTPRequest.put("/data/" + this.state.year, body);
+                loadingMessage.remove();
             }
             catch(err) {
                 handleError(err);
+                loadingMessage.remove();
             }
         }
     }
@@ -317,17 +347,22 @@ class App extends React.Component {
             password: password,
         };
 
+        let loadingMessage = this.createLoadingMessage("Logging In");
         try {
+            loadingMessage.add();
             await HTTPRequest.post("login", body);
             this.setState({
                 loggedIn: true
             });
-            this.syncData();
             this.addAlert("info", "Successfully Logged In");
+            loadingMessage.remove();
+
+            this.syncData(); // this will create it's own loading message
         }
         catch(error) {
             handleError(error, this.addAlert, [["IncorrectPasswordError", "Incorrect Password"],
                 ["IncorrectUsernameError", "Unknown User"]]);
+            loadingMessage.remove();
             return false;
         }
         
@@ -340,15 +375,19 @@ class App extends React.Component {
             username: username
         };
 
+        let loadingMessage = this.createLoadingMessage("Updating Account Info");
         try {
+            loadingMessage.add();
             await HTTPRequest.put("users", body);
             this.setState({
                 name: name,
                 username: username
             });
+            loadingMessage.remove();
         }
         catch(err) {
             handleError(err, this.addAlert);
+            loadingMessage.remove();
         }
     }
 
@@ -358,26 +397,43 @@ class App extends React.Component {
             newPassword: newPassword
         };
 
+        let loadingMessage = this.createLoadingMessage("Changing Password");
         try {
+            loadingMessage.add();
             await HTTPRequest.post("users/change-password", body);
             this.addAlert("info", "Successfully Changed Password");
+            loadingMessage.remove();
         }
         catch(err) {
             handleError(err, this.addAlert);
+            loadingMessage.remove();
         }
     }
 
     updateBoardSettings = async(newBoardSettings) => {
-        this.setState({
-            boardSettings: newBoardSettings
-        });
+        let loadingMessage = this.createLoadingMessage("Updating Board Settings");
 
-        for(let [key, value] of Object.entries(newBoardSettings)) {
-            await HTTPRequest.put("settings/" + key, { newValue: value });
+        try {
+            loadingMessage.add();
+            this.setState({
+                boardSettings: newBoardSettings
+            });
+
+            for(let [key, value] of Object.entries(newBoardSettings)) {
+                await HTTPRequest.put("settings/" + key, { newValue: value });
+            }
+
+            loadingMessage.remove();    
+        }
+        catch(err) {
+            handleError(err, this.addAlert);
+            loadingMessage.remove();
         }
     }
 
     changeYear = async (newYear) => {
+        let loadingMessage = this.createLoadingMessage("Changing Year");
+        loadingMessage.add();
         // wipe data to prevent any overriding issues
         this.setState({
             year: newYear,
@@ -387,20 +443,26 @@ class App extends React.Component {
             // make sure the state is updated before we start getting new year
             try {
                 await this.syncValuesAndComments();
+                loadingMessage.remove();
             }
             catch(err) {
                 handleError(err, this.addAlert);
+                loadingMessage.remove();
             }
         });
     }
 
     addYear = async (newYear) => {
         if(this.state.loggedIn) {
+            let loadingMessage = this.createLoadingMessage("Adding Year");
             try {
+                loadingMessage.add();
                 await HTTPRequest.post("data/" + newYear);  
+                loadingMessage.remove();
             }
             catch(err) {
                 handleError(err, this.addAlert);
+                loadingMessage.remove();
             }
             await this.changeYear(newYear);
             await this.loadYears();
@@ -418,6 +480,8 @@ class App extends React.Component {
     }
 
     handleDataOverride = async (overrideOption) => {
+        let loadingMessage = this.createLoadingMessage("Handling Data Merging");
+        loadingMessage.add();
         switch(overrideOption) {
             case OverrideOption.REPLACE_CURRENT:
                 this.onlineValues = this.state.values;
@@ -483,6 +547,8 @@ class App extends React.Component {
         catch(err) {
             handleError(err, this.addAlert);
         }
+        
+        loadingMessage.remove();
 
         this.onlineValues = null;
         this.onlineComments = null;
@@ -493,6 +559,9 @@ class App extends React.Component {
     }
 
     updateBoardData = async (month, day, value, comment) => {
+        let loadingMessage = this.createLoadingMessage("Updating Board Data");
+        loadingMessage.add();
+
         let valuesCopy = this.state.values.slice();
         valuesCopy[getIndex(month, day)] = value;
 
@@ -517,9 +586,14 @@ class App extends React.Component {
                 handleError(err, this.addAlert);
             }
         }
+
+        loadingMessage.remove();
     }
 
     changeColorSchemeOrder = async(startIndex, endIndex) => {
+        let loadingMessage = this.createLoadingMessage("Changing Color Scheme Order");
+        loadingMessage.add();
+
         // swap the color scheme orders orders
         let newColorSchemes = this.state.colorSchemes.slice();
         let [removed] = newColorSchemes.splice(startIndex, 1);
@@ -571,10 +645,15 @@ class App extends React.Component {
                 handleError(err, this.addAlert);
             }
         }
+
+        loadingMessage.remove();
     }
 
     // color is passed in as "#RRGGBB"
     addColorScheme = async(label, color) => {
+        let loadingMessage = this.createLoadingMessage("Adding Color");
+        loadingMessage.add();
+
         let colorSchemes = this.state.colorSchemes.slice();
         let r = parseInt(color.substring(1, 3), 16);
         let g = parseInt(color.substring(3, 5), 16);
@@ -599,10 +678,15 @@ class App extends React.Component {
                 handleError(err, this.addAlert);
             }
         }
+
+        loadingMessage.remove();
     }
 
     // newColor is passed in as "#RRGGBB"
     editColorScheme = async(originalLabel, newLabel, newColor) => {
+        let loadingMessage = this.createLoadingMessage("Editing Color");
+        loadingMessage.add();
+
         let colorSchemes = this.state.colorSchemes.slice();
         let r = parseInt(newColor.substring(1, 3), 16);
         let g = parseInt(newColor.substring(3, 5), 16);
@@ -634,9 +718,14 @@ class App extends React.Component {
                 handleError(err, this.addAlert);
             }
         }
+        
+        loadingMessage.remove();
     }
 
     deleteColorScheme = async(label) => {
+        let loadingMessage = this.createLoadingMessage("Deleting Color");
+        loadingMessage.add();
+
         // delete color scheme from colorSchemes
         let newColorSchemes = this.state.colorSchemes.slice();
         let index = -1;
@@ -696,6 +785,8 @@ class App extends React.Component {
                 handleError(err, this.addAlert);
             }
         }
+
+        loadingMessage.remove();
     }
 
     checkLabelExists = (label) => {
@@ -759,6 +850,42 @@ class App extends React.Component {
         this.setState({
             alerts: []
         });
+    }
+
+    createLoadingMessage = (message) => {
+        function add() {
+            this.setState((state) => {
+                let loadingMessages = state.loadingMessages.slice();
+                loadingMessages.push(message);
+                return {
+                    loadingMessages: loadingMessages
+                }
+            });
+        }
+
+        function remove() {
+            this.setState((state) => {
+                let loadingMessages = state.loadingMessages.slice();
+                let index = loadingMessages.indexOf(message);
+                if(index != -1) {
+                    loadingMessages.splice(index, 1);
+                    return {
+                        loadingMessages: loadingMessages
+                    }
+                }
+                else {
+                    return {};
+                }
+            });
+        }
+
+        add = add.bind(this);
+        remove = remove.bind(this);
+
+        return {
+            add: add,
+            remove: remove
+        };
     }
     
     render() {
@@ -840,6 +967,9 @@ class App extends React.Component {
                     status={this.state.overrideDataPromptStatus}
                     handleDataOverride={this.handleDataOverride}
                     handleColorSchemeOverride={this.handleColorSchemeOverride}
+                />
+                <LoadingIndicator
+                    messages={this.state.loadingMessages}
                 />
                 <AlertContainer position="bottom-left">
                     {   
