@@ -141,6 +141,7 @@ export default class YearInPixels extends React.Component {
             deleteColorScheme={this.props.deleteColorScheme}
             checkLabelExists={this.props.checkLabelExists}
             style={{ maxWidth: "500px" }}
+            inLg={this.props.inLg}
             className={"mx-auto mb-5 " + (this.props.inSm ? "w-100" : "w-75")}
         />);
         let board = (<Board

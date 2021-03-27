@@ -29,7 +29,7 @@ const getItemColorPreviewStyle = (colorScheme) => ({
     border: "1px solid black",
     height: "0.8em",
     width: "0.8em",
-    margin: "auto 0.5em auto 0.2em",
+    margin: "auto 0.5em auto 0.4em",
     display: "inline-block",
     verticalAlign: "middle",
 });
@@ -94,6 +94,10 @@ export default class ColorSchemeList extends React.Component {
     }
 
     createEditButton = (colorScheme) => {
+        let editButtonBaseStyle = {
+            fontSize: this.props.inLg ? "1.0rem" : "1.1rem"
+        };
+
         let button = (<Button 
             className="ml-auto" 
             variant="outline-secondary"
@@ -104,7 +108,12 @@ export default class ColorSchemeList extends React.Component {
                     this.openEditColorSchemeModal(colorScheme);
                 }
             }
-            style={this.props.disabled ? {pointerEvents: "none"} : {}}
+            style={this.props.disabled ? {
+                    pointerEvents: "none",
+                    ...editButtonBaseStyle
+                } : {
+                    ...editButtonBaseStyle
+                }}
         >
             Edit
         </Button>);
@@ -121,6 +130,7 @@ export default class ColorSchemeList extends React.Component {
                     this.props.deleteColorScheme(colorScheme[3]);
                 }
             }
+            inLg={this.props.inLg}
         />);
 
         if(!this.props.disabled) return button;
@@ -131,6 +141,7 @@ export default class ColorSchemeList extends React.Component {
         let button = (<AddColorSchemeButton
             disabled={this.props.disabled}
             handleClick={this.openAddColorSchemeModal}
+            inLg={this.props.inLg}
         />);
 
         if(!this.props.disabled) return button;

@@ -18,7 +18,7 @@ export default class DeleteColorSchemeButton extends React.Component {
 
     getIconStyle(hover, disabled) {
         return {
-            fontSize: "2rem",
+            fontSize: this.props.inLg ? "2rem" : "2.25rem",
             cursor: disabled ? "" : "pointer",
             color: (hover && !disabled) ? "#FFFFFF" : "#6c757d",
             margin: "auto 0 auto 0.5rem",

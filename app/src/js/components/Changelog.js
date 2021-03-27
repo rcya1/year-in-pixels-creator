@@ -16,6 +16,8 @@ export default class Changelog extends Component {
             <h3 className={headerClassName}>v1.1</h3>
             <ul className={paragraphClassName}>
                 <li>Added this changelog :D</li>
+                <li>Add loading bar indicator for updating the user on what operations are occurring</li>
+                <li>Improve color scheme list sizing on mobile view</li>
                 <li>Added limits to the day menu size</li>
                 <li>Fixed bug where dragging in the day menu would result in closing the menu</li>
                 <li>TODO</li>

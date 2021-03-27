@@ -18,7 +18,7 @@ export default class AddColorSchemeButton extends React.Component {
 
     getIconStyle(disabled) {
         return {
-            fontSize: "1.5rem",
+            fontSize: this.props.inLg ? "1.75rem" : "2.0rem",
             cursor: disabled ? "" : "pointer",
             color: "#6c757d",
             opacity: disabled ? ".65" : "1.0",
@@ -39,6 +39,7 @@ export default class AddColorSchemeButton extends React.Component {
                 onMouseEnter={() => this.setState({ hover: true })}
                 onMouseLeave={() => this.setState({ hover: false })}
                 onClick={this.props.disabled ? null : this.props.handleClick}
+                className={this.props.inLg ? "mt-1" : "mt-2"}
                 style={this.getIconStyle(this.props.disabled)}
                 {...this.props}
             />
