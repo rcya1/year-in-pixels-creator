@@ -2,6 +2,7 @@ import React from 'react';
 import { HashRouter as Router, Route } from "react-router-dom";
 import Button from "react-bootstrap/Button";
 import { AlertContainer } from "react-bs-notifier";
+import FileSaver from 'file-saver';
 
 // Main Components
 import AppNavbar from './components/AppNavbar'
@@ -443,6 +444,23 @@ class App extends React.Component {
             handleError(err, this.addAlert);
             loadingMessage.remove();
         }
+    }
+
+    exportUserData = async() => {
+        let loadingMessage = this.createLoadingMessage("Exporting User Data");
+
+        try {
+            loadingMessage.add();
+            let res = await HTTPRequest.get("users/full-data");
+            let json = JSON.stringify(res.data);
+            let blob = new Blob([json], {type: "application/json"});
+            FileSaver.saveAs(blob, this.state.username + "_data.json");
+        }
+        catch(err) {
+            handleError(err, this.addAlert);
+        }
+
+        loadingMessage.remove();
     }
 
     changeYear = async (newYear) => {
@@ -973,6 +991,8 @@ class App extends React.Component {
 
                         boardSettings={this.state.boardSettings}
                         updateBoardSettings={this.updateBoardSettings}
+
+                        exportUserData={this.exportUserData}
                     />
                 </Route>
                 <Route path="/about">

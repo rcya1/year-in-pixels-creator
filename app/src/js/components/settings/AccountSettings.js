@@ -176,7 +176,9 @@ export default class AccountSettings extends Component {
                                             </FormControl.Feedback>
                                         </InputGroup>
                                     </Form.Group>
+                                    
                                     <br></br>
+
                                     <Button 
                                         variant="primary"
                                         type="submit"
