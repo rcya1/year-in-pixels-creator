@@ -54,7 +54,6 @@ export default class YearInPixels extends React.Component {
 
     handleClick = () => {
         if(this.props.inLg) {
-            console.log("TEST");
             this.closeMenu();
         }
     }

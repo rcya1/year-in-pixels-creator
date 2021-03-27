@@ -67,6 +67,20 @@ class App extends React.Component {
         window.removeEventListener('resize', this.handleResize);
         this.removeNewDayCallback();
     }
+
+    componentDidUpdate = (prevProps, prevState) => {
+        let prevLoading = prevState.loadingMessages.length > 0;
+        let currLoading = this.state.loadingMessages.length > 0;
+
+        if(prevLoading !== currLoading) {
+            if(currLoading) {
+                window.addEventListener('beforeunload', this.showQuitWhileLoadingPrompt);
+            }
+            else {
+                window.removeEventListener('beforeunload', this.showQuitWhileLoadingPrompt);
+            }
+        }
+    }
     
     handleResize = () => {
         if(this.state.inLg !== inLg()) {
@@ -867,7 +881,7 @@ class App extends React.Component {
             this.setState((state) => {
                 let loadingMessages = state.loadingMessages.slice();
                 let index = loadingMessages.indexOf(message);
-                if(index != -1) {
+                if(index !== -1) {
                     loadingMessages.splice(index, 1);
                     return {
                         loadingMessages: loadingMessages
@@ -879,13 +893,20 @@ class App extends React.Component {
             });
         }
 
-        add = add.bind(this);
-        remove = remove.bind(this);
+        let bindedAdd = add.bind(this);
+        let bindedRemove = remove.bind(this);
 
         return {
-            add: add,
-            remove: remove
+            add: bindedAdd,
+            remove: bindedRemove
         };
+    }
+
+    showQuitWhileLoadingPrompt = (e) => {
+        e.preventDefault();
+        let message = "The app is currently saving your data. If you leave before saving, your changes may be lost."
+        e.returnValue = message;
+        return message;
     }
     
     render() {
