@@ -1,6 +1,7 @@
 # Year in Pixels Creator
 
 Year in Pixels Creator is a tool for keeping track of your mood through colors.
+
 https://year-in-pixels-creator.herokuapp.com/#/
 
 It is built with a React frontend, an Express backend, and a MongoDB database. See the [About Page](https://year-in-pixels-creator.herokuapp.com/#/about) for more information.
