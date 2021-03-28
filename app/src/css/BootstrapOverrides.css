@@ -3,3 +3,10 @@
     font-weight: 300;
     line-height: 1.0;
 }
+
+/* Some random hack to make the loading indicator work */
+body {
+    position: relative;
+    float: left;
+    width: 100%;
+}
