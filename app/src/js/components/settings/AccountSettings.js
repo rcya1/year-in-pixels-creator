@@ -117,6 +117,13 @@ export default class AccountSettings extends Component {
         }
     }
 
+    deleteAccount = () => {
+        if(window.confirm("Are you sure you would like to delete your account? This is irreversible!")) {
+            this.props.setRedirect("/");
+            this.props.deleteAccount();
+        }
+    }
+
     render() {
         return (
             <Card className="bg-light">
@@ -274,6 +281,16 @@ export default class AccountSettings extends Component {
                                     </Button>
                                 </Form>
                             </Col>
+                        </Row>
+                        <Row>
+                            <Button 
+                                variant="danger"
+                                onClick={this.deleteAccount}
+                                className="mx-auto mt-5 w-25"
+                                block
+                            >
+                                Delete Account
+                            </Button>
                         </Row>
                     </Container>
                 </Card.Body>

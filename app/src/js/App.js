@@ -36,6 +36,22 @@ class App extends React.Component {
 
         this.state = {
             loggedIn: false,
+            
+            loadingMessages: [],
+            alerts: [],
+            overrideDataPromptStatus: PromptStatus.NONE,
+            inLg: inLg(),
+            inSm: inSm(),
+            ...this.getDefaultData()
+        }
+
+        this.onlineValues = null;
+        this.onlineComments = null;
+    }
+
+    getDefaultData = () => {
+        return {
+            loggedIn: false,
             name: "",
             username: "",
 
@@ -45,17 +61,8 @@ class App extends React.Component {
             values: Array(12 * 31).fill(0),
             comments: Array(12 * 31).fill(""),
             colorSchemes: defaultColorSchemes,
-            boardSettings: defaultBoardSettings,
-            
-            loadingMessages: [],
-            alerts: [],
-            overrideDataPromptStatus: PromptStatus.NONE,
-            inLg: inLg(),
-            inSm: inSm()
-        }
-
-        this.onlineValues = null;
-        this.onlineComments = null;
+            boardSettings: defaultBoardSettings
+        };
     }
 
     componentDidMount = () => {
@@ -272,14 +279,12 @@ class App extends React.Component {
         }
     }
 
-    navbarLogout = async () => {
+    logout = async () => {
         let loadingMessage = this.createLoadingMessage("Logging Out");
         try {
             loadingMessage.add();
             await HTTPRequest.post("logout");
-            this.setState({
-                loggedIn: false
-            });
+            this.setState(this.getDefaultData());
             this.addAlert("info", "Successfully Logged Out");
             loadingMessage.remove();
         }
@@ -398,6 +403,7 @@ class App extends React.Component {
                 name: name,
                 username: username
             });
+            this.addAlert("info", "Successfully Changed Account Info");
             loadingMessage.remove();
         }
         catch(err) {
@@ -423,6 +429,21 @@ class App extends React.Component {
             handleError(err, this.addAlert);
             loadingMessage.remove();
         }
+    }
+
+    deleteAccount = async() => {
+        let loadingMessage = this.createLoadingMessage("Deleting Account");
+        try {
+            loadingMessage.add();
+            await HTTPRequest.delete("users");
+            this.setState(this.getDefaultData());
+            this.addAlert("info", "Successfully Deleted Account");
+        }
+        catch(err) {
+            handleError(err, this.addAlert);
+        }
+
+        loadingMessage.remove();
     }
 
     updateBoardSettings = async(newBoardSettings) => {
@@ -933,7 +954,7 @@ class App extends React.Component {
                 <AppNavbar
                     loggedIn={this.state.loggedIn}
                     username={this.state.username}
-                    logout={this.navbarLogout}
+                    logout={this.logout}
 
                     inLg={this.state.inLg}
                     inSm={this.state.inSm}
@@ -988,6 +1009,7 @@ class App extends React.Component {
                         checkUsernameAvailable={this.checkUsernameAvailable}
                         updateAccountInfo={this.updateAccountInfo}
                         changePassword={this.changePassword}
+                        deleteAccount={this.deleteAccount}
 
                         boardSettings={this.state.boardSettings}
                         updateBoardSettings={this.updateBoardSettings}

@@ -32,6 +32,9 @@ class Settings extends Component {
                     checkUsernameAvailable={this.props.checkUsernameAvailable}
                     updateAccountInfo={this.props.updateAccountInfo}
                     changePassword={this.props.changePassword}
+                    deleteAccount={this.props.deleteAccount}
+
+                    setRedirect={this.props.setRedirect}
                     inLg={this.props.inLg}
                 />
 

@@ -56,13 +56,38 @@ router.route('/').put(asyncHandler(async(req, res) => {
     let username = req.body.username;
     let name     = req.body.name;
     
-    user = await UserSchema.findById(req.user._id);
+    let user = await UserSchema.findById(req.user._id);
 
     user.username = username;
     user.name = name;
     await user.save();
     
     log(res, Status.SUCCESS, "User updated.");
+}));
+
+/**
+ * DELETE
+ * Delete the current user's account
+ */
+router.route('/').delete(asyncHandler(async(req, res) => {
+    if(!req.isAuthenticated()) {
+        log(res, Status.ERROR, "User is not logged in");
+        return;
+    }
+
+    let user = await UserSchema.findById(req.user._id);
+    req.logOut();
+    
+    for(let colorSchemeID of user.colorSchemes) {
+        await ColorSchemeSchema.findByIdAndDelete(colorSchemeID);
+    }
+    for(let dataID of user.data) {
+        await DataSchema.findByIdAndDelete(dataID);
+    }
+    await SettingsSchema.findByIdAndDelete(user.settings);
+    await user.delete();
+    
+    log(res, Status.SUCCESS, "User deleted.");
 }));
 
 /**
