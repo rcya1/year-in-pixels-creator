@@ -37,7 +37,6 @@ export default class DeleteColorSchemeButton extends React.Component {
                 onMouseLeave={() => this.setState({ hover: false })}
                 onClick={this.props.disabled ? null : this.props.handleClick}
                 style={this.getIconStyle(this.state.hover, this.props.disabled)}
-                {...this.props}
             />
         );
     }

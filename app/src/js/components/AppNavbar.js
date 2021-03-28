@@ -23,13 +23,14 @@ class AppNavbar extends React.Component {
                 className="navbar-link mr-auto"
                 id="navbar-brand"
                 eventKey="1"
+                key="yip"
             >
                 Year in Pixels
             </NavLink>
         );
 
         let primaryContent = (
-            <Navbar.Collapse id="basic-navbar-nav">
+            <Navbar.Collapse id="basic-navbar-nav" key="collapse">
                 <Nav className="">
                     <NavLink
                         to="/"
@@ -37,6 +38,7 @@ class AppNavbar extends React.Component {
                         activeStyle={activeStyle}
                         exact
                         eventKey="2"
+                        key="home"
                     >
                         Home
                     </NavLink>
@@ -48,6 +50,7 @@ class AppNavbar extends React.Component {
                         activeStyle={activeStyle}
                         exact
                         eventKey="3"
+                        key="about"
                     >
                         About
                     </NavLink>
@@ -59,8 +62,21 @@ class AppNavbar extends React.Component {
                         activeStyle={activeStyle}
                         exact
                         eventKey="4"
+                        key="privacy"
                     >
                         Privacy Policy
+                    </NavLink>
+                </Nav>
+                <Nav>
+                    <NavLink
+                        to="/changelog"
+                        className="navbar-link"
+                        activeStyle={activeStyle}
+                        exact
+                        eventKey="5"
+                        key="changelog"
+                    >
+                        Changelog
                     </NavLink>
                 </Nav>
                 <Nav className="mr-auto">
@@ -69,8 +85,8 @@ class AppNavbar extends React.Component {
                         className="navbar-link"
                         target="_blank"
                         rel="noreferrer"
-                        exact
-                        eventKey="5"
+                        eventKey="6"
+                        key="github"
                     >
                         <FaGithub style={{marginBottom: ".15rem"}}/> GitHub
                     </a>
@@ -89,7 +105,6 @@ class AppNavbar extends React.Component {
                     style={{
                         maxWidth: this.props.inSm ? "80px" : "200px"
                     }}
-                    eventKey="10"
                 >
                     {this.props.username}
                 </Button>
@@ -100,7 +115,6 @@ class AppNavbar extends React.Component {
                     onClick={() => {
                         this.props.logout();
                     }}
-                    eventKey="11"
                 >
                     Logout
                 </Button>
@@ -113,7 +127,6 @@ class AppNavbar extends React.Component {
                     onClick={() => {
                         this.props.setRedirect("/login");
                     }}
-                    eventKey="12"
                 >
                     Login
                 </Button>
@@ -135,13 +148,13 @@ class AppNavbar extends React.Component {
         if(this.props.inLg) {
             navbar.push(title);
             navbar.push(primaryContent);
-            navbar.push(<Nav className="ml-auto">{loginArea}</Nav>);
+            navbar.push(<Nav className="ml-auto" key="login-area">{loginArea}</Nav>);
         }
         else {
-            navbar.push(<Navbar.Toggle className="mr-2" aria-controls="basic-navbar-nav" />);
+            navbar.push(<Navbar.Toggle className="mr-2" aria-controls="basic-navbar-nav" key="toggle" />);
             navbar.push(title);
             navbar.push(primaryContent);
-            navbar.push(<Nav className="ml-auto" style={{flexDirection: "row"}}>{loginArea}</Nav>);
+            navbar.push(<Nav className="ml-auto" key="login-area" style={{flexDirection: "row"}}>{loginArea}</Nav>);
         }
     
         return (

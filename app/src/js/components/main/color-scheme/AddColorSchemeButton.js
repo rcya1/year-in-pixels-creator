@@ -41,7 +41,6 @@ export default class AddColorSchemeButton extends React.Component {
                 onClick={this.props.disabled ? null : this.props.handleClick}
                 className={this.props.inLg ? "mt-1" : "mt-2"}
                 style={this.getIconStyle(this.props.disabled)}
-                {...this.props}
             />
         );
     }

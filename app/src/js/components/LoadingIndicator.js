@@ -19,7 +19,7 @@ export default class LoadingIndicator extends React.Component {
                             <Tooltip id="tooltip-disabled">
                                 {
                                     this.props.messages.map((message) => {
-                                        return (<p className="mb-1">
+                                        return (<p className="mb-1" key={message.split(" ")[0].toLowerCase()}>
                                             {message}
                                         </p>)
                                     })
