@@ -9,26 +9,40 @@ import FormControl from 'react-bootstrap/FormControl';
 import Card from 'react-bootstrap/Card';
 import Modal from 'react-bootstrap/Modal';
 
-import { inLg } from 'js/util/BootstrapUtils';
 import { FULL_MONTH_NAMES } from 'js/components/main/Constants'
 import { getOrdinalEnding } from 'js/util/DateUtils';
 
 let selectStyles = require('./MenuSelectStyle').selectStyles;
 
+// TODO The text box size handling
 export default class CellMenu extends React.Component {
     constructor(props) {
         super(props);
 
         this.state = {
             value: 0,
-            comment: ""
+            comment: "",
+            flipped: false,
+            height: 0,
+            selectYPos: 0
         };
 
         this.menuRef = React.createRef();
+        this.containerRef = React.createRef();
         this.textRef = React.createRef();
     }
 
-    componentDidUpdate(prevProps) {
+    componentDidMount() {
+        window.addEventListener("scroll", this.updatePositioning);
+        window.addEventListener("resize", this.updatePositioning);
+    }
+
+    componentWillMount() {
+        window.removeEventListener("scroll", this.updatePositioning);
+        window.removeEventListener("resize", this.updatePositioning);
+    }
+
+    componentDidUpdate(prevProps, prevState) {
         if(prevProps.value !== this.props.value || prevProps.comment !== this.props.comment || 
             prevProps.day !== this.props.day || prevProps.month !== this.props.month) {
                 
@@ -38,13 +52,26 @@ export default class CellMenu extends React.Component {
             });
         }
 
-        if(inLg()) {
-            // TODO Look into IntersectionObserver instead of this
-            if(prevProps.xPos !== this.props.xPos || prevProps.yPos !== this.props.yPos) {
-                let rect = this.menuRef.current.getBoundingClientRect();
-                this.props.updateMenuOffset(rect, this.textRef.current.getBoundingClientRect().height);
+        if(!this.showAsModal()) {
+            if(prevProps.xPos !== this.props.xPos || prevProps.yPos !== this.props.yPos || prevState.flipped !== this.state.flipped) {
+                this.updatePositioning();
             }
         }
+    }
+
+    updatePositioning = () => {
+        if(this.menuRef != null && this.menuRef.current != null && this.containerRef != null && this.containerRef.current != null) {
+            let rect = this.menuRef.current.getBoundingClientRect();
+            this.setState({
+                flipped: this.props.yPos + rect.height > window.innerHeight,
+                height: rect.height,
+                selectYPos: this.containerRef.current.getBoundingClientRect().top
+            });
+        }
+    }
+
+    showAsModal = () => {
+        return !this.props.inLg || window.innerHeight < 500;
     }
 
     onChangeValue = (newValue) => {
@@ -98,7 +125,7 @@ export default class CellMenu extends React.Component {
             
             let bodyContent = (
                 <Form>
-                    <Container>
+                    <Container ref={this.containerRef}>
                         <Row className="mb-2">
                             <Col>
                                 <Select
@@ -108,6 +135,15 @@ export default class CellMenu extends React.Component {
                                     styles={selectStyles}
                                     isSearchable={false}
                                     menuShouldScrollIntoView={false}
+                                    closeMenuOnScroll={function(e) {
+                                        return e.target instanceof HTMLDocument;
+                                    }}
+                                    menuPlacement={this.state.flipped ? "top" : "bottom"}
+                                    maxMenuHeight={!this.showAsModal() ?
+                                        (!this.state.flipped ?  
+                                            window.innerHeight - this.state.selectYPos - 50 : 
+                                            this.state.selectYPos - 10) : 
+                                        null}
                                 />
                             </Col>
                         </Row>
@@ -146,12 +182,12 @@ export default class CellMenu extends React.Component {
                 </Form>
             );
 
-            if(inLg()) {
+            if(!this.showAsModal()) {
                 return (
                     <div className=""
                         style={{
                             position: "absolute",
-                            top: top,
+                            top: this.state.flipped ? top - this.state.height : top,
                             left: left,
                             boxShadow: "0 5px 10px rgba(0, 0, 0, 0.3)",
                             whiteSpace: "nowrap",

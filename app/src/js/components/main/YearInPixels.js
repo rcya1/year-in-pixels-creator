@@ -18,12 +18,7 @@ export default class YearInPixels extends React.Component {
         this.state = {
             menuXPos: 0,
             menuYPos: 0,
-            menuXOffset: 0,
-            menuYOffset: 0,
             menuVisible: false,
-            menuMaxHeight: 10000,
-            menuMaxWidth: 10000,
-            menuMaxTextHeight: 10000,
 
             showAddYearModal: false,
             currentlySelected: [-1, -1]
@@ -64,8 +59,6 @@ export default class YearInPixels extends React.Component {
         this.setState({
             menuXPos: xy[0],
             menuYPos: xy[1],
-            menuXOffset: 0,
-            menuYOffset: 0,
             menuVisible: true,
             currentlySelected: [month, day]
         })
@@ -76,9 +69,7 @@ export default class YearInPixels extends React.Component {
             let xy = this.menuXYProvider();
             this.setState({
                 menuXPos: xy[0],
-                menuYPos: xy[1],
-                menuXOffset: 0,
-                menuYOffset: 0
+                menuYPos: xy[1]
             });
         }
     }
@@ -88,33 +79,6 @@ export default class YearInPixels extends React.Component {
         this.setState({
             menuVisible: false,
             currentlySelected: [-1, -1]
-        });
-    }
-
-    updateMenuOffset = (rect, textHeight) => {
-        let newMenuXOffset = this.state.menuXOffset;
-        let newMenuYOffset = this.state.menuYOffset;
-
-        let verticalPadding = 10;
-        let horizontalPadding = 30;
-        
-        if(rect.top - verticalPadding < 0) {
-            newMenuYOffset -= (rect.top - verticalPadding);
-        }
-        if(rect.bottom + verticalPadding > window.innerHeight) {
-            newMenuYOffset += (window.innerHeight - (rect.bottom + verticalPadding));
-        }
-
-        let maxHeight = Math.min(window.innerHeight * 2 / 3, window.innerHeight - rect.top - verticalPadding);
-        let maxWidth = Math.min(window.innerWidth * 2 / 3, window.innerWidth - rect.left - horizontalPadding);
-        let maxTextHeight = maxHeight - (rect.height - textHeight);
-
-        this.setState({
-            menuXOffset: newMenuXOffset,
-            menuYOffset: newMenuYOffset,
-            menuMaxHeight: maxHeight,
-            menuMaxWidth: maxWidth,
-            menuMaxTextHeight: maxTextHeight
         });
     }
 
@@ -195,9 +159,8 @@ export default class YearInPixels extends React.Component {
             <div>
                 { content }
                 <CellMenu 
-                    xPos={this.state.menuXPos + this.state.menuXOffset}
-                    yPos={this.state.menuYPos + this.state.menuYOffset}
-                    updateMenuOffset={this.updateMenuOffset}
+                    xPos={this.state.menuXPos}
+                    yPos={this.state.menuYPos}
                     maxWidth={this.state.menuMaxWidth}
                     maxHeight={this.state.menuMaxHeight}
                     maxTextHeight={this.state.menuMaxTextHeight}
@@ -216,6 +179,8 @@ export default class YearInPixels extends React.Component {
                     options={this.props.colorSchemes}
                     updateBoardData={this.props.updateBoardData}
                     closeMenu={this.closeMenu}
+
+                    inLg={this.props.inLg}
                 />
                 <AddYearModal
                     visible={this.state.showAddYearModal}
