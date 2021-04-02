@@ -24,7 +24,8 @@ export default class CellMenu extends React.Component {
             comment: "",
             flipped: false,
             height: 0,
-            selectYPos: 0
+            selectYPos: 0,
+            maxTextHeight: 9999
         };
 
         this.menuRef = React.createRef();
@@ -33,13 +34,13 @@ export default class CellMenu extends React.Component {
     }
 
     componentDidMount() {
-        window.addEventListener("scroll", this.updatePositioning);
-        window.addEventListener("resize", this.updatePositioning);
+        window.addEventListener("scroll", this.onChangeListener);
+        window.addEventListener("resize", this.onChangeListener);
     }
 
-    componentWillMount() {
-        window.removeEventListener("scroll", this.updatePositioning);
-        window.removeEventListener("resize", this.updatePositioning);
+    componentWillUnmount() {
+        window.removeEventListener("scroll", this.onChangeListener);
+        window.removeEventListener("resize", this.onChangeListener);
     }
 
     componentDidUpdate(prevProps, prevState) {
@@ -53,20 +54,40 @@ export default class CellMenu extends React.Component {
         }
 
         if(!this.showAsModal()) {
-            if(prevProps.xPos !== this.props.xPos || prevProps.yPos !== this.props.yPos || prevState.flipped !== this.state.flipped) {
-                this.updatePositioning();
+            if(prevProps.xPos !== this.props.xPos || prevProps.yPos !== this.props.yPos || 
+                prevState.flipped !== this.state.flipped) {
+
+                this.updatePositioning(prevState.flipped !== this.state.flipped);
             }
         }
     }
 
-    updatePositioning = () => {
-        if(this.menuRef != null && this.menuRef.current != null && this.containerRef != null && this.containerRef.current != null) {
-            let rect = this.menuRef.current.getBoundingClientRect();
+    onChangeListener = () => {
+        this.updatePositioning(false);
+    }
+
+    // will not reupdate the flipped state if flip had just changed
+    updatePositioning = (justFlipped) => {
+        if(this.menuRef != null && this.menuRef.current != null && this.containerRef != null && 
+            this.containerRef.current != null && this.textRef != null && this.textRef.current != null) {
+
+            let menuRect = this.menuRef.current.getBoundingClientRect();
+            let containerRect = this.containerRef.current.getBoundingClientRect();
+            let textRect = this.textRef.current.getBoundingClientRect();
+            let flipped = this.props.yPos + menuRect.height > window.innerHeight;
+
             this.setState({
-                flipped: this.props.yPos + rect.height > window.innerHeight,
-                height: rect.height,
-                selectYPos: this.containerRef.current.getBoundingClientRect().top
+                height: menuRect.height,
+                selectYPos: containerRect.top,
+                maxTextHeight: textRect.height + window.innerHeight - menuRect.bottom - 10,
+                maxWidth: window.innerWidth - menuRect.left - 30
             });
+
+            if(justFlipped !== true) {
+                this.setState({
+                    flipped: flipped
+                });
+            }
         }
     }
 
@@ -159,7 +180,7 @@ export default class CellMenu extends React.Component {
                                         resize: "both",
                                         maxWidth: "100%",
                                         minWidth: "100%",
-                                        maxHeight: this.props.maxTextHeight,
+                                        maxHeight: this.state.maxTextHeight,
                                         minHeight: "50px"
                                     }}
                                     ref={this.textRef}
@@ -192,8 +213,7 @@ export default class CellMenu extends React.Component {
                             boxShadow: "0 5px 10px rgba(0, 0, 0, 0.3)",
                             whiteSpace: "nowrap",
                             flexWrap: "nowrap",
-                            maxWidth: this.props.maxWidth,
-                            maxHeight: this.props.maxHeight,
+                            maxWidth: this.state.maxWidth
                         }}
                         ref={this.menuRef}
                         onMouseDown={this.handleClick}
