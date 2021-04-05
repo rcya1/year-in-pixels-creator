@@ -159,6 +159,7 @@ export default class YearInPixels extends React.Component {
             years={this.props.years}
             disabled={!this.props.loggedIn}
             changeYear={this.props.changeYear}
+            deleteYear={this.props.deleteYear}
             showAddYearModal={this.showAddYearModal}
             className={"mt-4 mb-4 mx-auto " + (this.props.inSm ? "w-100" : "w-50")}
         />);

@@ -160,10 +160,7 @@ class App extends React.Component {
 
     loadYears = async () => {
         if(this.state.loggedIn) {
-            const body = {
-                includeData: false
-            };
-            let res = await HTTPRequest.get("data", body);
+            let res = await HTTPRequest.get("data");
 
             let years = [];
             let currentYearIncluded = false;
@@ -519,6 +516,33 @@ class App extends React.Component {
             }
             await this.changeYear(newYear);
             await this.loadYears();
+        }
+    }
+
+    deleteYear = async (year) => {
+        if(this.state.loggedIn) {
+            let loadingMessage = this.createLoadingMessage("Deleting Year");
+            try {
+                loadingMessage.add();
+                await HTTPRequest.delete("data/" + year);
+                
+                let index = this.state.years.indexOf(parseInt(year));
+                let newYears = this.state.years.slice();
+
+                newYears.splice(index, 1);
+                let newIndex = index == 0 ? 0 : index - 1;
+
+                this.setState({
+                    years: newYears,
+                    year: newYears[newIndex]
+                });
+
+                loadingMessage.remove();
+            }
+            catch(err) {
+                handleError(err, this.addAlert);
+                loadingMessage.remove();
+            }
         }
     }
     
@@ -967,6 +991,7 @@ class App extends React.Component {
                         years={this.state.years}
                         changeYear={this.changeYear}
                         addYear={this.addYear}
+                        deleteYear={this.deleteYear}
                         checkYearExists={this.checkYearExists}
                         showAddYearModal={this.showAddYearModal}
 

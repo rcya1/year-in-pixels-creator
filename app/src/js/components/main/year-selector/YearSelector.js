@@ -6,6 +6,8 @@ import Col from 'react-bootstrap/Col'
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger'
 import Tooltip from 'react-bootstrap/Tooltip'
 
+import DeleteButton from 'js/components/main/DeleteButton'
+
 let selectStyles = require('./YearSelectStyle').selectStyles;
 
 export default class YearSelector extends React.Component {
@@ -21,14 +23,40 @@ export default class YearSelector extends React.Component {
         this.props.changeYear(newYear);
     }
 
-    addOverlay = (component) => {
-        return (<OverlayTrigger
+    addSelectOverlay = (component) => {
+        return (<OverlayTrigger placement="bottom"
             overlay={<Tooltip id="tooltip-disabled">Create an account to access multiple years!</Tooltip>}
         >
             <div className="flex-grow-1" style={{maxWidth: "250px"}}>
                 {component}
             </div>
         </OverlayTrigger>);
+    }
+
+    createDeleteButton = (disabledForNoAccount, disabledForYearsLength) => {
+        let button = (<DeleteButton
+            disabled={disabledForNoAccount || disabledForYearsLength}
+            handleClick={
+                () => {
+                    console.log("Deleting the year: " + this.props.year);
+                    this.props.deleteYear(this.props.year);
+                }
+            }
+            inLg={this.props.inLg}
+        />);
+
+        if(disabledForNoAccount || disabledForYearsLength) {
+            return (<OverlayTrigger placement="bottom"
+                overlay={<Tooltip id="tooltip-disabled">
+                    {disabledForNoAccount ? "Create an account to access multiple years!" : 
+                        "You cannot delete the only year remaining! Create another board to delete this year."}
+                    </Tooltip>}
+            >
+                <span style={{display: "inline-block"}}>{button}</span>
+            </OverlayTrigger>);
+        }
+
+        return button;
     }
     
     render() {
@@ -55,7 +83,7 @@ export default class YearSelector extends React.Component {
             style={{maxWidth: "250px"}}
         />);
 
-        select = this.props.disabled ? this.addOverlay(select) : select;
+        select = this.props.disabled ? this.addSelectOverlay(select) : select;
 
         return (
         <Container className={this.props.className}>
@@ -68,6 +96,7 @@ export default class YearSelector extends React.Component {
                         Select Year: 
                     </p>
                     {select}
+                    {this.createDeleteButton(this.props.disabled, this.props.years.length == 1)}
                 </Col>
             </Row>
         </Container>);

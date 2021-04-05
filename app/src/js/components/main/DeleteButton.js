@@ -2,7 +2,7 @@ import React from 'react';
 
 import { FaTrashAlt } from "react-icons/fa"
 
-export default class DeleteColorSchemeButton extends React.Component {
+export default class DeleteButton extends React.Component {
 
     constructor(props) {
         super(props);
@@ -16,7 +16,7 @@ export default class DeleteColorSchemeButton extends React.Component {
 
     }
 
-    getIconStyle(hover, disabled) {
+    getIconStyle(hover, disabled, style) {
         return {
             fontSize: this.props.inLg ? "2rem" : "2.25rem",
             cursor: disabled ? "" : "pointer",
@@ -26,7 +26,8 @@ export default class DeleteColorSchemeButton extends React.Component {
             backgroundColor: (hover && !disabled) ? "#6c757d" : "transparent",
             opacity: disabled ? ".65" : "1.0",
             padding: "0.25rem",
-            borderRadius: ".2rem"
+            borderRadius: ".2rem",
+            ...style
         }
     }
 
@@ -36,7 +37,7 @@ export default class DeleteColorSchemeButton extends React.Component {
                 onMouseEnter={() => this.setState({ hover: true })}
                 onMouseLeave={() => this.setState({ hover: false })}
                 onClick={this.props.disabled ? null : this.props.handleClick}
-                style={this.getIconStyle(this.state.hover, this.props.disabled)}
+                style={this.getIconStyle(this.state.hover, this.props.disabled, this.props.style)}
             />
         );
     }

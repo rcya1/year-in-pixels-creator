@@ -10,7 +10,7 @@ import Tooltip from 'react-bootstrap/Tooltip'
 import AddColorSchemeModal from './AddColorSchemeModal';
 import EditColorSchemeModal from './EditColorSchemeModal';
 import AddColorSchemeButton from './AddColorSchemeButton';
-import DeleteColorSchemeButton from './DeleteColorSchemeButton';
+import DeleteButton from 'js/components/main/DeleteButton';
 
 const grid = 6;
 
@@ -123,7 +123,7 @@ export default class ColorSchemeList extends React.Component {
     }
 
     createDeleteButton = (colorScheme) => {
-        let button = (<DeleteColorSchemeButton
+        let button = (<DeleteButton
             disabled={this.props.disabled}
             handleClick={
                 () => {
