@@ -96,7 +96,7 @@ export default class YearSelector extends React.Component {
                         Select Year: 
                     </p>
                     {select}
-                    {this.createDeleteButton(this.props.disabled, this.props.years.length == 1)}
+                    {this.createDeleteButton(this.props.disabled, this.props.years.length === 1)}
                 </Col>
             </Row>
         </Container>);

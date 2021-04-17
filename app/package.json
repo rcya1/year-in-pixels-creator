@@ -15,6 +15,7 @@
     "react-bootstrap": "^1.4.3",
     "react-bs-notifier": "^6.0.0",
     "react-color": "2.19.3",
+    "react-component-export-image": "^1.0.5",
     "react-dom": "^17.0.1",
     "react-icons": "^4.2.0",
     "react-jss": "^10.5.1",

@@ -83,7 +83,7 @@ export default class Cell extends React.Component {
                     if(this.props.valid) {
                         e.stopPropagation();
                         this.props.handleClick(() => {
-                            if(this.ref.current == null) return [-1, -1];
+                            if(this.ref.current === null) return [-1, -1];
                             let rect = this.ref.current.getBoundingClientRect();
                             return [rect.x + rect.width * 3 / 4, rect.y + rect.height / 2];
                         }, this.props.month, this.props.day)}

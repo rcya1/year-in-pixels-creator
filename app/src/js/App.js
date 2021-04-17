@@ -530,7 +530,7 @@ class App extends React.Component {
                 let newYears = this.state.years.slice();
 
                 newYears.splice(index, 1);
-                let newIndex = index == 0 ? 0 : index - 1;
+                let newIndex = index === 0 ? 0 : index - 1;
 
                 this.setState({
                     years: newYears,
