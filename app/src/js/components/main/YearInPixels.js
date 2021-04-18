@@ -2,12 +2,14 @@ import React from 'react';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
+import Button from 'react-bootstrap/Button';
 
 import Board from './board/Board'
 import CellMenu from './menu/CellMenu';
 import ColorSchemeList from './color-scheme/ColorSchemeList';
 import YearSelector from './year-selector/YearSelector';
 import AddYearModal from './year-selector/AddYearModal';
+import ExportPreview from './ExportPreview';
 
 import { getIndex } from 'js/util/DateUtils';
 
@@ -26,6 +28,7 @@ export default class YearInPixels extends React.Component {
             menuMaxTextHeight: 10000,
 
             showAddYearModal: false,
+            exportPreviewMode: false,
             currentlySelected: [-1, -1]
         }
 
@@ -130,6 +133,12 @@ export default class YearInPixels extends React.Component {
         });
     }
 
+    enableExportPreview = () => {
+        this.setState({
+            exportPreviewMode: true
+        });
+    }
+
     render() {
         let title = (<h1 className="display-5 mt-3">{this.props.year + " in Pixels"}</h1>);
         let colorSchemeList = (<ColorSchemeList
@@ -140,6 +149,7 @@ export default class YearInPixels extends React.Component {
             addColorScheme={this.props.addColorScheme}
             deleteColorScheme={this.props.deleteColorScheme}
             checkLabelExists={this.props.checkLabelExists}
+            exportPreview={this.state.exportPreviewMode}
             style={{ maxWidth: "500px" }}
             inLg={this.props.inLg}
             className={"mx-auto mb-5 " + (this.props.inSm ? "w-100" : "w-75")}
@@ -151,9 +161,19 @@ export default class YearInPixels extends React.Component {
             invalidCellsDisplayType={this.props.boardSettings.invalidCellsDisplayType}
             values={this.props.values}
             handleClick={this.handleCellClick}
+            showEditing={!this.state.exportPreviewMode}
             colorSchemes={this.props.colorSchemes}
             currentlySelected={this.state.currentlySelected}
         />);
+
+        if(this.state.exportPreviewMode) {
+            return (<ExportPreview
+                title={title}
+                colorSchemeList={colorSchemeList}
+                board={board}
+            />);
+        }
+
         let yearSelector = (<YearSelector
             year={String(this.props.year)}
             years={this.props.years}
@@ -161,8 +181,15 @@ export default class YearInPixels extends React.Component {
             changeYear={this.props.changeYear}
             deleteYear={this.props.deleteYear}
             showAddYearModal={this.showAddYearModal}
-            className={"mt-4 mb-4 mx-auto " + (this.props.inSm ? "w-100" : "w-50")}
+            className={"mt-4 mb-2 mx-auto " + (this.props.inSm ? "w-100" : "w-50")}
         />);
+        
+        let exportImageButton = (<Button
+            className="mt-2 mb-4"
+            onClick={this.enableExportPreview}
+        >
+            Export Image
+        </Button>)
 
         let content = undefined;
         if(this.props.inLg) {
@@ -174,6 +201,7 @@ export default class YearInPixels extends React.Component {
                     </Col>
                     <Col className="text-center">
                         { yearSelector }
+                        { exportImageButton }
                         { colorSchemeList }
                     </Col>
                 </Row>

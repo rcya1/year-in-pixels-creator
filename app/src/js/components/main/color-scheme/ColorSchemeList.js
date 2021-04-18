@@ -34,11 +34,11 @@ const getItemColorPreviewStyle = (colorScheme) => ({
     verticalAlign: "middle",
 });
 
-const getItemLabelStyle = () => ({
+const getItemLabelStyle = (exportPreview) => ({
     lineHeight: "normal",
     height: "100%",
     fontSize: "1.1rem",
-    maxWidth: "50%"
+    maxWidth: exportPreview ? "100%" : "50%"
 });
 
 export default class ColorSchemeList extends React.Component {
@@ -149,58 +149,75 @@ export default class ColorSchemeList extends React.Component {
     }
 
     render() {
+        // remove any w-classes if in export preview mode
+        let classes = this.props.className.split(" ");
+        let adjustedClasses = classes.filter(word => !word.includes("w-"));
+        let adjustedClassName = this.props.exportPreview ? adjustedClasses.join(" ") : this.props.className;
+
+        let card = (<Card className={adjustedClassName}
+            style={this.props.exportPreview ? {
+                overflow: "hidden",
+                resize: "horizontal"
+            } : null}
+        >
+            <Card.Header>
+                <h3 className="text-center">Colors</h3>
+            </Card.Header>
+            <Card.Body>
+                <DragDropContext onDragEnd={this.onDragEnd}>
+                    <Droppable droppableId="droppable">
+                        {(provided, snapshot) => (
+                            <div
+                                {...provided.droppableProps}
+                                ref={provided.innerRef}
+                            >
+                                {this.props.colorSchemes.map((colorScheme, index) => {
+                                    return (
+                                    <Draggable 
+                                        key={colorScheme[3]}
+                                        draggableId={colorScheme[3]}
+                                        index={index}
+                                        isDragDisabled={this.props.disabled || this.props.exportPreview}
+                                    >
+                                        {(provided, snapshot) => (
+                                            <div
+                                                ref={provided.innerRef}
+                                                {...provided.draggableProps}
+                                                {...provided.dragHandleProps}
+                                                style={getItemBackgroundStyle(snapshot.isDragging, provided.draggableProps.style)}
+                                            >
+                                                <Container>
+                                                    <Row>
+                                                        <span style={getItemColorPreviewStyle(colorScheme)}> </span>
+                                                        <p className="mr-auto my-auto text-truncate" 
+                                                            style={getItemLabelStyle(this.props.exportPreview)}
+                                                        >
+                                                            {colorScheme[3]}
+                                                        </p>
+                                                        {!this.props.exportPreview && this.createEditButton(colorScheme)}
+                                                        {!this.props.exportPreview && this.createDeleteButton(colorScheme)}
+                                                    </Row>
+                                                </Container>
+                                            </div>
+                                        )}
+                                    </Draggable>)
+                                })}
+                                {provided.placeholder}
+                            </div>
+                        )}
+                    </Droppable>
+                </DragDropContext>
+                {!this.props.exportPreview && this.createAddButton()}
+            </Card.Body>
+        </Card>);
+
+        if(this.props.exportPreview) {
+            return card;
+        }
+
         return (
             <div>
-                <Card className={this.props.className}>
-                    <Card.Header>
-                        <h3 className="text-center">Colors</h3>
-                    </Card.Header>
-                    <Card.Body>
-                        <DragDropContext onDragEnd={this.onDragEnd}>
-                            <Droppable droppableId="droppable">
-                                {(provided, snapshot) => (
-                                    <div
-                                        {...provided.droppableProps}
-                                        ref={provided.innerRef}
-                                    >
-                                        {this.props.colorSchemes.map((colorScheme, index) => {
-                                            return (
-                                            <Draggable 
-                                                key={colorScheme[3]}
-                                                draggableId={colorScheme[3]}
-                                                index={index}
-                                                isDragDisabled={this.props.disabled}
-                                            >
-                                                {(provided, snapshot) => (
-                                                    <div
-                                                        ref={provided.innerRef}
-                                                        {...provided.draggableProps}
-                                                        {...provided.dragHandleProps}
-                                                        style={getItemBackgroundStyle(snapshot.isDragging, provided.draggableProps.style)}
-                                                    >
-                                                        <Container>
-                                                            <Row>
-                                                                <span style={getItemColorPreviewStyle(colorScheme)}> </span>
-                                                                <p className="mr-auto my-auto text-truncate" style={getItemLabelStyle()}>
-                                                                    {colorScheme[3]}
-                                                                </p>
-                                                                {this.createEditButton(colorScheme)}
-                                                                {this.createDeleteButton(colorScheme)}
-                                                            </Row>
-                                                        </Container>
-                                                    </div>
-                                                )}
-                                            </Draggable>)
-                                        })}
-                                        {provided.placeholder}
-                                    </div>
-                                )}
-                            </Droppable>
-                        </DragDropContext>
-                        {this.createAddButton()}
-                    </Card.Body>
-                </Card>
-
+                {card}
                 <AddColorSchemeModal
                     visible={this.state.addColorSchemeModalVisible}
                     closeModal={this.closeAddColorSchemeModal}

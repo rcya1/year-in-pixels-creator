@@ -25,7 +25,7 @@ export default class Board extends React.Component {
                 rowData.push(<Cell value={value}
                     month={m}
                     day={d}
-                    handleClick={this.props.handleClick}
+                    handleClick={this.props.showEditing ? this.props.handleClick : () => {}}
                     valid={valid}
                     invalidCellsDisplayType={this.props.invalidCellsDisplayType}
                     active={active}
