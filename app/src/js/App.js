@@ -25,6 +25,7 @@ import { handleError } from './util/ErrorUtils';
 import { inLg, inSm } from 'js/util/BootstrapUtils';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
+import "bootstrap-slider/dist/css/bootstrap-slider.css"
 import 'css/BootstrapOverrides.css';
 
 let StyledAlert = require('./components/AlertStyle').StyledAlert;

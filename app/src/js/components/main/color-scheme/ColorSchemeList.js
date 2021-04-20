@@ -41,7 +41,7 @@ const getItemLabelStyle = (exportPreview) => ({
     maxWidth: exportPreview ? "100%" : "50%"
 });
 
-export default class ColorSchemeList extends React.Component {
+class ColorSchemeList extends React.Component {
     constructor(props) {
         super(props);
         
@@ -149,16 +149,13 @@ export default class ColorSchemeList extends React.Component {
     }
 
     render() {
-        // remove any w-classes if in export preview mode
-        let classes = this.props.className.split(" ");
-        let adjustedClasses = classes.filter(word => !word.includes("w-"));
-        let adjustedClassName = this.props.exportPreview ? adjustedClasses.join(" ") : this.props.className;
-
-        let card = (<Card className={adjustedClassName}
+        let card = (<Card className={this.props.className}
             style={this.props.exportPreview ? {
                 overflow: "hidden",
-                resize: "horizontal"
+                resize: "horizontal",
+                maxWidth: this.props.maxWidth
             } : null}
+            ref={this.props.innerRef}
         >
             <Card.Header>
                 <h3 className="text-center">Colors</h3>
@@ -235,3 +232,7 @@ export default class ColorSchemeList extends React.Component {
         )
     }
 }
+
+export default React.forwardRef((props, ref) => <ColorSchemeList 
+    innerRef={ref} {...props}
+/>);

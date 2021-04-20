@@ -9,7 +9,7 @@ import CellMenu from './menu/CellMenu';
 import ColorSchemeList from './color-scheme/ColorSchemeList';
 import YearSelector from './year-selector/YearSelector';
 import AddYearModal from './year-selector/AddYearModal';
-import ExportPreview from './ExportPreview';
+import ExportPreview from './export/ExportPreview';
 
 import { getIndex } from 'js/util/DateUtils';
 
@@ -141,19 +141,21 @@ export default class YearInPixels extends React.Component {
 
     render() {
         let title = (<h1 className="display-5 mt-3">{this.props.year + " in Pixels"}</h1>);
-        let colorSchemeList = (<ColorSchemeList
-            colorSchemes={this.props.colorSchemes}
-            disabled={!this.props.loggedIn}
-            changeColorSchemeOrder={this.props.changeColorSchemeOrder}
-            editColorScheme={this.props.editColorScheme}
-            addColorScheme={this.props.addColorScheme}
-            deleteColorScheme={this.props.deleteColorScheme}
-            checkLabelExists={this.props.checkLabelExists}
-            exportPreview={this.state.exportPreviewMode}
-            style={{ maxWidth: "500px" }}
-            inLg={this.props.inLg}
-            className={"mx-auto mb-5 " + (this.props.inSm ? "w-100" : "w-75")}
-        />);
+
+        let colorSchemeListProps = {
+            colorSchemes: this.props.colorSchemes,
+            disabled: !this.props.loggedIn,
+            changeColorSchemeOrder: this.props.changeColorSchemeOrder,
+            editColorScheme: this.props.editColorScheme,
+            addColorScheme: this.props.addColorScheme,
+            deleteColorScheme: this.props.deleteColorScheme,
+            checkLabelExists: this.props.checkLabelExists,
+            exportPreview: this.state.exportPreviewMode,
+            style: { maxWidth: "500px" },
+            inLg: this.props.inLg,
+            className: "mx-auto mb-5 " + (this.props.inSm ? "w-100" : "w-75")
+        };
+
         let board = (<Board
             currentDay={this.props.currentDay}
             year={this.props.year}
@@ -169,10 +171,14 @@ export default class YearInPixels extends React.Component {
         if(this.state.exportPreviewMode) {
             return (<ExportPreview
                 title={title}
-                colorSchemeList={colorSchemeList}
+                colorSchemeListProps={colorSchemeListProps}
                 board={board}
             />);
         }
+        
+        let colorSchemeList = (<ColorSchemeList
+            {...colorSchemeListProps}
+        />);
 
         let yearSelector = (<YearSelector
             year={String(this.props.year)}

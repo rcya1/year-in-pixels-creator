@@ -1,7 +1,7 @@
 import React from 'react';
 import { InvalidCellsDisplayType } from 'js/util/SettingsUtils'
 
-let squareLength = 30;
+export let squareLength = 30;
 
 let getCellStyle = (active, valid, invalidCellsDisplayType, backgroundColor) => {
     let colorOptions;
@@ -55,7 +55,7 @@ let todayTriangle = {
     borderTop: "10px solid black",
 };
 
-export default class Cell extends React.Component {
+export class Cell extends React.Component {
 
     constructor(props) {
         super(props);
