@@ -41,8 +41,8 @@ export class SBSControls extends React.Component {
         if(this.props.data.colorsRef.current != null && this.props.data.colRef.current != null) {
             let colorRect = this.props.data.colorsRef.current.getBoundingClientRect();
             let colRect = this.props.data.colRef.current.getBoundingClientRect();
-            maxGutterWidth = colRect.width - colorRect.width - 50;
-            maxTopMargin = colRect.height - colorRect.height - 20;
+            maxGutterWidth = Math.floor(colRect.width - colorRect.width - 50);
+            maxTopMargin = Math.floor(colRect.height - colorRect.height - 20);
         }
 
         return <React.Fragment>
