@@ -38,6 +38,7 @@ let getCellStyle = (active, valid, invalidCellsDisplayType, backgroundColor) => 
         cursor: "pointer",
         position: "relative",
         zIndex: "-1",
+        backgroundClip: "padding-box",
         ...colorOptions
     }
 };
