@@ -1012,6 +1012,7 @@ class App extends React.Component {
 
                         inLg={this.state.inLg}
                         inSm={this.state.inSm}
+                        createLoadingMessage={this.createLoadingMessage}
                     />
                 </Route>
                 <Route path="/register">

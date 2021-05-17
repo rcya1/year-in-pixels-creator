@@ -180,6 +180,7 @@ export default class YearInPixels extends React.Component {
                 colorSchemeListProps={colorSchemeListProps}
                 board={board}
                 cancel={this.disableExportPreview}
+                createLoadingMessage={this.props.createLoadingMessage}
             />);
         }
         

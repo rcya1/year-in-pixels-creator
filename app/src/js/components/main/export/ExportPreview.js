@@ -5,18 +5,23 @@ import Col from 'react-bootstrap/Col';
 import Card from 'react-bootstrap/Card';
 import Button from 'react-bootstrap/Button';
 import domtoimage from 'dom-to-image';
+import Select from 'react-select'
 
 import SBSView from './sbs/SBSView'
 import { SBSConfig, SBSExternalData, SBSControls } from './sbs/SBSControls'
 
 // TODO Add the stacked layout
-// TODO Add ability to select image type
-// TODO Add loading indicator to exporting image
+// TODO Add PDF support
 
 // TODO Fix the bug where when elements such as width are updated or when we first load in,
 // the sliders values are not correct
 // I think the above is b/c the state is not updated, so it never rerenders and recomputes. Need to somehow trigger a state
 // update (probably attach a couple of event handlers and move the calculation logic?)
+
+const EXPORT_OPTIONS = Object.freeze({
+    PNG: "PNG",
+    PDF: "PDF"
+});
 
 export default class ExportPreview extends React.Component {
 
@@ -25,7 +30,9 @@ export default class ExportPreview extends React.Component {
 
         this.state = {
             config: new SBSConfig(),
-            data: new SBSExternalData()
+            data: new SBSExternalData(),
+
+            fileType: EXPORT_OPTIONS.PNG
         };
 
         this.sbsRef = React.createRef();
@@ -39,12 +46,35 @@ export default class ExportPreview extends React.Component {
         });
     }
 
+    onChangeFileType = (option) => {
+        this.setState({
+            fileType: option.value
+        });
+    }
+
     exportImage = async () => {
         let node = this.sbsRef.current;
 
-        domtoimage.toBlob(node).then(function (blob) {
-            window.saveAs(blob, 'my-node.png');
-        });
+        let loadingMessage = this.props.createLoadingMessage("Generating Image");
+        loadingMessage.add();
+
+        switch(this.state.fileType) {
+            case EXPORT_OPTIONS.PNG:
+                domtoimage.toBlob(node)
+                    .then(function (blob) {
+                        window.saveAs(blob, 'board.png');
+                    })
+                    .catch(function(error) {
+                        console.log(error);
+                    })
+                    .finally(function() {
+                        loadingMessage.remove();
+                    });
+                break;
+            case EXPORT_OPTIONS.PDF:
+
+                break;
+        }
     }
 
     render() {
@@ -53,6 +83,21 @@ export default class ExportPreview extends React.Component {
         }
         
         colorSchemeListProps.className = "";
+        
+        let select = (<Select
+            value={{
+                value: this.state.fileType,
+                label: this.state.fileType
+            }}
+            onChange={this.onChangeFileType}
+            options={Object.values(EXPORT_OPTIONS).map(x => {
+                return {
+                    value: x,
+                    label: x
+                };
+            })}
+            style={{maxWidth: "250px"}}
+        />);
         
         return (
             <Container fluid>
@@ -81,6 +126,7 @@ export default class ExportPreview extends React.Component {
                                     updateConfig={this.updateConfig}
                                     data={this.state.data}
                                 />
+                                {select}
                             </Card.Body>
                             <Card.Footer className="d-flex justify-content-around">
                                 <Button variant="danger" onClick={this.props.cancel}>
