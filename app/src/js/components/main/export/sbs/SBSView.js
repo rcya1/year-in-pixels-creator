@@ -7,12 +7,6 @@ import ColorSchemeList from '../../color-scheme/ColorSchemeList'
 class SBSView extends React.Component {
     
     render() {
-        let maxWidth = 250;
-        if(this.props.data.colRef.current != null) {
-            let colRect = this.props.data.colRef.current.getBoundingClientRect();
-            maxWidth = colRect.width - this.props.config.colorsLeftMargin - 50;
-        }
-
         return (<Container
             ref={this.props.innerRef}
         >
@@ -24,12 +18,15 @@ class SBSView extends React.Component {
                     </div>
                 </Col>
                 <Col className="text-center" ref={this.props.data.colRef}>
-                    <div style={{marginTop: this.props.config.colorsTopMargin + "px", float: "left",
-                        marginLeft: this.props.config.colorsLeftMargin + "px"}}
+                    <div style={{
+                        marginTop: this.props.config.colorsTopMargin + "px",
+                        float: "left",
+                        marginLeft: this.props.config.colorsLeftMargin + "px",
+                        width: this.props.config.colorsWidth + "%"
+                    }}
                     >
                         <ColorSchemeList
                             ref={this.props.data.colorsRef}
-                            maxWidth={maxWidth}
                             {...this.props.colorSchemeListProps}
                         />
                     </div>

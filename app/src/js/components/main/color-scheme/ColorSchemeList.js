@@ -152,8 +152,7 @@ class ColorSchemeList extends React.Component {
         let card = (<Card className={this.props.className}
             style={this.props.exportPreview ? {
                 overflow: "hidden",
-                resize: "horizontal",
-                maxWidth: this.props.maxWidth
+                resize: "none"
             } : null}
             ref={this.props.innerRef}
         >
