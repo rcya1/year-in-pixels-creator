@@ -9,6 +9,7 @@
     "axios": "^0.21.1",
     "bootstrap": "^4.6.0",
     "chroma-js": "^2.1.0",
+    "dom-to-image": "^2.6.0",
     "file-saver": "^2.0.5",
     "jquery": "^3.6.0",
     "react": "^17.0.1",

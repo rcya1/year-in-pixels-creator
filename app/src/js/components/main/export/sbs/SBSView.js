@@ -1,8 +1,10 @@
 import React from "react"
+import Container from 'react-bootstrap/Container';
+import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import ColorSchemeList from '../../color-scheme/ColorSchemeList'
 
-export default class SBSView extends React.Component {
+class SBSView extends React.Component {
     
     render() {
         let maxWidth = 250;
@@ -11,24 +13,32 @@ export default class SBSView extends React.Component {
             maxWidth = colRect.width - this.props.config.colorsLeftMargin - 50;
         }
 
-        return (<React.Fragment>
-            <Col className="text-center">
-                <div style={{float: "right"}}>
-                    { this.props.title }
-                    { this.props.board }
-                </div>
-            </Col>
-            <Col className="text-center" ref={this.props.data.colRef}>
-                <div style={{marginTop: this.props.config.colorsTopMargin + "px", float: "left",
-                    marginLeft: this.props.config.colorsLeftMargin + "px"}}
-                >
-                    <ColorSchemeList
-                        ref={this.props.data.colorsRef}
-                        maxWidth={maxWidth}
-                        {...this.props.colorSchemeListProps}
-                    />
-                </div>
-            </Col>
-        </React.Fragment>);
+        return (<Container
+            ref={this.props.innerRef}
+        >
+            <Row>
+                <Col className="text-center">
+                    <div style={{float: "right"}}>
+                        { this.props.title }
+                        { this.props.board }
+                    </div>
+                </Col>
+                <Col className="text-center" ref={this.props.data.colRef}>
+                    <div style={{marginTop: this.props.config.colorsTopMargin + "px", float: "left",
+                        marginLeft: this.props.config.colorsLeftMargin + "px"}}
+                    >
+                        <ColorSchemeList
+                            ref={this.props.data.colorsRef}
+                            maxWidth={maxWidth}
+                            {...this.props.colorSchemeListProps}
+                        />
+                    </div>
+                </Col>
+            </Row>
+        </Container>);
     }
 }
+
+export default React.forwardRef((props, ref) => <SBSView 
+    innerRef={ref} {...props}
+/>);

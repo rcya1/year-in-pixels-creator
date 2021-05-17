@@ -139,6 +139,12 @@ export default class YearInPixels extends React.Component {
         });
     }
 
+    disableExportPreview = () => {
+        this.setState({
+            exportPreviewMode: false
+        });
+    }
+
     render() {
         let title = (<h1 className="display-5 mt-3">{this.props.year + " in Pixels"}</h1>);
 
@@ -173,6 +179,7 @@ export default class YearInPixels extends React.Component {
                 title={title}
                 colorSchemeListProps={colorSchemeListProps}
                 board={board}
+                cancel={this.disableExportPreview}
             />);
         }
         
