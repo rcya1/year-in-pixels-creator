@@ -5,6 +5,7 @@ import Col from 'react-bootstrap/Col';
 import Card from 'react-bootstrap/Card';
 import Button from 'react-bootstrap/Button';
 import domtoimage from 'dom-to-image';
+import FileSaver from 'file-saver';
 import Select from 'react-select'
 
 import SBSView from './sbs/SBSView'
@@ -13,13 +14,11 @@ import { SBSConfig, SBSExternalData, SBSControls } from './sbs/SBSControls'
 import StackedView from './stacked/StackedView'
 import { StackedConfig, StackedExternalData, StackedControls } from './stacked/StackedControls'
 
-// TODO Add the stacked layout
-// TODO Add PDF support
+const { jsPDF } = require("jspdf");
 
-// TODO Fix the bug where when elements such as width are updated or when we first load in,
-// the sliders values are not correct
-// I think the above is b/c the state is not updated, so it never rerenders and recomputes. Need to somehow trigger a state
-// update (probably attach a couple of event handlers and move the calculation logic?)
+// TODO Fix the bug where when we first load in, the limits for the sliders aren't calculated until we click
+// b/c the state is not updated, so it never rerenders and recomputes. Need to somehow trigger a state
+// update (not sure how to force update to fire tho)
 
 const LAYOUT_OPTIONS = Object.freeze({
     SBS: "Side by Side",
@@ -27,6 +26,7 @@ const LAYOUT_OPTIONS = Object.freeze({
 });
 
 const EXPORT_OPTIONS = Object.freeze({
+    SVG: "SVG (Best Quality)",
     PNG: "PNG",
     PDF: "PDF"
 });
@@ -50,7 +50,7 @@ export default class ExportPreview extends React.Component {
             data: data,
 
             layout: LAYOUT_OPTIONS.SBS,
-            fileType: EXPORT_OPTIONS.PNG
+            fileType: EXPORT_OPTIONS.SVG
         };
 
         this.viewRefs = {};
@@ -90,9 +90,20 @@ export default class ExportPreview extends React.Component {
         loadingMessage.add();
 
         switch(this.state.fileType) {
+            case EXPORT_OPTIONS.SVG:
+                domtoimage.toSvg(node, {filter: (elem) => elem.tagName !== 'i'})
+                    .then(function (dataUrl) {
+                        dataUrl = dataUrl.replace("data:image/svg+xml;charset=utf-8,", "");
+                        let blob = new Blob([dataUrl], {type: "image/svg+xml"});
+                        FileSaver.saveAs(blob, "board.json");
+                    }).catch(function(error) {
+                        console.log(error);
+                    }).finally(function() {
+                        loadingMessage.remove();
+                    });
+                break;
             case EXPORT_OPTIONS.PNG:
-                domtoimage.toBlob(node)
-                    .then(function (blob) {
+                domtoimage.toBlob(node).then(function (blob) {
                         window.saveAs(blob, 'board.png');
                     }).catch(function(error) {
                         console.log(error);
@@ -101,7 +112,24 @@ export default class ExportPreview extends React.Component {
                     });
                 break;
             case EXPORT_OPTIONS.PDF:
-                
+                let rect = node.getBoundingClientRect();
+                let padding = 50;
+
+                domtoimage.toPng(node)
+                    .then(function (dataUrl) {
+                        let doc = new jsPDF({
+                            orientation: 'landscape',
+                            unit: 'px',
+                            format: [rect.width + padding * 2, rect.height + padding * 2],
+                            hotfixes: ["px_scaling"]
+                        });
+                        doc.addImage(dataUrl, 'PNG', padding, padding, rect.width, rect.height);
+                        doc.save('board.pdf');
+                    }).catch(function(error) {
+                        console.log(error);
+                    }).finally(function() {
+                        loadingMessage.remove();
+                    });
                 break;
             default:
                 break;

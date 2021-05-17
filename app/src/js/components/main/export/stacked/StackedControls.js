@@ -18,9 +18,7 @@ export class StackedConfig {
 }
 
 export class StackedExternalData {
-    constructor() {
-        
-    }
+    
 }
 
 export class StackedControls extends React.Component {

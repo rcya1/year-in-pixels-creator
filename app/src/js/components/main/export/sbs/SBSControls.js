@@ -53,8 +53,6 @@ export class SBSControls extends React.Component {
             maxWidth = Math.floor((colRect.width - this.props.config.colorsLeftMargin) * 100.0 / colRect.width);
         }
 
-        console.log(maxWidth);
-
         return <React.Fragment>
             <Form.Group>
                 <Form.Label as="h5">
