@@ -39,7 +39,7 @@ export default class AddColorSchemeButton extends React.Component {
                 onMouseEnter={() => this.setState({ hover: true })}
                 onMouseLeave={() => this.setState({ hover: false })}
                 onClick={this.props.disabled ? null : this.props.handleClick}
-                className={this.props.inLg ? "mt-1" : "mt-2"}
+                className={"mt-2"}
                 style={this.getIconStyle(this.props.disabled)}
             />
         );

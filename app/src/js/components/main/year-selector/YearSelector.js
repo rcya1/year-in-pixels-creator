@@ -6,7 +6,7 @@ import Col from 'react-bootstrap/Col'
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger'
 import Tooltip from 'react-bootstrap/Tooltip'
 
-import DeleteButton from 'js/components/main/DeleteButton'
+import { DeleteButton } from 'js/components/main/IconButton'
 
 let selectStyles = require('./YearSelectStyle').selectStyles;
 

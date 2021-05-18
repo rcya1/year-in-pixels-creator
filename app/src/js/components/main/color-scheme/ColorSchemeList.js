@@ -10,7 +10,7 @@ import Tooltip from 'react-bootstrap/Tooltip'
 import AddColorSchemeModal from './AddColorSchemeModal';
 import EditColorSchemeModal from './EditColorSchemeModal';
 import AddColorSchemeButton from './AddColorSchemeButton';
-import DeleteButton from 'js/components/main/DeleteButton';
+import { DeleteButton } from 'js/components/main/IconButton';
 
 const grid = 6;
 

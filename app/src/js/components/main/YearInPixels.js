@@ -10,6 +10,7 @@ import ColorSchemeList from './color-scheme/ColorSchemeList';
 import YearSelector from './year-selector/YearSelector';
 import AddYearModal from './year-selector/AddYearModal';
 import ExportPreview from './export/ExportPreview';
+import { ExportImageButton, SelectCurrentDayButton } from './IconButton'
 
 import { getIndex } from 'js/util/DateUtils';
 
@@ -28,6 +29,7 @@ export default class YearInPixels extends React.Component {
         }
 
         this.menuXYProvider = null;
+        this.currentDayXYProvider = null;
     }
 
     componentDidMount() {
@@ -65,6 +67,21 @@ export default class YearInPixels extends React.Component {
             menuVisible: true,
             currentlySelected: [month, day]
         })
+    }
+    
+    setCurrentDayXYProvider = (xyProvider) => {
+        this.currentDayXYProvider = xyProvider;
+    }
+
+    selectCurrentDay = () => {
+        this.menuXYProvider = this.currentDayXYProvider;
+        let xy = this.menuXYProvider();
+        this.setState({
+            menuXPos: xy[0],
+            menuYPos: xy[1],
+            menuVisible: true,
+            currentlySelected: [Math.floor(this.props.currentDay / 31), this.props.currentDay % 31]
+        });
     }
 
     updateMenuPosition = () => {
@@ -123,11 +140,12 @@ export default class YearInPixels extends React.Component {
             exportPreview: this.state.exportPreviewMode,
             style: { maxWidth: "500px" },
             inLg: this.props.inLg,
-            className: "mx-auto mt-4 mb-3 " + (this.props.inSm ? "w-100" : "w-75")
+            className: "mx-auto mt-4 mb-1 " + (this.props.inSm ? "w-100" : "w-75")
         };
 
         let board = (<Board
             currentDay={this.props.currentDay}
+            setCurrentDayXYProvider={this.setCurrentDayXYProvider}
             year={this.props.year}
             showTodayMarker={this.props.boardSettings.showTodayMarker}
             invalidCellsDisplayType={this.props.boardSettings.invalidCellsDisplayType}
@@ -161,14 +179,21 @@ export default class YearInPixels extends React.Component {
             showAddYearModal={this.showAddYearModal}
             className={"mt-4 mb-2 mx-auto " + (this.props.inSm ? "w-100" : "w-50")}
         />);
-        
-        let exportImageButton = (<Button
-            className="mt-2 mb-4"
-            onClick={this.enableExportPreview}
-            variant="outline-secondary"
-        >
-            Export Image
-        </Button>)
+
+        let toolbar = (<div className={"mx-auto d-flex flex-row align-items-center " 
+            + (this.props.inSm ? "w-75" : "w-50")}>
+            <SelectCurrentDayButton
+                className="mt-2 mb-4"
+                handleClick={this.selectCurrentDay}
+                overlayText="Select Current Day"
+            />
+            
+            <ExportImageButton
+                className="mt-2 mb-4"
+                handleClick={this.enableExportPreview}
+                overlayText="Export Image"
+            />
+        </div>);
 
         let content = undefined;
         if(this.props.inLg) {
@@ -181,7 +206,7 @@ export default class YearInPixels extends React.Component {
                     <Col className="text-center">
                         { yearSelector }
                         { colorSchemeList }
-                        { exportImageButton }
+                        { toolbar }
                     </Col>
                 </Row>
             </Container>);
@@ -194,7 +219,7 @@ export default class YearInPixels extends React.Component {
                         { yearSelector }
                         { board }
                         { colorSchemeList }
-                        { exportImageButton }
+                        { toolbar }
                     </Col>
                 </Row>
             </Container>);

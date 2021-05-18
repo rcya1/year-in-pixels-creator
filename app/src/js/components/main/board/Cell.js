@@ -64,6 +64,12 @@ export class Cell extends React.Component {
         this.ref = React.createRef();
     }
 
+    getXY = () => {
+        if(this.ref.current === null) return [-1, -1];
+        let rect = this.ref.current.getBoundingClientRect();
+        return [rect.x + rect.width * 3 / 4, rect.y + rect.height / 2];
+    }
+
     render() {
         let backgroundColor = "";
         if(this.props.value) {
@@ -75,6 +81,8 @@ export class Cell extends React.Component {
                 backgroundColor = "rgb(" + color[0] + ", " + color[1] + ", " + color[2] + ")";
             }
         }
+        
+        this.props.setCurrentDayXYProvider(this.getXY);
 
         return (
             <td 
@@ -83,11 +91,7 @@ export class Cell extends React.Component {
                 onClick = {(e) => {
                     if(this.props.valid) {
                         e.stopPropagation();
-                        this.props.handleClick(() => {
-                            if(this.ref.current === null) return [-1, -1];
-                            let rect = this.ref.current.getBoundingClientRect();
-                            return [rect.x + rect.width * 3 / 4, rect.y + rect.height / 2];
-                        }, this.props.month, this.props.day)}
+                        this.props.handleClick(this.getXY, this.props.month, this.props.day)}
                     }
                 }
             >

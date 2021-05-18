@@ -17,7 +17,8 @@ export default class Board extends React.Component {
                  // add on one to days per month if it's a leap year
                 let valid = d + 1 <= DAYS_PER_MONTH[m] + (isLeapYear(this.props.year) && m === 1 ? 1 : 0);
                 let active = this.props.currentlySelected[0] === m && this.props.currentlySelected[1] === d;
-                let showTodayMarker = (m * 31 + d === this.props.currentDay) && this.props.showTodayMarker
+                let isToday = (m * 31 + d === this.props.currentDay);
+                let showTodayMarker = isToday && this.props.showTodayMarker
                     && String(new Date().getFullYear()) === String(this.props.year);
 
                 if(valid) value = this.props.values[getIndex(m, d)];
@@ -30,6 +31,7 @@ export default class Board extends React.Component {
                     invalidCellsDisplayType={this.props.invalidCellsDisplayType}
                     active={active}
                     showTodayMarker={showTodayMarker}
+                    setCurrentDayXYProvider={isToday ? this.props.setCurrentDayXYProvider : function() {}}
                     colorSchemes={this.props.colorSchemes}
                     key={m + ":" + d}
                 />);
