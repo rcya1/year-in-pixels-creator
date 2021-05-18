@@ -18,7 +18,7 @@ export default class Changelog extends Component {
                 <li>Added the ability to export board images as SVG, PNG, and PDF files</li>
                 <li>Added new day menu system that should hopefully be more stable and less prone to flickering or crashing</li>
                 <li>Added the ability to delete years</li>
-                <li>Add toolbar for the new select current day button and the exporting feature</li>z
+                <li>Add toolbar for the new select current day button and the exporting feature</li>
             </ul>
             
             <h3 className={headerClassName}>v1.1</h3>

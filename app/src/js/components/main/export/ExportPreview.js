@@ -123,7 +123,7 @@ export default class ExportPreview extends React.Component {
                     .then(function (dataUrl) {
                         dataUrl = dataUrl.replace("data:image/svg+xml;charset=utf-8,", "");
                         let blob = new Blob([dataUrl], {type: "image/svg+xml"});
-                        FileSaver.saveAs(blob, "board.json");
+                        FileSaver.saveAs(blob, "board.svg");
                     }).catch(function(error) {
                         console.log(error);
                     }).finally(function() {
