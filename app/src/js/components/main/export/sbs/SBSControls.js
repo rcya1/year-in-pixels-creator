@@ -27,6 +27,21 @@ export class SBSExternalData {
 }
 
 export class SBSControls extends React.Component {
+
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            forceUpdate: 0
+        };
+    }
+
+    // force a rerender to get the sliders aligned (super dirty hack)
+    componentDidMount = () => {
+        this.setState({
+            forceUpdate: this.state.forceUpdate + 1
+        });
+    }
     
     changeColorSchemeTopMargin = (e) => {
         this.props.updateConfig("colorsTopMargin", e.target.value);

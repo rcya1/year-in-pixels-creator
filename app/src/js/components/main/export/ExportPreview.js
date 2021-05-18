@@ -7,6 +7,7 @@ import Button from 'react-bootstrap/Button';
 import domtoimage from 'dom-to-image';
 import FileSaver from 'file-saver';
 import Select from 'react-select'
+import { inLg, inSm } from 'js/util/BootstrapUtils';
 
 import SBSView from './sbs/SBSView'
 import { SBSConfig, SBSExternalData, SBSControls } from './sbs/SBSControls'
@@ -15,10 +16,6 @@ import StackedView from './stacked/StackedView'
 import { StackedConfig, StackedExternalData, StackedControls } from './stacked/StackedControls'
 
 const { jsPDF } = require("jspdf");
-
-// TODO Fix the bug where when we first load in, the limits for the sliders aren't calculated until we click
-// b/c the state is not updated, so it never rerenders and recomputes. Need to somehow trigger a state
-// update (not sure how to force update to fire tho)
 
 const LAYOUT_OPTIONS = Object.freeze({
     SBS: "Side by Side",
@@ -57,6 +54,37 @@ export default class ExportPreview extends React.Component {
         
         for(let layout of Object.values(LAYOUT_OPTIONS)) {
             this.viewRefs[layout] = React.createRef();
+        }
+    }
+
+    componentDidMount = () => {
+        this.updateLayout();
+        window.addEventListener('resize', this.updateLayout);
+    }
+
+    componentWillUnmount = () => {
+        this.updateLayout();
+        window.removeEventListener('resize', this.updateLayout);
+    }
+
+    componentDidUpdate = () => {
+        this.updateLayout();
+    }
+
+    updateLayout = () => {
+        if(this.isLayoutDisabled(this.state.layout)) {
+            switch(this.state.layout) {
+                case LAYOUT_OPTIONS.SBS:
+                    this.setState({
+                        layout: LAYOUT_OPTIONS.STACKED
+                    });
+                    break;
+                case LAYOUT_OPTIONS.STACKED:
+                    // can't happen rn
+                    break;
+                default:
+                    break;
+            }
         }
     }
 
@@ -136,6 +164,17 @@ export default class ExportPreview extends React.Component {
         }
     }
 
+    isLayoutDisabled = (layout) => {
+        switch(layout) {
+            case LAYOUT_OPTIONS.SBS:
+                return window.innerWidth < 800;
+            case LAYOUT_OPTIONS.STACKED:
+                return false;
+            default:
+                return false;
+        }
+    }
+
     render() {
         let colorSchemeListProps = {
             ...this.props.colorSchemeListProps
@@ -152,7 +191,8 @@ export default class ExportPreview extends React.Component {
             options={Object.values(LAYOUT_OPTIONS).map(x => {
                 return {
                     value: x,
-                    label: x
+                    label: x,
+                    isDisabled: this.isLayoutDisabled(x)
                 };
             })}
             className="mt-2 mb-3"
@@ -227,14 +267,18 @@ export default class ExportPreview extends React.Component {
         return (
             <Container fluid>
                 <Row>
-                    <Col>
+                    <Col lg={9}>
                         {layoutView}
                     </Col>
                     <Col lg={3}>
-                        <Card className="mt-5 mr-3 text-center shadow-sm" style={{
-                            position: "sticky",
-                            top: "40px"
-                        }}>
+                        <Card className={"mt-5 mb-4 mr-3 text-center shadow-sm mx-auto " + 
+                            ((inLg() || inSm()) ? "w-100" : "w-50")}
+
+                            style={{
+                                position: "sticky",
+                                top: "40px"
+                            }}
+                        >
                             <Card.Header>
                                 <h3 className="text-center">Configure Image</h3>
                             </Card.Header>

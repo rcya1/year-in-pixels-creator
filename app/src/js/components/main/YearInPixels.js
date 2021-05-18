@@ -165,6 +165,7 @@ export default class YearInPixels extends React.Component {
         let exportImageButton = (<Button
             className="mt-2 mb-4"
             onClick={this.enableExportPreview}
+            variant="outline-secondary"
         >
             Export Image
         </Button>)
@@ -193,6 +194,7 @@ export default class YearInPixels extends React.Component {
                         { yearSelector }
                         { board }
                         { colorSchemeList }
+                        { exportImageButton }
                     </Col>
                 </Row>
             </Container>);
