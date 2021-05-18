@@ -181,7 +181,9 @@ export default class CellMenu extends React.Component {
                                         maxWidth: "100%",
                                         minWidth: "100%",
                                         maxHeight: this.state.maxTextHeight,
-                                        minHeight: "50px"
+                                        minHeight: "50px",
+                                        width: window.innerWidth / 6,
+                                        height: window.innerHeight / 5
                                     }}
                                     ref={this.textRef}
                                 />
@@ -221,7 +223,7 @@ export default class CellMenu extends React.Component {
 
                         <Card style={{
                             maxWidth: this.props.maxWidth,
-                            maxHeight: this.props.maxHeight,
+                            maxHeight: this.props.maxHeight
                         }}>
                             <Card.Header className="text-center py-2" as="h4">
                                 {title}
