@@ -13,6 +13,14 @@ export default class Changelog extends Component {
                 </h1>
             </div>
             
+            <h3 className={headerClassName}>v1.2</h3>
+            <ul className={paragraphClassName}>
+                <li>Added the ability to export board images as SVG, PNG, and PDF files</li>
+                <li>Added new day menu system that should hopefully be more stable and less prone to flickering or crashing</li>
+                <li>Added the ability to delete years</li>
+                <li>TODO</li>
+            </ul>
+            
             <h3 className={headerClassName}>v1.1</h3>
             <ul className={paragraphClassName}>
                 <li>Added this changelog :D</li>
