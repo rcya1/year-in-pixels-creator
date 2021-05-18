@@ -159,11 +159,9 @@ export default class CellMenu extends React.Component {
                                     closeMenuOnScroll={function(e) {
                                         return e.target instanceof HTMLDocument;
                                     }}
-                                    menuPlacement={this.state.flipped ? "top" : "bottom"}
+                                    menuPlacement="bottom"
                                     maxMenuHeight={!this.showAsModal() ?
-                                        (!this.state.flipped ?  
-                                            window.innerHeight - this.state.selectYPos - 50 : 
-                                            this.state.selectYPos - 10) : 
+                                        window.innerHeight - this.state.selectYPos - 50 :
                                         null}
                                 />
                             </Col>

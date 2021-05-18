@@ -123,7 +123,7 @@ export default class YearInPixels extends React.Component {
             exportPreview: this.state.exportPreviewMode,
             style: { maxWidth: "500px" },
             inLg: this.props.inLg,
-            className: "mx-auto mb-5 " + (this.props.inSm ? "w-100" : "w-75")
+            className: "mx-auto mt-4 mb-3 " + (this.props.inSm ? "w-100" : "w-75")
         };
 
         let board = (<Board
@@ -179,8 +179,8 @@ export default class YearInPixels extends React.Component {
                     </Col>
                     <Col className="text-center">
                         { yearSelector }
-                        { exportImageButton }
                         { colorSchemeList }
+                        { exportImageButton }
                     </Col>
                 </Row>
             </Container>);
