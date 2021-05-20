@@ -7,6 +7,8 @@ const passport = require('passport');
 const asyncHandler = require('express-async-handler');
 let {log, Status} = require('./route_logger');
 
+const { v4: uuidv4 } = require('uuid');
+
 /**
  * GET
  * Returns all of the user data in JSON for the currently logged in user
@@ -88,6 +90,103 @@ router.route('/').delete(asyncHandler(async(req, res) => {
     await user.delete();
     
     log(res, Status.SUCCESS, "User deleted.");
+}));
+
+/**
+ * POST
+ * Changes the user's email address
+ */
+router.route('/change-email/:email').post(asyncHandler(async(req, res) => {
+    if(!req.isAuthenticated()) {
+        log(res, Status.ERROR, "User is not logged in");
+        return;
+    }
+
+    let user = await UserSchema.findById(req.user._id);
+    let newEmail = req.params.email;
+
+    if(user.email === newEmail) {
+        log(res, Status.ERROR, "Email address already associated with this account");
+        return;
+    }
+
+    let exists = await UserSchema.exists({email: newEmail});
+    if(exists) {
+        log(res, Status.ERROR, "Email address associated with different account");
+        return;
+    }
+
+    user.email = newEmail;
+    user.emailVerified = false;
+    user.emailVerificationToken = uuidv4();
+    user.emailVerificationTokenDate = Date.now();
+    await user.save();
+    
+    log(res, Status.SUCCESS, "Added email.");
+}));
+
+/**
+ * DELETE
+ * Deletes the user's currently stored email address
+ */
+router.route('/change-email/').delete(asyncHandler(async(req, res) => {
+    if(!req.isAuthenticated()) {
+        log(res, Status.ERROR, "User is not logged in");
+        return;
+    }
+
+    let user = await UserSchema.findById(req.user._id);
+
+    user.email = "";
+    user.emailVerified = false;
+    user.emailVerificationToken = "";
+    user.emailVerificationTokenDate = Date.now();
+    await user.save();
+    
+    log(res, Status.SUCCESS, "Deleted email.");
+}));
+
+/**
+ * POST
+ * Verifies the email address with a verification token sent to email
+ */
+router.route('/verify-email/:user/:token').post(asyncHandler(async(req, res) => {
+    let user = await UserSchema.findOne({username: req.params.user});
+    
+    if(user == null) {
+        log(res, Status.ERROR, "User does not exist");
+        return;
+    }
+
+    let token = req.params.token;
+
+    if(user.emailVerified) {
+        log(res, Status.ERROR, "Email is already verified");
+        return;
+    }
+
+    if(user.emailVerificationToken == "" || user.email == "") {
+        log(res, Status.ERROR, "User has no email associated with their account");
+        return;
+    }
+
+    if(user.emailVerificationToken != token) {
+        log(res, Status.ERROR, "Incorrect email verification token");
+        return;
+    }
+
+    let diffHours = (Date.now() - user.emailVerificationTokenDate) / (1000 * 60 * 60);
+    if(diffHours >= 24.0) {
+        log(res, Status.ERROR, "Email verification token has expired");
+        return;
+    }
+
+    user.emailVerified = true;
+    user.emailVerificationToken = "";
+    user.emailVerificationTokenDate = Date.now();
+    await user.save();
+    
+    log(res, Status.SUCCESS, "Verified email.");
 }));
 
 /**
