@@ -13,6 +13,7 @@ import Settings from './components/settings/Settings'
 import About from './components/About'
 import PrivacyPolicy from './components/PrivacyPolicy'
 import Changelog from './components/Changelog'
+import VerifyEmail from './components/VerifyEmail'
 import LoadingIndicator from './components/LoadingIndicator'
 
 // Utility
@@ -20,7 +21,7 @@ import HTTPRequest from './util/HTTPRequest';
 import { OverridePrompt, OverrideOption, PromptStatus } from './components/OverridePrompt'
 import { getIndex } from './util/DateUtils';
 import { defaultColorSchemes } from './util/ColorUtils';
-import { defaultBoardSettings } from './util/SettingsUtils';
+import { defaultBoardSettings, EmailStatus } from './util/SettingsUtils';
 import { handleError } from './util/ErrorUtils';
 import { inLg, inSm } from 'js/util/BootstrapUtils';
 
@@ -61,6 +62,7 @@ class App extends React.Component {
             years: [new Date().getFullYear()],
             values: Array(12 * 31).fill(0),
             comments: Array(12 * 31).fill(""),
+            emailStatus: EmailStatus.NO_EMAIL,
             colorSchemes: defaultColorSchemes,
             boardSettings: defaultBoardSettings
         };
@@ -131,8 +133,7 @@ class App extends React.Component {
             try {
                 loadingMessage.add();
 
-                let requests = [this.loadName(),
-                    this.loadName(),
+                let requests = [this.loadBasicInfo(),
                     this.syncColorSchemes(),
                     this.syncSettings(),
                     this.loadYears().then(() => this.syncValuesAndComments())];
@@ -148,14 +149,30 @@ class App extends React.Component {
         }
     }
 
-    loadName = async () => {
+    loadBasicInfo = async () => {
         let res = await HTTPRequest.get("users");
         let name = res.data.name;
         let username = res.data.username;
+        let email = res.data.email;
+
+        if(email === undefined) email = "";
+
+        let emailStatus = EmailStatus.VERIFIED;
+        if(res.data.email === "" || res.data.email == undefined) {
+            this.addAlert("info", "Add Email Address", "Go to your profile to add an email address to your account!");
+            emailStatus = EmailStatus.NO_EMAIL;
+        }
+        else if(res.data.emailVerified === false) {
+            this.addAlert("warning", "Unverified Email Address", "Check your email to verify your email! " + 
+                "You may have to check the spam folder, and go to your profile to resend the verification email.");
+            emailStatus = EmailStatus.NOT_VERIFIED;
+        }
 
         this.setState({
             name: name,
-            username: username
+            username: username,
+            email: email,
+            emailStatus: emailStatus
         });
     }
 
@@ -898,6 +915,58 @@ class App extends React.Component {
         this.addNewDayCallback();
     }
 
+    changeEmail = async (email) => {
+        let loadingMessage = this.createLoadingMessage("Changing email address");
+        loadingMessage.add();
+
+        if(this.state.loggedIn) {
+            try {
+                await HTTPRequest.post("/users/change-email/" + email);
+                this.addAlert("info", "Changed Email Address", "Please check your inbox and spam folder to verify your email address!");
+            }
+            catch(err) {
+                handleError(err, this.addAlert, [
+                    ["User validation failed: email", "Email Not Valid!", "If your email address is valid, please submit a bug report!"]
+                ]);
+            }
+        }
+
+        loadingMessage.remove();
+    }
+
+    resendEmailVerification = async () => {
+        let loadingMessage = this.createLoadingMessage("Resending verification email");
+        loadingMessage.add();
+
+        if(this.state.loggedIn) {
+            try {
+                await HTTPRequest.post("/users/resend-verification-email/");
+                this.addAlert("info", "Resent Verification Email", "Please check your inbox and spam folder to verify your email address!");
+            }
+            catch(err) {
+                handleError(err, this.addAlert);
+            }
+        }
+
+        loadingMessage.remove();
+    }
+
+    verifyEmail = async(user, token) => {
+        let loadingMessage = this.createLoadingMessage("Verifying email");
+        loadingMessage.add();
+
+        try {
+            await HTTPRequest.post("/users/verify-email/" + user + "/" + token);
+            loadingMessage.remove();
+            return true;
+        }
+        catch(err) {
+            handleError(err, this.addAlert);
+            loadingMessage.remove();
+            return false;
+        }
+    }
+
     addAlert = (type, headline, message) => {
         let alerts = this.state.alerts.slice();
         alerts.push({
@@ -1038,12 +1107,25 @@ class App extends React.Component {
                         changePassword={this.changePassword}
                         deleteAccount={this.deleteAccount}
 
+                        email={this.state.email}
+                        emailStatus={this.state.emailStatus}
+                        changeEmail={this.changeEmail}
+                        resendEmailVerification={this.resendEmailVerification}
+
                         boardSettings={this.state.boardSettings}
                         updateBoardSettings={this.updateBoardSettings}
 
                         exportUserData={this.exportUserData}
                     />
                 </Route>
+                <Route path="/verify/:username/:token"
+                    render={(matchProps) =>
+                        <VerifyEmail
+                            {...matchProps}
+                            verifyEmail={this.verifyEmail}
+                        />
+                    }
+                />
                 <Route path="/about">
                     <About/>
                 </Route>

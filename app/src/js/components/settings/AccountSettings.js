@@ -8,6 +8,8 @@ import Card from 'react-bootstrap/Card';
 import Button from 'react-bootstrap/Button';
 import InputGroup from 'react-bootstrap/InputGroup';
 import { FaUser, FaLock } from 'react-icons/fa';
+import { MdEmail } from 'react-icons/md';
+import { EmailStatus } from 'js/util/SettingsUtils';
 
 export default class AccountSettings extends Component {
 
@@ -22,7 +24,8 @@ export default class AccountSettings extends Component {
             confirmNewPassword: "",
             updateFormValidated: false,
             changePasswordFormValidated: false,
-            usernameTaken: false
+            usernameTaken: false,
+            emailAddress: this.props.email
         };
     }
 
@@ -76,6 +79,12 @@ export default class AccountSettings extends Component {
     onChangeConfirmNewPassword = (e) => {
         this.setState({
             confirmNewPassword: e.target.value
+        });
+    }
+
+    onChangeEmailAddress = (e) => {
+        this.setState({
+            emailAddress: e.target.value
         });
     }
 
@@ -281,6 +290,39 @@ export default class AccountSettings extends Component {
                                     </Button>
                                 </Form>
                             </Col>
+                        </Row>
+                        <Row className="mt-5 mb-3 w-50 mx-auto">
+                            <InputGroup>
+                                <InputGroup.Prepend>
+                                    <InputGroup.Text>
+                                        <MdEmail/>
+                                    </InputGroup.Text>
+                                </InputGroup.Prepend>
+                                <FormControl
+                                    placeholder="Email Address"
+                                    type="text"
+                                    value={this.state.emailAddress}
+                                    onChange={this.onChangeEmailAddress}
+                                />
+                            </InputGroup>
+                        </Row>
+                        <Row className="mt-3">
+                            {this.props.emailStatus === EmailStatus.NOT_VERIFIED && 
+                            <Button
+                                variant="primary"
+                                className="mx-auto"
+                                onClick={this.props.resendEmailVerification}
+                            >
+                                Resend Verification Email
+                            </Button>}
+                            <Button 
+                                variant="primary"
+                                type="submit"
+                                className="mx-auto"
+                                onClick={() => { this.props.changeEmail(this.state.emailAddress); }}
+                            >
+                                Change Email Address
+                            </Button>
                         </Row>
                         <Row>
                             <Button 

@@ -8,3 +8,9 @@ export let defaultBoardSettings = {
     showTodayMarker: true,
     invalidCellsDisplayType: InvalidCellsDisplayType.GRAYED_OUT
 };
+
+export let EmailStatus = Object.freeze({
+    VERIFIED: "Verified",
+    NOT_VERIFIED: "Not Verified",
+    NO_EMAIL: "No Email"
+});

@@ -19,6 +19,13 @@ const transport = nodemailer.createTransport({
     }
 });
 
+function sanitizeData(user) {
+    user.emailVerificationToken = "REDACTED";
+    user.emailVerificationTokenDate = "REDACTED";
+
+    return user;
+}
+
 /**
  * GET
  * Returns all of the user data in JSON for the currently logged in user
@@ -30,7 +37,7 @@ router.route('/').get(asyncHandler(async(req, res) => {
     }
 
     let user = await UserSchema.findById(req.user._id);
-    res.json(user);
+    res.json(sanitizeData(user));
 }));
 
 /**
@@ -48,7 +55,8 @@ router.route('/').get(asyncHandler(async(req, res) => {
         .populate("colorSchemes")
         .populate("data")
         .populate("settings");
-    res.json(user);
+
+    res.json(sanitizeData(user));
 }));
 
 /**
@@ -132,16 +140,49 @@ router.route('/change-email/:email').post(asyncHandler(async(req, res) => {
     user.emailVerificationTokenDate = Date.now();
     await user.save();
 
-    await transport.sendMail({
-        from: "Year in Pixels",
-        to: user.email,
-        subject: "Year in Pixels Creator Email Verification",
-        html: "Press <a href=http://localhost:3000/verify/" + user.username + "/" + user.emailVerificationToken + 
-            ">here</a> within 24 hours to verify your email. Thank you!"
-    });
+    await sendVerificationEmail(user.email, user.username, user.emailVerificationToken);
     
     log(res, Status.SUCCESS, "Added email and sent verification email.");
 }));
+
+/**
+ * POST
+ * Resend verification email
+ */
+
+router.route('/resend-verification-email').post(asyncHandler(async(req, res) => {
+    if(!req.isAuthenticated()) {
+        log(res, Status.ERROR, "User is not logged in");
+        return;
+    }
+
+    let user = await UserSchema.findById(req.user._id);
+
+    if(user.email === undefined || user.email === "") {
+        log(res, Status.ERROR, "Email address not found");
+    }
+    else if(user.emailVerified) {
+        log(res, Status.ERROR, "Email address already verified");
+    }
+
+    user.emailVerificationToken = uuidv4();
+    user.emailVerificationTokenDate = Date.now();
+    await user.save();
+
+    await sendVerificationEmail(user.email, user.username, user.emailVerificationToken);
+    
+    log(res, Status.SUCCESS, "Sent verification email.");
+}));
+
+let sendVerificationEmail = async(email, username, token) => {
+    return transport.sendMail({
+        from: "Year in Pixels",
+        to: email,
+        subject: "Year in Pixels Creator Email Verification",
+        html: "Press <a href=http://localhost:3000/#/verify/" + username + "/" + token + 
+            ">here</a> within 24 hours to verify your email. Thank you!"
+    });
+}
 
 /**
  * DELETE
