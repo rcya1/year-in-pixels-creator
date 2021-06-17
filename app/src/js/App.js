@@ -313,7 +313,7 @@ class App extends React.Component {
         let loadingMessage = this.createLoadingMessage("Checking Username Availability");
         try {
             loadingMessage.add();
-            let res = await HTTPRequest.get("users/check-available/" + username);
+            let res = await HTTPRequest.get("users/check-available/username/" + username);
             loadingMessage.remove();
             return res.data === true;
         }
@@ -323,7 +323,23 @@ class App extends React.Component {
         }
     }
 
-    register = async (name, username, password) => {
+    checkEmailAvailable = async (email) => {
+        if(email === "") return true;
+
+        let loadingMessage = this.createLoadingMessage("Checking Email Availability");
+        try {
+            loadingMessage.add();
+            let res = await HTTPRequest.get("users/check-available/email/" + email);
+            loadingMessage.remove();
+            return res.data === true;
+        }
+        catch(err) {
+            handleError(err, this.addAlert);
+            loadingMessage.remove();
+        }
+    }
+
+    register = async (name, username, password, email) => {
         const body = {
             name: name,
             username: username,
@@ -337,9 +353,12 @@ class App extends React.Component {
             this.setState({
                 loggedIn: true,
                 name: name,
-                username: username
+                username: username,
+                email: email,
+                emailStatus: email === "" ? EmailStatus.NO_EMAIL : EmailStatus.NOT_VERIFIED
             }, async () => {
                 this.addAlert("info", "Successfully Registered");
+                this.changeEmail(email);
                 this.syncColorSchemes();
                 this.syncSettings();
                 await this.addYear(this.state.year);
@@ -916,13 +935,13 @@ class App extends React.Component {
     }
 
     changeEmail = async (email) => {
-        let loadingMessage = this.createLoadingMessage("Changing email address");
+        let loadingMessage = this.createLoadingMessage("Adding/Changing email address");
         loadingMessage.add();
 
         if(this.state.loggedIn) {
             try {
                 await HTTPRequest.post("/users/change-email/" + email);
-                this.addAlert("info", "Changed Email Address", "Please check your inbox and spam folder to verify your email address!");
+                this.addAlert("info", "Added/Changed Email Address", "Please check your inbox and spam folder to verify your email address!");
             }
             catch(err) {
                 handleError(err, this.addAlert, [
@@ -1088,6 +1107,7 @@ class App extends React.Component {
                     <Register
                         register={this.register}
                         checkUsernameAvailable={this.checkUsernameAvailable}
+                        checkEmailAvailable={this.checkEmailAvailable}
                     />
                 </Route>
                 <Route path="/login">
@@ -1103,6 +1123,7 @@ class App extends React.Component {
                         name={this.state.name}
                         username={this.state.username}
                         checkUsernameAvailable={this.checkUsernameAvailable}
+                        checkEmailAvailable={this.checkEmailAvailable}
                         updateAccountInfo={this.updateAccountInfo}
                         changePassword={this.changePassword}
                         deleteAccount={this.deleteAccount}

@@ -25,12 +25,13 @@ export default class AccountSettings extends Component {
             updateFormValidated: false,
             changePasswordFormValidated: false,
             usernameTaken: false,
-            emailAddress: this.props.email
+            email: this.props.email,
+            emailValid: true
         };
     }
 
     componentDidUpdate(prevProps) {
-        if(this.props.name !== prevProps.name || this.props.username !== prevProps.username) {
+        if(this.props.name !== prevProps.name || this.props.username !== prevProps.username || this.props.email != prevProps.email) {
             this.setState({
                 name: this.props.name,
                 username: this.props.username,
@@ -39,7 +40,9 @@ export default class AccountSettings extends Component {
                 confirmNewPassword: "",
                 updateFormValidated: false,
                 changePasswordFormValidated: false,
-                usernameTaken: false
+                usernameTaken: false,
+                email: this.props.email,
+                emailValid: true
             });
         }
     }
@@ -82,10 +85,27 @@ export default class AccountSettings extends Component {
         });
     }
 
-    onChangeEmailAddress = (e) => {
+    onChangeEmail = async (e) => {
+        let email = e.target.value;
+
         this.setState({
-            emailAddress: e.target.value
+            email: email
         });
+
+        let valid = await this.validateEmail(email);
+
+        this.setState({
+            emailValid: valid
+        });
+    }
+
+    validateEmail = async (email) => {
+        const regex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        
+        if(email != "" && !email.match(regex)) return false;
+        
+        let available = await this.props.checkEmailAvailable(email);
+        return available;
     }
 
     handleUpdateSubmit = async (e) => {
@@ -295,16 +315,21 @@ export default class AccountSettings extends Component {
                             <InputGroup>
                                 <InputGroup.Prepend>
                                     <InputGroup.Text>
-                                        <MdEmail/>
+                                        <MdEmail></MdEmail>
                                     </InputGroup.Text>
                                 </InputGroup.Prepend>
                                 <FormControl
                                     placeholder="Email Address"
                                     type="text"
-                                    value={this.state.emailAddress}
-                                    onChange={this.onChangeEmailAddress}
+                                    isInvalid={!this.state.emailValid}
+                                    value={this.state.email}
+                                    onChange={this.onChangeEmail}
                                 />
+                                <FormControl.Feedback type="invalid">
+                                    Email invalid.
+                                </FormControl.Feedback>
                             </InputGroup>
+                            <small className="form-text text-muted">This is optional but highly recommended.</small>
                         </Row>
                         <Row className="mt-3">
                             {this.props.emailStatus === EmailStatus.NOT_VERIFIED && 
@@ -319,7 +344,7 @@ export default class AccountSettings extends Component {
                                 variant="primary"
                                 type="submit"
                                 className="mx-auto"
-                                onClick={() => { this.props.changeEmail(this.state.emailAddress); }}
+                                onClick={() => { this.props.changeEmail(this.state.email); }}
                             >
                                 Change Email Address
                             </Button>

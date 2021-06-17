@@ -342,9 +342,25 @@ router.route('/register').post((req, res) => {
  * GET
  * Returns whether the given username is available
  */
-router.route('/check-available/:username').get(asyncHandler(async(req, res) => {
+router.route('/check-available/username/:username').get(asyncHandler(async(req, res) => {
     let exists = await UserSchema.exists({
         username: req.params.username
+    });
+
+    res.json(!exists);
+}));
+
+/**
+ * GET
+ * Returns whether the given email is available
+ */
+router.route('/check-available/email/:email').get(asyncHandler(async(req, res) => {
+    if(req.params.email === "") {
+        return true;
+    }
+
+    let exists = await UserSchema.exists({
+        email: req.params.email
     });
 
     res.json(!exists);
