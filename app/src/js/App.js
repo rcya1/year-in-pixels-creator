@@ -158,7 +158,7 @@ class App extends React.Component {
         if(email === undefined) email = "";
 
         let emailStatus = EmailStatus.VERIFIED;
-        if(res.data.email === "" || res.data.email == undefined) {
+        if(res.data.email === "" || res.data.email === undefined) {
             this.addAlert("info", "Add Email Address", "Go to your profile to add an email address to your account!");
             emailStatus = EmailStatus.NO_EMAIL;
         }

@@ -31,7 +31,7 @@ export default class AccountSettings extends Component {
     }
 
     componentDidUpdate(prevProps) {
-        if(this.props.name !== prevProps.name || this.props.username !== prevProps.username || this.props.email != prevProps.email) {
+        if(this.props.name !== prevProps.name || this.props.username !== prevProps.username || this.props.email !== prevProps.email) {
             this.setState({
                 name: this.props.name,
                 username: this.props.username,
@@ -100,9 +100,10 @@ export default class AccountSettings extends Component {
     }
 
     validateEmail = async (email) => {
+        // eslint-disable-next-line
         const regex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
         
-        if(email != "" && !email.match(regex)) return false;
+        if(email !== "" && !email.match(regex)) return false;
         
         let available = await this.props.checkEmailAvailable(email);
         return available;
