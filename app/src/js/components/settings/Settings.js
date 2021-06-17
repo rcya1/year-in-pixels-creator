@@ -36,6 +36,7 @@ class Settings extends Component {
                     
                     email={this.props.email}
                     emailStatus={this.props.emailStatus}
+                    checkEmailAvailable={this.props.checkEmailAvailable}
                     changeEmail={this.props.changeEmail}
                     resendEmailVerification={this.props.resendEmailVerification}
 

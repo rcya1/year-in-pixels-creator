@@ -179,7 +179,7 @@ let sendVerificationEmail = async(email, username, token) => {
         from: "Year in Pixels",
         to: email,
         subject: "Year in Pixels Creator Email Verification",
-        html: "Press <a href=http://localhost:3000/#/verify/" + username + "/" + token + 
+        html: "Press <a href=https://year-in-pixels-creator.herokuapp.com/#/verify/" + username + "/" + token + 
             ">here</a> within 24 hours to verify your email. Thank you!"
     });
 }
