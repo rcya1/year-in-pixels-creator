@@ -24,7 +24,7 @@ const userSchema = new mongoose.Schema({
         emailVerificationToken: {
             type: String,
             required: false,
-            unique: true
+            unique: false
         },
         emailVerificationTokenDate: {
             type: Date,
@@ -34,6 +34,15 @@ const userSchema = new mongoose.Schema({
             type: Boolean,
             required: true,
             default: false
+        },
+        passwordResetToken: {
+            type: String,
+            required: false,
+            unique: false
+        },
+        passwordResetTokenDate: {
+            type: Date,
+            required: false
         },
         colorSchemes: {
             type: [{

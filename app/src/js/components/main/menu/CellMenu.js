@@ -14,7 +14,7 @@ import { getOrdinalEnding } from 'js/util/DateUtils';
 
 let selectStyles = require('./MenuSelectStyle').selectStyles;
 
-// TODO The text box size handling
+// TODO Figure out what this means -> "The text box size handling"
 export default class CellMenu extends React.Component {
     constructor(props) {
         super(props);

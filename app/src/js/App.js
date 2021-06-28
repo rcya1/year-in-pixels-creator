@@ -14,6 +14,8 @@ import About from './components/About'
 import PrivacyPolicy from './components/PrivacyPolicy'
 import Changelog from './components/Changelog'
 import VerifyEmail from './components/VerifyEmail'
+import RequestPasswordReset from './components/RequestPasswordReset';
+import ResetPassword from './components/ResetPassword';
 import LoadingIndicator from './components/LoadingIndicator'
 
 // Utility
@@ -457,11 +459,47 @@ class App extends React.Component {
             loadingMessage.add();
             await HTTPRequest.post("users/change-password", body);
             this.addAlert("info", "Successfully Changed Password");
-            loadingMessage.remove();
         }
         catch(err) {
             handleError(err, this.addAlert);
+        }
+        loadingMessage.remove();
+    }
+
+    requestPasswordReset = async(username) => {
+        let loadingMessage = this.createLoadingMessage("Requesting Password Reset");
+        try {
+            loadingMessage.add();
+            await HTTPRequest.post("users/request-reset/" + username);
+            this.addAlert("info", "Successfully Requested Password Reset");
+        }
+        catch(err) {
+            handleError(err, this.addAlert, [
+                ["exist", "User does not exist", "If you believe this is a bug, please contact the developer"]
+            ]);
+        }
+
+        loadingMessage.remove();
+    }
+
+    resetPassword = async(username, token, newPassword) => {
+        let loadingMessage = this.createLoadingMessage("Resetting Password");
+        try {
+            loadingMessage.add();
+            const body = {
+                newPassword: newPassword
+            };
+            await HTTPRequest.post("users/reset-password/" + username + "/" + token, body)
+            this.addAlert("info", "Successfully Changed Pasword");
             loadingMessage.remove();
+            return true;
+        }
+        catch(err) {
+            handleError(err, this.addAlert, [
+                ["Incorrect password reset token", "Error Resetting Password (Incorrect Token)", "Please re-request a password reset"],
+                ["expired", "Password Reset Link has Expired", "Please re-request a password reset"]]);
+            loadingMessage.remove();
+            return false;
         }
     }
 
@@ -980,7 +1018,9 @@ class App extends React.Component {
             return true;
         }
         catch(err) {
-            handleError(err, this.addAlert);
+            handleError(err, this.addAlert, [
+                ["Incorrect email verification token", "Error Verifying Email (Incorrect Token)", "Please re-request email verification"], 
+                ["expired", "Email Verification Link has Expired", "Please re-request email verification"]]);
             loadingMessage.remove();
             return false;
         }
@@ -1144,6 +1184,19 @@ class App extends React.Component {
                         <VerifyEmail
                             {...matchProps}
                             verifyEmail={this.verifyEmail}
+                        />
+                    }
+                />
+                <Route path="/request-reset">
+                    <RequestPasswordReset
+                        requestPasswordReset={this.requestPasswordReset}
+                    />
+                </Route>
+                <Route path="/reset-password/:username/:token"
+                    render={(matchProps) =>
+                        <ResetPassword
+                            {...matchProps}
+                            resetPassword={this.resetPassword}
                         />
                     }
                 />
