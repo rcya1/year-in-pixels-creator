@@ -15,9 +15,15 @@ function validateBoolean(string) {
     return lower === "true" || lower === "false";
 }
 
+function validateEmail(email) {
+    const regex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return email.match(regex);
+}
+
 module.exports = {
     validateDataLength: validateDataLength,
     validateColorValue: validateColorValue,
     validateNonZeroLength: validateNonZeroLength,
-    validateBoolean: validateBoolean
+    validateBoolean: validateBoolean,
+    validateEmail: validateEmail
 };

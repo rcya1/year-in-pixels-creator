@@ -5,28 +5,21 @@ import FormControl from 'react-bootstrap/FormControl';
 import Card from 'react-bootstrap/Card';
 import Button from 'react-bootstrap/Button';
 import InputGroup from 'react-bootstrap/InputGroup';
-import { FaUser, FaLock } from 'react-icons/fa';
-import { Link } from 'react-router-dom';
+import { FaLock } from 'react-icons/fa';
 
 import withRedirect from 'js/util/react/WithRedirect';
 
 import 'css/Form.css';
 
-class CreateUser extends Component {
+class ResetPassword extends Component {
     constructor(props) {
         super(props);
 
         this.state = {
-            username: "",
             password: "",
+            confirmPassword: "",
             validated: false
         }
-    }
-
-    onChangeUsername = (e) => {
-        this.setState({
-            username: e.target.value
-        });
     }
 
     onChangePassword = (e) => {
@@ -35,18 +28,31 @@ class CreateUser extends Component {
         });
     }
 
+    onChangeConfirmPassword = (e) => {
+        this.setState({
+            confirmPassword: e.target.value
+        });
+    }
+
     handleSubmit = async (e) => {
         e.preventDefault();
         e.stopPropagation();
 
         let form = e.currentTarget;
+        
+        if(this.state.password !== this.state.confirmPassword) {
+            return;
+        }
 
         this.setState({
             validated: true
         });
 
+        let username = this.props.match.params.username;
+        let token = this.props.match.params.token;
+
         if(form.checkValidity() === true) {
-            let success = await this.props.login(this.state.username, this.state.password);
+            let success = await this.props.resetPassword(username, token, this.state.password);
             if(success) this.props.setRedirect("/");
         }
     }
@@ -56,31 +62,10 @@ class CreateUser extends Component {
             <Container className="mt-3 form">
                 <Card className="bg-light">
                     <Card.Header>
-                        <h3 className="text-center">Login</h3>
+                        <h3 className="text-center">Reset Password</h3>
                     </Card.Header>
                     <Card.Body className="form-body mx-auto">
                         <Form noValidate validated={this.state.validated} onSubmit={this.handleSubmit}>
-                            <Form.Group>
-                                <InputGroup>
-                                    <InputGroup.Prepend>
-                                        <InputGroup.Text>
-                                            <FaUser></FaUser>
-                                        </InputGroup.Text>
-                                    </InputGroup.Prepend>
-                                    <FormControl
-                                        placeholder="Username"
-                                        type="text"
-                                        required
-                                        value={this.state.username}
-                                        onChange={this.onChangeUsername}
-                                    />
-
-                                    <FormControl.Feedback type="invalid">
-                                        Please enter your username.
-                                    </FormControl.Feedback>
-                                </InputGroup>
-                            </Form.Group>
-
                             <Form.Group>
                                 <InputGroup>
                                     <InputGroup.Prepend>
@@ -97,18 +82,36 @@ class CreateUser extends Component {
                                     />
 
                                     <FormControl.Feedback type="invalid">
-                                        Please enter your password.
+                                        Please choose a password.
+                                    </FormControl.Feedback>
+                                </InputGroup>
+                            </Form.Group>
+                            <Form.Group>
+                                <InputGroup>
+                                    <InputGroup.Prepend>
+                                        <InputGroup.Text>
+                                            <FaLock></FaLock>
+                                        </InputGroup.Text>
+                                    </InputGroup.Prepend>
+                                    <FormControl
+                                        placeholder="Confirm Password"
+                                        type="password"
+                                        required
+                                        isInvalid={this.state.password !== this.state.confirmPassword}
+                                        value={this.state.confirmPassword}
+                                        onChange={this.onChangeConfirmPassword}
+                                    />
+
+                                    <FormControl.Feedback type="invalid">
+                                        Passwords not entered / do not match.
                                     </FormControl.Feedback>
                                 </InputGroup>
                             </Form.Group>
                             <br></br>
                             <Button variant="primary" type="submit" block>
-                                Submit
+                                Change Password
                             </Button>
-                        </Form>
-
-                        <p className="mt-3 text-center">Don't have an account? <Link to="/register">Register</Link> </p>
-                        <p className="mt-3 text-center">Forgot your password? <Link to="/request-reset">Request Password Reset</Link> </p>               
+                        </Form>          
                     </Card.Body>
                 </Card>
             </Container>
@@ -116,4 +119,4 @@ class CreateUser extends Component {
     }
 }
 
-export default withRedirect(CreateUser);
+export default withRedirect(ResetPassword);

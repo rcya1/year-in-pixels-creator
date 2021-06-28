@@ -27,9 +27,11 @@
     "express-async-handler": "^1.1.4",
     "express-session": "^1.17.1",
     "mongoose": "^5.11.11",
+    "nodemailer": "^6.6.0",
     "passport": "^0.4.1",
     "passport-auth-token": "^1.0.1",
-    "passport-local-mongoose": "^6.1.0"
+    "passport-local-mongoose": "^6.1.0",
+    "uuid": "^8.3.2"
   },
   "engines": {
     "node": "10.19.0"

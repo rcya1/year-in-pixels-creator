@@ -6,6 +6,7 @@ import Card from 'react-bootstrap/Card';
 import Button from 'react-bootstrap/Button';
 import InputGroup from 'react-bootstrap/InputGroup';
 import { FaUser, FaLock } from 'react-icons/fa';
+import { MdEmail } from 'react-icons/md';
 import { Link } from 'react-router-dom';
 
 import withRedirect from 'js/util/react/WithRedirect';
@@ -18,11 +19,13 @@ class Register extends Component {
 
         this.state = {
             name: "",
+            email: "",
             username: "",
             password: "",
             confirmPassword: "",
             validated: false,
-            usernameTaken: false
+            usernameTaken: false,
+            emailValid: true
         }
     }
 
@@ -30,6 +33,30 @@ class Register extends Component {
         this.setState({
             name: e.target.value
         });
+    }
+
+    onChangeEmail = async (e) => {
+        let email = e.target.value;
+
+        this.setState({
+            email: email
+        });
+
+        let valid = await this.validateEmail(email);
+
+        this.setState({
+            emailValid: valid
+        });
+    }
+
+    validateEmail = async (email) => {
+        // eslint-disable-next-line
+        const regex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        
+        if(email !== "" && !email.match(regex)) return false;
+        
+        let available = await this.props.checkEmailAvailable(email);
+        return available;
     }
 
     onChangeUsername = async(e) => {
@@ -64,7 +91,7 @@ class Register extends Component {
 
         let form = e.currentTarget;
 
-        if(this.state.password !== this.state.confirmPassword || this.state.usernameTaken) {
+        if(this.state.password !== this.state.confirmPassword || this.state.usernameTaken || !this.state.emailValid) {
             return;
         }
 
@@ -73,7 +100,7 @@ class Register extends Component {
         });
 
         if(form.checkValidity() === true) {
-            let success = await this.props.register(this.state.name, this.state.username, this.state.password);
+            let success = await this.props.register(this.state.name, this.state.username, this.state.password, this.state.email);
             if(success) this.props.setRedirect("/");
         }
     }
@@ -95,13 +122,34 @@ class Register extends Component {
                                         </InputGroup.Text>
                                     </InputGroup.Prepend>
                                     <FormControl
-                                        placeholder="First Name"
+                                        placeholder="Name"
                                         type="text"
                                         value={this.state.name}
                                         onChange={this.onChangeName}
                                     />
                                 </InputGroup>
                                 <small className="form-text text-muted">You may leave this blank.</small>
+                            </Form.Group>
+
+                            <Form.Group>
+                                <InputGroup>
+                                    <InputGroup.Prepend>
+                                        <InputGroup.Text>
+                                            <MdEmail></MdEmail>
+                                        </InputGroup.Text>
+                                    </InputGroup.Prepend>
+                                    <FormControl
+                                        placeholder="Email Address"
+                                        type="text"
+                                        isInvalid={!this.state.emailValid}
+                                        value={this.state.email}
+                                        onChange={this.onChangeEmail}
+                                    />
+                                    <FormControl.Feedback type="invalid">
+                                        Email invalid.
+                                    </FormControl.Feedback>
+                                </InputGroup>
+                                <small className="form-text text-muted">This is optional but highly recommended.</small>
                             </Form.Group>
 
                             <Form.Group>

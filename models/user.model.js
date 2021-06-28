@@ -15,6 +15,35 @@ const userSchema = new mongoose.Schema({
             type: String,
             required: false
         },
+        email: {
+            type: String,
+            required: false,
+            unique: true,
+            validate: [validate.validateEmail, "Invalid email address"]
+        },
+        emailVerificationToken: {
+            type: String,
+            required: false,
+            unique: false
+        },
+        emailVerificationTokenDate: {
+            type: Date,
+            required: false
+        },
+        emailVerified: {
+            type: Boolean,
+            required: true,
+            default: false
+        },
+        passwordResetToken: {
+            type: String,
+            required: false,
+            unique: false
+        },
+        passwordResetTokenDate: {
+            type: Date,
+            required: false
+        },
         colorSchemes: {
             type: [{
                 type: mongoose.Schema.Types.ObjectId,
