@@ -5,7 +5,7 @@ const validate = require('./validate');
 const userSchema = new mongoose.Schema({
         username: {
             type: String,
-            validate: [validate.validateNonZeroLength, "Username must have length > 0"]
+            validate: [validate.validateUsernameLength, "Username must have 0 < length <= 20"]
         },
         password: {
             type: String,

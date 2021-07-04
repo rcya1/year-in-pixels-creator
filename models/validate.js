@@ -10,6 +10,10 @@ function validateNonZeroLength(string) {
     return string.length > 0;
 }
 
+function validateUsernameLength(username) {
+    return validateNonZeroLength(username) && username.length <= 20;
+}
+
 function validateBoolean(string) {
     let lower = string.toLowerCase();
     return lower === "true" || lower === "false";
@@ -24,6 +28,7 @@ module.exports = {
     validateDataLength: validateDataLength,
     validateColorValue: validateColorValue,
     validateNonZeroLength: validateNonZeroLength,
+    validateUsernameLength: validateUsernameLength,
     validateBoolean: validateBoolean,
     validateEmail: validateEmail
 };

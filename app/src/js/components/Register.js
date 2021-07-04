@@ -24,7 +24,7 @@ class Register extends Component {
             password: "",
             confirmPassword: "",
             validated: false,
-            usernameTaken: false,
+            usernameInvalid: false,
             emailValid: true
         }
     }
@@ -66,9 +66,15 @@ class Register extends Component {
 
         let username = e.target.value;
         if(username !== "") {
-            let usernameAvailable = await this.props.checkUsernameAvailable(username);
+            let usernameAvailable = true;
+
+            // only check username availability if less than 20 characters
+            if(username.length <= 20) {
+                usernameAvailable = await this.props.checkUsernameAvailable(username);
+            }
+
             this.setState({
-                usernameTaken: !usernameAvailable
+                usernameInvalid: !usernameAvailable || username.length > 20
             })
         }
     }
@@ -91,7 +97,7 @@ class Register extends Component {
 
         let form = e.currentTarget;
 
-        if(this.state.password !== this.state.confirmPassword || this.state.usernameTaken || !this.state.emailValid) {
+        if(this.state.password !== this.state.confirmPassword || this.state.usernameInvalid || !this.state.emailValid) {
             return;
         }
 
@@ -163,13 +169,13 @@ class Register extends Component {
                                         placeholder="Username"
                                         type="text"
                                         required
-                                        isInvalid={this.state.usernameTaken}
+                                        isInvalid={this.state.usernameInvalid}
                                         value={this.state.username}
                                         onChange={this.onChangeUsername}
                                     />
 
                                     <FormControl.Feedback type="invalid">
-                                        Username already taken / is empty.
+                                        Username already taken / is empty / is longer than 20 characters.
                                     </FormControl.Feedback>
                                 </InputGroup>
                             </Form.Group>
