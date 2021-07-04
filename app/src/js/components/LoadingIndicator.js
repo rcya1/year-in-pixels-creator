@@ -12,7 +12,7 @@ export default class LoadingIndicator extends React.Component {
                     position: "absolute",
                     top: "5.0rem",
                     right: "1.5rem",
-                    height: "100%"
+                    height: "calc(100% - 5.0rem)"
                 }}>
                     <OverlayTrigger
                         overlay={

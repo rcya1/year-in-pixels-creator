@@ -1035,6 +1035,10 @@ class App extends React.Component {
             message: message
         });
 
+        if(alerts.length > 4) {
+            alerts.shift();
+        }
+
         this.setState({
             alerts: alerts
         });

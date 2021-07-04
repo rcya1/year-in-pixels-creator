@@ -13,6 +13,12 @@ export default class Changelog extends Component {
                 </h1>
             </div>
             
+            <h3 className={headerClassName}>v1.3</h3>
+            <ul className={paragraphClassName}>
+                <li>Added email account support and password resetting</li>
+                <li>Fixed vertical scrollbar appearing due to loading indicator</li>
+                <li>Added limit to how many alerts could appear on screen</li>
+            </ul>
             <h3 className={headerClassName}>v1.2</h3>
             <ul className={paragraphClassName}>
                 <li>Added the ability to export board images as SVG, PNG, and PDF files</li>
