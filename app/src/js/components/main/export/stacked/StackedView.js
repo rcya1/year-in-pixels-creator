@@ -9,6 +9,7 @@ class StackedView extends React.Component {
     render() {
         return (<Container
             ref={this.props.innerRef}
+            style={{backgroundColor: "#FFF"}}
         >
             <Row>
                 <Col className="text-center">
