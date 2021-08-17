@@ -1,22 +1,19 @@
-import { squareLength} from './Cell';
 import { FULL_MONTH_NAMES, ABBR_WEEKDAY_NAMES } from 'js/components/main/Constants'
+import { getDayOfWeek } from 'js/util/DateUtils'
 
-function getTable() {
+function getTable(month, year, getCell) {
     let tableData = [];
+    let firstDay = getDayOfWeek(month, 1, year);
+
     for(let w = 0; w < 5; w++) {
         let rowData = [
             
         ];
         
         for(let d = 0; d < 7; d++) {
-            rowData.push(<td key={d} style={{
-                width: squareLength + "px",
-                height: squareLength + "px",
-                border: "1px solid rgb(0, 0, 0)",   
-                cursor: "pointer"
-            }}>
+            let dayOfMonth = w * 7 + d - firstDay;
 
-            </td>)
+            rowData.push(getCell(month, dayOfMonth));
         }
 
         tableData.push(<tr key={w}>{rowData}</tr>);
@@ -38,13 +35,13 @@ function getTable() {
     </table>
 }
 
-export default function getBoardCalendarLayout(getCell) {
+export default function getBoardCalendarLayout(getCell, year) {
     let calendarData = [];
     
     for(let m = 0; m < 12; m++) {
-        calendarData.push(<div key={m} className="mx-3 mb-3">
+        calendarData.push(<div key={m} className="mx-3 my-2">
             <h4>{FULL_MONTH_NAMES[m]}</h4>
-            {getTable()}
+            {getTable(m, year, getCell)}
         </div>)
     }
 

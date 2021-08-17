@@ -31,3 +31,8 @@ export let isLeapYear = function(year) {
     }
     return false;
 }
+
+export let getDayOfWeek = function(month, day, year) {
+    let date = new Date(year, month, day, 12, 0, 0, 0);
+    return date.getDay();
+}
