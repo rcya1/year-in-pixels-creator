@@ -610,6 +610,16 @@ class App extends React.Component {
                 this.setState({
                     years: newYears,
                     year: newYears[newIndex]
+                }, async () => {
+                    // make sure the state is updated before we start getting new year
+                    try {
+                        await this.syncValuesAndComments();
+                        loadingMessage.remove();
+                    }
+                    catch(err) {
+                        handleError(err, this.addAlert);
+                        loadingMessage.remove();
+                    }
                 });
 
                 loadingMessage.remove();
