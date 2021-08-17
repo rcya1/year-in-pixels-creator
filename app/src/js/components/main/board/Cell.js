@@ -11,18 +11,21 @@ let getCellStyle = (active, valid, invalidCellsDisplayType, backgroundColor) => 
             colorOptions = {
                 border: active ? "3px solid rgba(0, 0, 0, 0.7)" : "1px solid rgb(0, 0, 0)",
                 backgroundColor: backgroundColor,
+                cursor: valid ? "pointer" : "not-allowed",
             };
             break;
         case InvalidCellsDisplayType.INVISIBLE:
             colorOptions = {
                 border: valid ? (active ? "3px solid rgba(0, 0, 0, 0.7)" : "1px solid rgb(0, 0, 0)") : "none",
                 backgroundColor: backgroundColor,
+                cursor: valid ? "pointer" : "default",
             };
             break;
         case InvalidCellsDisplayType.GRAYED_OUT:
             colorOptions = {
                 border: active ? "3px solid rgba(0, 0, 0, 0.7)" : "1px solid rgb(0, 0, 0)",
                 backgroundColor: valid ? backgroundColor : "rgba(0, 0, 0, 0.25)",
+                cursor: valid ? "pointer" : "not-allowed",
             };
             break;
         default: 
@@ -35,7 +38,6 @@ let getCellStyle = (active, valid, invalidCellsDisplayType, backgroundColor) => 
     return {
         width: squareLength + "px",
         height: squareLength + "px",
-        cursor: "pointer",
         position: "relative",
         zIndex: "-1",
         backgroundClip: "padding-box",
