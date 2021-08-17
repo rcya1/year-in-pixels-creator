@@ -14,3 +14,8 @@ export let EmailStatus = Object.freeze({
     NOT_VERIFIED: "Not Verified",
     NO_EMAIL: "No Email"
 });
+
+export let BoardDisplayType = Object.freeze({
+    GRID: "Grid",
+    CALENDAR: "Calendar" 
+});
