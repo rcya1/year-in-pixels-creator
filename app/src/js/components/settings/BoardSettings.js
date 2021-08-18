@@ -7,7 +7,7 @@ import Card from 'react-bootstrap/Card';
 import Button from 'react-bootstrap/Button';
 import Select from 'react-select'
 
-import { InvalidCellsDisplayType } from 'js/util/SettingsUtils';
+import { InvalidCellsDisplayType, BoardDisplayType } from 'js/util/SettingsUtils';
 
 export default class BoardSettings extends Component {
 
@@ -16,7 +16,8 @@ export default class BoardSettings extends Component {
 
         this.state = {
             showTodayMarker: this.props.boardSettings.showTodayMarker,
-            invalidCellsDisplayType: this.props.boardSettings.invalidCellsDisplayType
+            invalidCellsDisplayType: this.props.boardSettings.invalidCellsDisplayType,
+            boardDisplayType: this.props.boardSettings.boardDisplayType
         };
     }
 
@@ -32,6 +33,12 @@ export default class BoardSettings extends Component {
         });
     }
 
+    onChangeBoardDisplayType = (option) => {
+        this.setState({
+            boardDisplayType: option.value
+        });
+    }
+
     handleSubmit = (e) => {
         e.preventDefault();
         e.stopPropagation();
@@ -40,7 +47,14 @@ export default class BoardSettings extends Component {
     }
 
     render() {
-        let options = Object.values(InvalidCellsDisplayType).map((value) => {
+        let boardDisplayOptions = Object.values(BoardDisplayType).map((value) => {
+            return {
+                value: value,
+                label: value
+            };
+        });
+        
+        let invalidCellsOptions = Object.values(InvalidCellsDisplayType).map((value) => {
             return {
                 value: value,
                 label: value,
@@ -55,22 +69,22 @@ export default class BoardSettings extends Component {
                 <Card.Body className="w-100 mx-auto">
                     <Container className="w-100 mw-100">
                         <Row className="equal">
-                            <Col>
+                            <Col md={6}>
                                 <Row className="w-75 mx-auto">
                                     <Col lg={6} className="d-flex px-0 mb-1">
-                                        <p className="my-auto">Show Invalid Cells: </p>
+                                        <p className="my-auto">Board Display Type: </p>
                                     </Col>
                                     <Col lg={6} className="px-0">
                                         <Select
-                                            value={{value: this.state.invalidCellsDisplayType, 
-                                                    label: this.state.invalidCellsDisplayType}}
-                                            options={options}
-                                            onChange={this.onChangeInvalidCellsDisplayType}
+                                            value={{value: this.state.boardDisplayType, 
+                                                    label: this.state.boardDisplayType}}
+                                            options={boardDisplayOptions}
+                                            onChange={this.onChangeBoardDisplayType}
                                         />
                                     </Col>
                                 </Row>
                             </Col>
-                            <Col>
+                            <Col md={6}>
                                 <Form.Check
                                     type="switch"
                                     id="show-current-day-switch"
@@ -79,6 +93,24 @@ export default class BoardSettings extends Component {
                                     onChange={this.onChangeShowTodayMarker}
                                     className="w-75 mx-auto"
                                 />
+                            </Col>
+                        </Row>
+                        <br></br>
+                        <Row>
+                            <Col md={6}>
+                                <Row className="w-75 mx-auto">
+                                    <Col lg={6} className="d-flex px-0 mb-1">
+                                        <p className="my-auto">Show Invalid Cells: </p>
+                                    </Col>
+                                    <Col lg={6} className="px-0">
+                                        <Select
+                                            value={{value: this.state.invalidCellsDisplayType, 
+                                                    label: this.state.invalidCellsDisplayType}}
+                                            options={invalidCellsOptions}
+                                            onChange={this.onChangeInvalidCellsDisplayType}
+                                        />
+                                    </Col>
+                                </Row>
                             </Col>
                         </Row>
                         <Row>

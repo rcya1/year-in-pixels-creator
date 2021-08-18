@@ -6,6 +6,9 @@ const settingsSchema = new mongoose.Schema({
         },
         invalidCellsDisplayType: {
             type: String
+        },
+        boardDisplayType: {
+            type: String
         }
     }, {
         timestamps: false

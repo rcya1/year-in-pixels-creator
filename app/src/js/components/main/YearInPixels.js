@@ -13,6 +13,7 @@ import { ExportImageButton, SelectCurrentDayButton } from './IconButton'
 
 import { getIndex } from 'js/util/DateUtils';
 
+// TODO Add an option to add numbers on the calendar
 export default class YearInPixels extends React.Component {
     constructor(props) {
         super(props);
@@ -146,6 +147,7 @@ export default class YearInPixels extends React.Component {
             currentDay={this.props.currentDay}
             setCurrentDayXYProvider={this.setCurrentDayXYProvider}
             year={this.props.year}
+            displayType={this.props.boardSettings.boardDisplayType}
             showTodayMarker={this.props.boardSettings.showTodayMarker}
             invalidCellsDisplayType={this.props.boardSettings.invalidCellsDisplayType}
             values={this.props.values}

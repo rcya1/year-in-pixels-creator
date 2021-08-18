@@ -36,13 +36,13 @@ export default class Board extends React.Component {
     }
     
     render() {
-        let displayType = BoardDisplayType.CALENDAR;
-
-        switch(displayType) {
+        switch(this.props.displayType) {
             case BoardDisplayType.GRID:
                 return getBoardGridLayout(this.getCell);
             case BoardDisplayType.CALENDAR:
                 return getBoardCalendarLayout(this.getCell, this.props.year);
+            default:
+                return getBoardGridLayout(this.getCell);
         }
     }
 }
