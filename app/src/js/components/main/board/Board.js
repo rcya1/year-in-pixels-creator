@@ -27,6 +27,7 @@ export default class Board extends React.Component {
            handleClick={this.props.showEditing ? this.props.handleClick : () => {}}
            valid={valid}
            invalidCellsDisplayType={this.props.invalidCellsDisplayType}
+           showDayNumber={this.props.showDayNumber}
            active={active}
            showTodayMarker={showTodayMarker}
            setCurrentDayXYProvider={isToday ? this.props.setCurrentDayXYProvider : function() {}}

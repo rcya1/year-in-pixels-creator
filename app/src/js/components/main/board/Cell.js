@@ -98,6 +98,11 @@ export class Cell extends React.Component {
                 }
             >
                 {this.props.showTodayMarker && <span style={todayTriangle}></span>}
+                {this.props.showDayNumber && this.props.valid && <div style={{
+                    fontSize: "12px",
+                    marginTop: "-15px",
+                    textAlign: "left"
+                }}>{this.props.day+1}</div>}
             </td>
         )
     }

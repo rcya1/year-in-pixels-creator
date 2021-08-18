@@ -9,6 +9,9 @@ const settingsSchema = new mongoose.Schema({
         },
         boardDisplayType: {
             type: String
+        },
+        showDayNumber: {
+            type: Boolean
         }
     }, {
         timestamps: false

@@ -17,7 +17,8 @@ export default class BoardSettings extends Component {
         this.state = {
             showTodayMarker: this.props.boardSettings.showTodayMarker,
             invalidCellsDisplayType: this.props.boardSettings.invalidCellsDisplayType,
-            boardDisplayType: this.props.boardSettings.boardDisplayType
+            boardDisplayType: this.props.boardSettings.boardDisplayType,
+            showDayNumber: this.props.boardSettings.showDayNumber
         };
     }
 
@@ -36,6 +37,12 @@ export default class BoardSettings extends Component {
     onChangeBoardDisplayType = (option) => {
         this.setState({
             boardDisplayType: option.value
+        });
+    }
+
+    onChangeShowDayNumber = (e) => {
+        this.setState({
+            showDayNumber: !this.state.showDayNumber
         });
     }
 
@@ -111,6 +118,16 @@ export default class BoardSettings extends Component {
                                         />
                                     </Col>
                                 </Row>
+                            </Col>
+                            <Col md={6}>
+                                <Form.Check
+                                    type="switch"
+                                    id="show-day-number-switch"
+                                    label="Show Day Number"
+                                    checked={this.state.showDayNumber}
+                                    onChange={this.onChangeShowDayNumber}
+                                    className="w-75 mx-auto"
+                                />
                             </Col>
                         </Row>
                         <Row>
