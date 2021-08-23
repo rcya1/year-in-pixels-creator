@@ -6,6 +6,7 @@ import Form from 'react-bootstrap/Form';
 import Card from 'react-bootstrap/Card';
 import Button from 'react-bootstrap/Button';
 import Select from 'react-select'
+import MaterialSwitch from "js/util/MaterialSwitch";
 
 import { InvalidCellsDisplayType, BoardDisplayType } from 'js/util/SettingsUtils';
 
@@ -92,13 +93,10 @@ export default class BoardSettings extends Component {
                                 </Row>
                             </Col>
                             <Col md={6}>
-                                <Form.Check
-                                    type="switch"
-                                    id="show-current-day-switch"
+                                <MaterialSwitch 
                                     label="Show Current Day Marker"
-                                    checked={this.state.showTodayMarker}
                                     onChange={this.onChangeShowTodayMarker}
-                                    className="w-75 mx-auto"
+                                    checked={this.state.showTodayMarker}
                                 />
                             </Col>
                         </Row>
@@ -120,13 +118,10 @@ export default class BoardSettings extends Component {
                                 </Row>
                             </Col>
                             <Col md={6}>
-                                <Form.Check
-                                    type="switch"
-                                    id="show-day-number-switch"
+                                <MaterialSwitch
                                     label="Show Day Number"
                                     checked={this.state.showDayNumber}
                                     onChange={this.onChangeShowDayNumber}
-                                    className="w-75 mx-auto"
                                 />
                             </Col>
                         </Row>
