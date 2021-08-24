@@ -12,13 +12,13 @@ class SBSView extends React.Component {
             style={{backgroundColor: "#FFF"}}
         >
             <Row>
-                <Col className="text-center">
+                <Col className="text-center" xs={6} lg={9}>
                     <div style={{float: "right"}}>
                         { this.props.title }
                         { this.props.board }
                     </div>
                 </Col>
-                <Col className="text-center" ref={this.props.data.colRef}>
+                <Col className="text-center" ref={this.props.data.colRef} xs={6} lg={3}>
                     <div style={{
                         marginTop: this.props.config.colorsTopMargin + "px",
                         float: "left",
