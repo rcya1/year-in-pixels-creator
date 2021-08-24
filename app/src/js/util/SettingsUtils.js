@@ -13,7 +13,7 @@ export let BoardDisplayType = Object.freeze({
 export let defaultBoardSettings = {
     showTodayMarker: true,
     invalidCellsDisplayType: InvalidCellsDisplayType.GRAYED_OUT,
-    boardDisplayType: BoardDisplayType.GRID,
+    boardDisplayType: BoardDisplayType.CALENDAR,
     showDayNumber: false
 };
 

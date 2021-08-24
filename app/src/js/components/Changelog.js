@@ -18,6 +18,10 @@ export default class Changelog extends Component {
                 <li>Added email account support and password resetting</li>
                 <li>Fixed vertical scrollbar appearing due to loading indicator</li>
                 <li>Added limit to how many alerts could appear on screen</li>
+                <li>Add new default calendar view that can be accessed in the settings</li>
+                <li>Add limit on username length</li>
+                <li>Fix transparent backgrounds on exported PNG images</li>
+                <li>Added sizing control for exporting images in the side by side layout</li>
             </ul>
             <h3 className={headerClassName}>v1.2</h3>
             <ul className={paragraphClassName}>
