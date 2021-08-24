@@ -8,6 +8,7 @@ export class SBSConfig {
         this.colorsTopMargin = 100;
         this.colorsLeftMargin = 0;
         this.colorsWidth = 100;
+        this.boardPercentage = 50;
     }
 
     clone = () => {
@@ -15,6 +16,7 @@ export class SBSConfig {
         config.colorsTopMargin = this.colorsTopMargin;
         config.colorsLeftMargin = this.colorsLeftMargin;
         config.colorsWidth = this.colorsWidth;
+        config.boardPercentage = this.boardPercentage;
         return config;
     }
 }
@@ -53,6 +55,10 @@ export class SBSControls extends React.Component {
     
     changeColorSchemeWidth = (e) => {
         this.props.updateConfig("colorsWidth", e.target.value);
+    }
+    
+    changeBoardPercentage = (e) => {
+        this.props.updateConfig("boardPercentage", e.target.value);
     }
 
     render() {
@@ -108,6 +114,20 @@ export class SBSControls extends React.Component {
                         step={1}
                         max={maxWidth}
                         min={5}
+                    />
+                </InputGroup>
+            </Form.Group>
+            <Form.Group>
+                <Form.Label as="h5">
+                    Board Width (%)
+                </Form.Label>
+                <InputGroup className="justify-content-center mt-3">
+                    <ReactBootstrapSlider
+                        value={this.props.config.boardPercentage}
+                        change={this.changeBoardPercentage}
+                        step={1}
+                        max={75}
+                        min={25}
                     />
                 </InputGroup>
             </Form.Group>
