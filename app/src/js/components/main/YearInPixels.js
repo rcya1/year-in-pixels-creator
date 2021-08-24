@@ -192,7 +192,7 @@ export default class YearInPixels extends React.Component {
             <ExportImageButton
                 className="mt-2 mb-4"
                 handleClick={this.enableExportPreview}
-                overlayText="Export Image"
+                overlayText="Export as Image"
             />
         </div>);
 

@@ -39,7 +39,7 @@ let getCellStyle = (active, valid, invalidCellsDisplayType, backgroundColor) => 
         width: squareLength + "px",
         height: squareLength + "px",
         position: "relative",
-        zIndex: "-1",
+        zIndex: "0",
         backgroundClip: "padding-box",
         ...colorOptions
     }

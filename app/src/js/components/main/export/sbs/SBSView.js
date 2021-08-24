@@ -4,6 +4,7 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import ColorSchemeList from '../../color-scheme/ColorSchemeList'
 
+// will probably have to switch to a normal columns and just set the width of each of them
 class SBSView extends React.Component {
     
     render() {

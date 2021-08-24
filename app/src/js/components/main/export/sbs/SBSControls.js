@@ -7,7 +7,7 @@ export class SBSConfig {
     constructor() {
         this.colorsTopMargin = 100;
         this.colorsLeftMargin = 0;
-        this.colorsWidth = 50;
+        this.colorsWidth = 100;
     }
 
     clone = () => {

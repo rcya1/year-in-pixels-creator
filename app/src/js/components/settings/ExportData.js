@@ -11,7 +11,7 @@ export default class ExportData extends Component {
         return (
             <Card className="bg-light">
                 <Card.Header>
-                    <h3 className="text-center">Export Data</h3>
+                    <h3 className="text-center">Managing Data</h3>
                 </Card.Header>
                 <Card.Body className="w-100 mx-auto">
                     <Container className="w-100 mw-100 mt-3">
