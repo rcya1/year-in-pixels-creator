@@ -1,12 +1,12 @@
 .display-5 {
-    font-size: 3.0rem;
-    font-weight: 300;
-    line-height: 1.0;
+  font-size: 3rem;
+  font-weight: 300;
+  line-height: 1;
 }
 
 /* Some random hack to make the loading indicator work */
 body {
-    position: relative;
-    float: left;
-    width: 100%;
+  position: relative;
+  float: left;
+  width: 100%;
 }

@@ -1,7 +1,7 @@
-import axios from 'axios';
+import axios from "axios";
 
 const httpRequest = axios.create({
-    withCredentials: true
+  withCredentials: true,
 });
 
 export default httpRequest;

@@ -1,25 +1,25 @@
 .form {
-    max-width: 900px !important;
+  max-width: 900px !important;
 }
 
 .form-body {
-    max-width: 500px;
-    min-width: 300px;
-    width: 50%;
+  max-width: 500px;
+  min-width: 300px;
+  width: 50%;
 }
 
 .equal {
-    display: flex;
-    display: -webkit-flex;
-    flex-wrap: wrap;
+  display: flex;
+  display: -webkit-flex;
+  flex-wrap: wrap;
 }
 
-input[type=number]::-webkit-inner-spin-button, 
-input[type=number]::-webkit-outer-spin-button { 
-    -webkit-appearance: none; 
-    margin: 0; 
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
 }
 
-input[type=number] {
-    -moz-appearance: textfield;
+input[type="number"] {
+  -moz-appearance: textfield;
 }

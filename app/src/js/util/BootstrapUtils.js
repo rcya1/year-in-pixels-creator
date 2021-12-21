@@ -1,7 +1,7 @@
 export function inLg() {
-    return window.innerWidth >= 992;
+  return window.innerWidth >= 992;
 }
 
 export function inSm() {
-    return window.innerWidth < 576;
+  return window.innerWidth < 576;
 }
