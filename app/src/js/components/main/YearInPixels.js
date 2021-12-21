@@ -10,6 +10,7 @@ import YearSelector from "./year-selector/YearSelector";
 import AddYearModal from "./year-selector/AddYearModal";
 import ExportPreview from "./export/ExportPreview";
 import { ExportImageButton, SelectCurrentDayButton } from "./IconButton";
+import Statistics from "./statistics/Statistics";
 
 import { getIndex } from "js/util/DateUtils";
 
@@ -213,6 +214,15 @@ export default class YearInPixels extends React.Component {
       </div>
     );
 
+    let stats = (
+      <Statistics
+        className={"mx-auto mt-4 mb-1 " + (this.props.inSm ? "w-100" : "w-75")}
+        year={String(this.props.year)}
+        values={this.props.values}
+        colorSchemes={this.props.colorSchemes}
+      />
+    );
+
     let content = undefined;
     if (this.props.inLg) {
       content = (
@@ -226,6 +236,7 @@ export default class YearInPixels extends React.Component {
               {yearSelector}
               {colorSchemeList}
               {toolbar}
+              {stats}
             </Col>
           </Row>
         </Container>
@@ -240,6 +251,7 @@ export default class YearInPixels extends React.Component {
               {board}
               {colorSchemeList}
               {toolbar}
+              {stats}
             </Col>
           </Row>
         </Container>
