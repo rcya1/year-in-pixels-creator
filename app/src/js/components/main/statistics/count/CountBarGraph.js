@@ -1,7 +1,49 @@
 import { Component } from "react";
+import {
+  BarChart,
+  Bar,
+  Cell,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+} from "recharts";
+import chroma from "chroma-js";
 
 export default class CountBarGraph extends Component {
   render() {
-    return <h3>Bar Graph</h3>;
+    let data = this.props.data.freq.map((freq, index) => {
+      return {
+        name: this.props.data.colorSchemes[index][3],
+        value: freq,
+      };
+    });
+
+    return (
+      <ResponsiveContainer width="100%" aspect={1.0}>
+        <BarChart width="100%" height="100%" data={data}>
+          <CartesianGrid strokeDasharray="3 3" vertical={false} />
+          <YAxis />
+          <Tooltip
+            formatter={(value, name, props) => {
+              return [value, "Frequency"];
+            }}
+            labelFormatter={(index) => {
+              return this.props.data.colorSchemes[index][3];
+            }}
+          />
+          <Bar dataKey="value" fill="#212529">
+            {data.map((entry, index) => (
+              <Cell
+                key={`cell-${index}`}
+                fill={chroma(
+                  this.props.data.colorSchemes[index].slice(0, 3)
+                ).hex()}
+              />
+            ))}
+          </Bar>
+        </BarChart>
+      </ResponsiveContainer>
+    );
   }
 }

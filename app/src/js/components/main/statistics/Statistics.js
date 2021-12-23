@@ -3,6 +3,7 @@ import Card from "react-bootstrap/Card";
 import Tabs from "react-bootstrap/Tabs";
 import Tab from "react-bootstrap/Tab";
 import CountStatistics from "./count/CountStatistics";
+import Summary from "./Summary";
 
 export default class Statistics extends Component {
   render() {
@@ -21,7 +22,11 @@ export default class Statistics extends Component {
               />
             </Tab>
             <Tab eventKey="summary" title="Summary">
-              <h3>Summary!</h3>
+              <Summary
+                value={this.props.values}
+                colorSchemes={this.props.colorSchemes}
+                year={this.props.year}
+              />
             </Tab>
           </Tabs>
         </Card.Body>
