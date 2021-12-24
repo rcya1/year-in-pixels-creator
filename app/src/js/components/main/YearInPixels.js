@@ -167,12 +167,22 @@ export default class YearInPixels extends React.Component {
       />
     );
 
+    let stats = (
+      <Statistics
+        className={"mx-auto mt-4 mb-1 " + (this.props.inSm ? "w-100" : "w-75")}
+        year={String(this.props.year)}
+        values={this.props.values}
+        colorSchemes={this.props.colorSchemes}
+      />
+    );
+
     if (this.state.exportPreviewMode) {
       return (
         <ExportPreview
           title={title}
           colorSchemeListProps={colorSchemeListProps}
           board={board}
+          stats={stats}
           cancel={this.disableExportPreview}
           createLoadingMessage={this.props.createLoadingMessage}
         />
@@ -212,15 +222,6 @@ export default class YearInPixels extends React.Component {
           overlayText="Export as Image"
         />
       </div>
-    );
-
-    let stats = (
-      <Statistics
-        className={"mx-auto mt-4 mb-1 " + (this.props.inSm ? "w-100" : "w-75")}
-        year={String(this.props.year)}
-        values={this.props.values}
-        colorSchemes={this.props.colorSchemes}
-      />
     );
 
     let content = undefined;

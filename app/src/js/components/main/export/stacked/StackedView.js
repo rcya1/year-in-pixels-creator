@@ -30,6 +30,7 @@ class StackedView extends React.Component {
                   notResizable
                 />
               </div>
+              {this.props.stats}
             </div>
           </Col>
         </Row>

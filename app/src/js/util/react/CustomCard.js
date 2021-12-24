@@ -17,7 +17,7 @@ export function createInfoCard(title, items) {
     <CustomCard title={title}>
       <ul className="list-unstyled mt-3 mb-4">
         {items.map((item) => {
-          return <li>{item}</li>;
+          return <li className="mb-3">{item}</li>;
         })}
       </ul>
     </CustomCard>

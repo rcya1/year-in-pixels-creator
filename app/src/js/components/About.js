@@ -14,7 +14,7 @@ export default class About extends Component {
             A tool for keeping track of your mood through colors
           </p>
           <p className="lead mb-0">Created by Ryan Chang</p>
-          <p className="lead">Inspired by and made for Lillian Jiang</p>
+          <p className="lead">Inspired by Lillian Jiang</p>
         </div>
 
         <hr></hr>
@@ -25,13 +25,19 @@ export default class About extends Component {
             "One board per year",
             "Unlimited years per account",
           ])}
-          {createInfoCard("Custom Color Schemes", [
+          {createInfoCard("Custom Colors", [
             "Freely choose labels and colors for boards",
             "Unlimited colors per account",
           ])}
           {createInfoCard("Online Saving", [
             "Access your boards from any device",
             "Account data is stored on a server",
+            "Optional email verification allows password resetting"
+          ])}
+          {createInfoCard("Statistics", [
+            "Access statistics about your board in table or graph format",
+            "Automatically tabulates frequency counts",
+            "Calculates summaries for each month and color"
           ])}
         </CardDeck>
 
@@ -39,12 +45,8 @@ export default class About extends Component {
 
         <h2 className={headerClassName}>Planned Features</h2>
         <CardDeck className="mb-5">
-          {createInfoCard("Statistics", [
-            "See how many times you have a color",
-            "View data in a variety of formats such as pie and bar charts",
-          ])}
-          {createInfoCard("Different Board Layouts", [
-            "Choose the standard chart view or a calendar view",
+          {createInfoCard("None for Now", [
+            "Submit feature requests to chang.ryan10145@gmail.com or as a GitHub issue!"
           ])}
         </CardDeck>
 
@@ -89,6 +91,12 @@ export default class About extends Component {
                 react-beautiful-dnd
               </a>{" "}
               for drag n drop components
+            </div>,
+            <div>
+              <a href="https://github.com/recharts/recharts">
+                Recharts
+              </a>{" "}
+              for charts
             </div>,
           ])}
           {createInfoCard("Backend", [

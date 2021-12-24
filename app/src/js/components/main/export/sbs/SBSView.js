@@ -34,6 +34,7 @@ class SBSView extends React.Component {
               ref={this.props.data.colorsRef}
               {...this.props.colorSchemeListProps}
             />
+            {this.props.stats}
           </div>
         </div>
       </div>

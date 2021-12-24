@@ -12,12 +12,19 @@ import chroma from "chroma-js";
 
 export default class CountBarGraph extends Component {
   render() {
+    let dataExists = false;
+
     let data = this.props.data.freq.map((freq, index) => {
+      if(freq > 0) dataExists = true;
       return {
         name: this.props.data.colorSchemes[index][3],
         value: freq,
       };
     });
+
+    if(!dataExists) {
+      return <h4 className="mx-auto">No Data</h4>
+    }
 
     return (
       <ResponsiveContainer width="100%" aspect={1.0}>

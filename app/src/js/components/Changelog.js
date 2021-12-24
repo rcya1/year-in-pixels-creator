@@ -12,6 +12,11 @@ export default class Changelog extends Component {
           <h1 className="display-4">Changelog</h1>
         </div>
 
+        <h3 className={headerClassName}>v1.4</h3>
+        <ul className={paragraphClassName}>
+          <li>Added logo</li>
+          <li>Added statistics panel for counting and summarizing boards</li>
+        </ul>
         <h3 className={headerClassName}>v1.3</h3>
         <ul className={paragraphClassName}>
           <li>Added email account support and password resetting</li>

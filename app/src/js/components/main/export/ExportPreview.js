@@ -249,6 +249,7 @@ export default class ExportPreview extends React.Component {
           <SBSView
             title={this.props.title}
             board={this.props.board}
+            stats={this.props.stats}
             colorSchemeListProps={colorSchemeListProps}
             config={config}
             data={data}
@@ -261,6 +262,7 @@ export default class ExportPreview extends React.Component {
           <StackedView
             title={this.props.title}
             board={this.props.board}
+            stats={this.props.stats}
             colorSchemeListProps={colorSchemeListProps}
             config={config}
             data={data}

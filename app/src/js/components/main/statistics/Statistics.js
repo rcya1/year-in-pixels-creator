@@ -3,7 +3,8 @@ import Card from "react-bootstrap/Card";
 import Tabs from "react-bootstrap/Tabs";
 import Tab from "react-bootstrap/Tab";
 import CountStatistics from "./count/CountStatistics";
-import Summary from "./Summary";
+import SummaryMonth from "./SummaryMonth";
+import SummaryColor from "./SummaryColor";
 
 export default class Statistics extends Component {
   render() {
@@ -21,9 +22,16 @@ export default class Statistics extends Component {
                 year={this.props.year}
               />
             </Tab>
-            <Tab eventKey="summary" title="Summary">
-              <Summary
-                value={this.props.values}
+            <Tab eventKey="summary-month" title="Month Summary">
+              <SummaryMonth
+                values={this.props.values}
+                colorSchemes={this.props.colorSchemes}
+                year={this.props.year}
+              />
+            </Tab>
+            <Tab eventKey="summary-color" title="Color Summary">
+              <SummaryColor
+                values={this.props.values}
                 colorSchemes={this.props.colorSchemes}
                 year={this.props.year}
               />
