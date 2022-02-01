@@ -1,15 +1,20 @@
 import {
   FULL_MONTH_NAMES,
   ABBR_WEEKDAY_NAMES,
+  DAYS_PER_MONTH
 } from "js/components/main/Constants";
-import { getDayOfWeek } from "js/util/DateUtils";
+import { getDayOfWeek, isLeapYear } from "js/util/DateUtils";
 
 function getTable(month, year, getCell) {
   let tableData = [];
   let firstDay = getDayOfWeek(month, 1, year);
+  let numDays = DAYS_PER_MONTH[month] + (month === 1 && isLeapYear(year) ? 1 : 0);
 
-  for (let w = 0; w < 5; w++) {
+  for (let w = 0; w < 6; w++) {
     let rowData = [];
+    if (w * 7 - firstDay >= numDays) {
+      break;
+    }
 
     for (let d = 0; d < 7; d++) {
       let dayOfMonth = w * 7 + d - firstDay;

@@ -12,14 +12,14 @@ export default class Board extends React.Component {
   getCell = (m, d) => {
     let value = "";
     // add on one to days per month if it's a leap year
-    let valid =
-      d >= 0 &&
-      d + 1 <=
-        DAYS_PER_MONTH[m] + (isLeapYear(this.props.year) && m === 1 ? 1 : 0);
+    let numDays =
+      DAYS_PER_MONTH[m] + (isLeapYear(this.props.year) && m === 1 ? 1 : 0);
+
+    let valid = d >= 0 && d + 1 <= numDays;
     let active =
       this.props.currentlySelected[0] === m &&
       this.props.currentlySelected[1] === d;
-    let isToday = m * 31 + d === this.props.currentDay;
+    let isToday = m * 31 + d === this.props.currentDay && d < numDays;
     let showTodayMarker =
       isToday &&
       this.props.showTodayMarker &&
