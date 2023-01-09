@@ -1,6 +1,6 @@
 # Year in Pixels Creator
 
-Year in Pixels Creator is a tool for keeping track of your mood through colors.
+Year in Pixels Creator is a journaling web app for keeping track of your mood throughout the year through colors. Each day, you put in a color representing how the day went and write a note about it. At the end of the year, you have a grid full of colors representing your entire year in a colorful board of pixels.
 
 https://year-in-pixels-creator.herokuapp.com/#/
 
