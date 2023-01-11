@@ -213,7 +213,19 @@ export default class CellMenu extends React.Component {
                   variant="danger"
                   block
                   className=""
-                  onClick={this.props.closeMenu}
+                  onClick={() => {
+                    if (this.state.value != 0 || this.state.comment != "") {
+                      if (
+                        window.confirm(
+                          "If you leave before saving, your changes will be lost. Please confirm leaving the menu."
+                        )
+                      ) {
+                        this.props.closeMenu();
+                      }
+                    } else {
+                      this.props.closeMenu();
+                    }
+                  }}
                 >
                   Cancel
                 </Button>

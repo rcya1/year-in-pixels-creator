@@ -52,12 +52,6 @@ export default class YearInPixels extends React.Component {
     this.updateMenuPosition();
   };
 
-  handleClick = () => {
-    if (this.props.inLg) {
-      this.closeMenu();
-    }
-  };
-
   handleCellClick = (xyProvider, month, day) => {
     this.menuXYProvider = xyProvider;
     let xy = this.menuXYProvider();
